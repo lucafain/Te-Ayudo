@@ -1,12 +1,71 @@
+@model TeAyudo.Models.HomeViewModel
 @{
     ViewData["Title"] = "Inicio";
 }
-<header class="header"><a class="brand" href="#inicio" aria-label="Te Ayudo, inicio"><span class="brand-mark">ta<span>✳</span></span>te ayudo<span class="brand-dot">.</span></a><button class="menu-toggle" aria-expanded="false" aria-controls="navigation" aria-label="Abrir menú">☰</button><nav id="navigation" aria-label="Navegación principal"><a href="#como-funciona">Explorá</a><a href="#preguntas">Preguntas frecuentes</a><a href="#trabaja">Trabajá con nosotros</a><a class="button small" asp-controller="Home" asp-action="Ingresar">Iniciar sesión <span aria-hidden="true">↗</span></a></nav></header>
-<main id="inicio"><section class="hero wrap"><div class="hero-copy"><span class="eyebrow"><span class="dot"></span> CONECTAMOS GENERACIONES</span><h1>Donde encontrás<br>lo que <em>buscás.</em></h1><p>Una mano con lo cotidiano.<br>Una oportunidad para empezar.</p><p class="hero-detail">Conectamos a adultos mayores que necesitan ayuda con jóvenes que quieren sumar experiencia.</p><a class="button" href="#como-funciona">Encontrá tu próxima ayuda <span aria-hidden="true">↗</span></a><div class="hero-note"><span class="avatars"><b>J</b><b>M</b><b>A</b></span><span>Más cerca, entre generaciones.</span></div></div><div class="hero-art"><img src="@Url.Content("~/img/community.svg")" alt="Un joven y un adulto mayor compartiendo una tarea en una computadora"><span class="floating-note"><span>✳</span> Pequeñas ayudas.<br><strong>Grandes conexiones.</strong></span></div></section>
-<section class="about wrap" id="nosotros"><div class="about-art"><span class="eyebrow">UNA COMUNIDAD, MUCHAS POSIBILIDADES</span><h2>Tu experiencia.<br>Mis ganas.<br><em>Nuestro encuentro.</em></h2><span class="asterisk" aria-hidden="true">✳</span></div><div class="about-copy"><span class="eyebrow">SOBRE NOSOTROS</span><h2>La ayuda nos acerca.</h2><p>En <strong>Te Ayudo</strong> creemos que ayudarnos entre generaciones puede cambiar la forma en la que vivimos.</p><p>Creamos un espacio que conecta a jóvenes universitarios con adultos para que puedan ayudarse en tareas cotidianas.</p><p>Los jóvenes tienen la posibilidad de ganar experiencia y aprender, mientras que los adultos encuentran una forma sencilla y segura de recibir la ayuda que necesitan.</p><p class="signature">Te Ayudo. Donde encontrás lo que buscás.</p></div></section>
-<section class="callout wrap"><div><span class="eyebrow">EL PRIMER PASO ES ENCONTRARNOS</span><h2>Recibí la ayuda que buscás.</h2><p>Seleccionamos a quienes pueden acompañarte.</p></div><a class="button light" asp-controller="Home" asp-action="Ingresar">Iniciar sesión <span aria-hidden="true">↗</span></a></section>
-<section class="how wrap" id="como-funciona"><div class="section-heading"><span class="eyebrow">ASÍ DE SIMPLE</span><h2>¿Cómo funciona?</h2><p>De una tarea pendiente a una conexión que suma.</p></div><div class="steps"><article><span class="step-number">01</span><div class="icon-box"><img src="@Url.Content("~/img/pen.png")" alt=""></div><h3>Publicá</h3><p>Contanos qué ayuda necesitás y elegí el momento que te resulte cómodo.</p></article><article><span class="step-number">02</span><div class="icon-box"><img src="@Url.Content("~/img/alarm.png")" alt=""></div><h3>Encontrá</h3><p>Buscá a alguien que pueda ayudarte con esa tarea.</p></article><article><span class="step-number">03</span><div class="icon-box"><img src="@Url.Content("~/img/circle-check.png")" alt=""></div><h3>Conectate</h3><p>Coordiná los detalles y empezá a resolverlo en compañía.</p></article></div><div class="ready"><span>¡Y listo!</span><a class="button" asp-controller="Home" asp-action="SolicitarTarea">Solicitar una tarea <span aria-hidden="true">↗</span></a></div></section>
-<section class="work wrap" id="trabaja"><span class="work-symbol" aria-hidden="true">✳</span><div><span class="eyebrow">TUS GANAS TIENEN UN LUGAR</span><h2>¿Sos joven y querés ganar<br>experiencia laboral?</h2><p>Formá parte de las historias de Te Ayudo.</p></div><a class="button outline" asp-controller="Home" asp-action="Trabajar">Trabajá con nosotros ↗</a></section>
-<section class="values wrap" id="valores"><div class="section-heading"><span class="eyebrow">LO QUE NOS REPRESENTA</span><h2>Una conexión con valores.</h2></div><div class="value-grid"><article><span class="value-icon" aria-hidden="true">◇</span><h3>Seguridad</h3><p>Tu tranquilidad es nuestra prioridad. Promovemos conexiones cuidadas y respeto entre las personas de nuestra comunidad.</p></article><article><span class="value-icon" aria-hidden="true">♡</span><h3>Confianza</h3><p>Creemos en la confianza entre las personas. Cada encuentro puede dejar un testimonio que ayude a conocer a quienes forman parte de nuestra comunidad.</p></article><article><span class="value-icon" aria-hidden="true">☏</span><h3>Comunicación</h3><p>Todo es más fácil cuando nos entendemos. Una buena conversación ayuda a coordinar los detalles y resolver lo que necesitás.</p></article></div></section>
-<section class="faq wrap" id="preguntas"><div><span class="eyebrow">TE SACAMOS LAS DUDAS</span><h2>Preguntas frecuentes.</h2></div><div><details><summary>¿Qué es Te Ayudo?</summary><p>Un espacio para conectar a jóvenes con adultos mayores que necesitan una mano con tareas cotidianas.</p></details><details><summary>¿Cómo solicito ayuda?</summary><p>Podrás publicar lo que necesitás desde “Solicitar una tarea” cuando se habiliten las solicitudes.</p></details><details><summary>¿Cómo puedo sumarme al equipo?</summary><p>Podrás postularte desde “Trabajá con nosotros” cuando se habilite el registro.</p></details></div></section></main>
-<footer><div class="footer-content wrap"><a class="brand" href="#inicio">te ayudo<span class="brand-dot">.</span></a><div><h3>Te Ayudo</h3><a href="#nosotros">Nuestra historia</a><a href="#valores">Nuestra comunidad</a></div><div><h3>Explorá</h3><a href="#como-funciona">Cómo funciona</a><a href="#trabaja">Trabajá con nosotros</a></div><div><h3>¿Te ayudamos?</h3><a href="#preguntas">Preguntas frecuentes</a><a class="text-button" asp-controller="Home" asp-action="Ingresar">Iniciar sesión</a></div></div><div class="footer-bottom wrap"><span>© <span id="year">2026</span> Te Ayudo. Todos los derechos reservados.</span><span>Hecho para acercarnos. ✳</span></div></footer>
+<header class="header">
+    <a class="logo" asp-controller="Home" asp-action="Index"><img src="~/img/logo-teayudo.png" alt="Te Ayudo" /></a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="navigation" aria-label="Abrir menú">☰</button>
+    <nav id="navigation" aria-label="Navegación principal">
+        <a href="#como-funciona">Explorá</a>
+        <a href="#preguntas">Preguntas frecuentes</a>
+        <a href="#trabaja">Trabajá con nosotros</a>
+        <a class="login" asp-controller="Home" asp-action="Ingresar">Iniciar sesión</a>
+    </nav>
+</header>
+<main class="page" id="inicio">
+    <section class="hero">
+        <h1>@Model.Titulo</h1>
+        <ul>@foreach (var texto in Model.Presentacion) { <li>@texto</li> }</ul>
+    </section>
+    <section class="about panel" id="nosotros">
+        <div class="about-logo"><img src="~/img/logo-teayudo.png" alt="Te Ayudo, ayuda entre generaciones" /></div>
+        <div class="about-copy">
+            <h2>SOBRE NOSOTROS</h2>
+            @foreach (var texto in Model.SobreNosotros) { <p>@texto</p> }
+            <p><strong>Te Ayudo. @Model.Titulo.</strong></p>
+        </div>
+    </section>
+    <section class="callout panel">
+        <h2>@Model.AyudaTitulo</h2><p>@Model.AyudaTexto</p>
+        <a class="button" asp-controller="Home" asp-action="Ingresar">Iniciar sesión</a>
+    </section>
+    <section class="how panel" id="como-funciona">
+        <h2>¿Cómo funciona?</h2>
+        <div class="steps">
+            @foreach (var paso in Model.Pasos)
+            {
+                <article><h3>@paso.Titulo</h3><div class="icon-box"><img src="@Url.Content("~/img/" + paso.Icono)" alt="" /></div><p>@paso.Texto</p></article>
+            }
+        </div>
+        <p class="ready">¡Y listo!</p>
+        <a class="button" asp-controller="Home" asp-action="SolicitarTarea">Solicitar tarea</a>
+    </section>
+    <section class="work panel" id="trabaja">
+        <h2>@Model.TrabajoTitulo</h2><p>@Model.TrabajoTexto</p>
+        <a class="button" asp-controller="Home" asp-action="Trabajar">Trabajá con nosotros</a>
+    </section>
+    <section class="values panel" id="valores">
+        <h2>Lo que nos representa</h2>
+        <div class="value-grid">
+            @foreach (var valor in Model.Valores)
+            {
+                <article><h3>@valor.Titulo</h3><div class="icon-box"><img src="@Url.Content("~/img/" + valor.Icono)" alt="" /></div><p>@valor.Texto</p></article>
+            }
+        </div>
+    </section>
+    <section class="faq panel" id="preguntas">
+        <h2>Preguntas frecuentes</h2>
+        @foreach (var pregunta in Model.Preguntas)
+        { <details><summary>@pregunta.Titulo</summary><p>@pregunta.Texto</p></details> }
+    </section>
+</main>
+<footer>
+    <div class="footer-content page">
+        <a class="logo" asp-controller="Home" asp-action="Index"><img src="~/img/logo-teayudo.png" alt="Te Ayudo" /></a>
+        <div><h3>Te Ayudo</h3><a href="#nosotros">Nuestra historia</a><a href="#valores">Nuestros valores</a></div>
+        <div><h3>Explorá</h3><a href="#como-funciona">Cómo funciona</a><a asp-controller="Home" asp-action="SolicitarTarea">Solicitar tarea</a></div>
+        <div><h3>Trabajá con nosotros</h3><a href="#trabaja">Conocé la propuesta</a><a asp-controller="Home" asp-action="Trabajar">Sumate</a></div>
+        <div><h3>Ayuda</h3><a href="#preguntas">Preguntas frecuentes</a><a asp-controller="Home" asp-action="Ingresar">Iniciar sesión</a></div>
+    </div>
+    <p class="copyright">© <span id="year">2026</span> Te Ayudo. Todos los derechos reservados.</p>
+</footer>

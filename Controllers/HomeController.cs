@@ -18,6 +18,22 @@ public class HomeController : Controller
         return View();
     }
 
+    // Cada acción devuelve su vista de Views/Home.
+    public IActionResult Ingresar()
+    {
+        return View();
+    }
+
+    public IActionResult SolicitarTarea()
+    {
+        return View();
+    }
+
+    public IActionResult Trabajar()
+    {
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();

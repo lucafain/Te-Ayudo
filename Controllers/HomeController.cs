@@ -45,8 +45,8 @@ public class HomeController : Controller
             },
             Preguntas = new[] {
                 new ContenidoItem { Titulo = "¿Qué es Te Ayudo?", Texto = "Un espacio que conecta a jóvenes con adultos que necesitan ayuda con tareas cotidianas." },
-                new ContenidoItem { Titulo = "¿Cómo solicito ayuda?", Texto = "Desde Solicitar tarea. El registro de solicitudes todavía está pendiente de implementación." },
-                new ContenidoItem { Titulo = "¿Cómo puedo sumarme?", Texto = "Desde Trabajá con nosotros. El registro de postulaciones todavía está pendiente de implementación." }
+                new ContenidoItem { Titulo = "¿Cómo solicito ayuda?", Texto = "Desde Solicitar ayuda podés acceder a la sección de registro para adultos mayores. El formulario todavía no está habilitado." },
+                new ContenidoItem { Titulo = "¿Cómo puedo sumarme?", Texto = "Desde Trabajá con nosotros podés acceder a la sección de registro para jóvenes. El formulario todavía no está habilitado." }
             }
         };
         return View(modelo);
@@ -66,6 +66,21 @@ public class HomeController : Controller
     public IActionResult Trabajar()
     {
         return View();
+    }
+
+    // Accesos preparados para los futuros formularios, sin implementar registros.
+    public IActionResult RegistroJoven()
+    {
+        ViewData["Title"] = "Registro para jóvenes";
+        ViewData["Descripcion"] = "Este será el acceso al registro para jóvenes que quieran trabajar en Te Ayudo.";
+        return View("Registro");
+    }
+
+    public IActionResult RegistroMayor()
+    {
+        ViewData["Title"] = "Registro para solicitar ayuda";
+        ViewData["Descripcion"] = "Este será el acceso al registro para adultos mayores que necesiten ayuda.";
+        return View("Registro");
     }
 
     public IActionResult Privacy()

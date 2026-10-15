@@ -1,7 +1,48 @@
-<header class="header"><a class="logo" asp-controller="Home" asp-action="Index"><img src="~/img/logo-teayudo.png" alt="Te Ayudo" /></a></header>
-<main class="wrap destination">
-    <h1>@ViewData["Title"]</h1>
-    <p>@ViewData["Descripcion"]</p>
-    <p>El formulario todavía no está habilitado.</p>
-    <a class="button" asp-controller="Home" asp-action="Index">Volver al inicio</a>
-</main>
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Registro</h1>
+    <p class="lead">Complete el formulario para crear un nuevo usuario.</p>
+</div>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<form id="usuarioForm" class="mx-auto mt-4" style="max-width: 500px;" method="post" action='@Url.Action("GuardarRegistro", "Home")' novalidate>
+    <div class="mb-3">
+        <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
+        <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" />
+    </div>
+    <div class="mb-3">
+        <label for="Contraseña" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="Contraseña" name="Contraseña" />
+    </div>
+    <div class="mb-3">
+        <label for="Nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="Nombre" name="Nombre" />
+    </div>
+    <div class="mb-3">
+        <label for="Apellido" class="form-label">Apellido</label>
+        <input type="text" class="form-control" id="Apellido" name="Apellido" />
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email" />
+    </div>
+    <div class="mb-3">
+        <label for="TipoUsuario" class="form-label">Tipo de usuario</label>
+        <select class="form-select" id="TipoUsuario" name="TipoUsuario">
+            <option value="">Seleccione un tipo</option>
+            <option value="Alumno">Alumno</option>
+            <option value="Docente">Docente</option>
+            <option value="Coordinador">Coordinador</option>
+            <option value="Padre">Padre</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar usuario</button>
+</form>
+

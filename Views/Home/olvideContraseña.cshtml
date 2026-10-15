@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Olvidé mi contraseña";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-5">Olvidé mi contraseña</h1>
+    <p class="lead">Ingrese su email para recuperar la contraseña.</p>
+</div>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<form class="mx-auto mt-4" style="max-width: 400px;" method="post" action='@Url.Action("OlvideContrasena", "Home")'>
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email" />
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar contraseña</button>
+</form>
+

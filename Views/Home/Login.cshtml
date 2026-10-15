@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!-- Generar una View Index que tenga las opciones Login y Registro
+Que ambas te lleven a su propia view
+agregar al controler los respectivos metodos y return View() -->
+
+<!--Agregar un mensaje (con JS) en las view que digan si se pudo guardar el usuario (o no porque ya existia)
+y si se pudo hacer el login o no -->
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Login</h1>
+    <p class="lead">Ingrese sus credenciales para acceder.</p>
+</div>
+
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">@ViewBag.SuccessMessage</div>
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<form id="loginForm" class="mx-auto mt-4" style="max-width: 400px;" method="post" action='@Url.Action("Login", "Home")'>
+    <div class="mb-3">
+        <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
+        <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" />
+    </div>
+    <div class="mb-3">
+        <label for="Contraseña" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="Contraseña" name="Contraseña" />
+    </div>
+    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+    <a class="btn btn-link" href='@Url.Action("OlvideContrasena", "Home")'>Olvidé mi contraseña</a>
+</form>
+

@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Perfil de usuario</h1>
+    <p class="lead">Estos son los datos de la sesión iniciada.</p>
+</div>
+
+<div class="card mx-auto mt-4" style="max-width: 600px;">
+    <div class="card-body">
+        <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
+        <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
+        <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
+        <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
+
+        <a class="btn btn-secondary" asp-action="CerrarSesion" asp-controller="Home">Cerrar sesión</a>
+    </div>
+</div>
+

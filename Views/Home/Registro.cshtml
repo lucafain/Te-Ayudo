@@ -2,47 +2,66 @@
     ViewData["Title"] = "Registro";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Registro</h1>
-    <p class="lead">Complete el formulario para crear un nuevo usuario.</p>
-</div>
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Registrarse</h1>
+        <div class="auth-divider"></div>
 
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-}
+        <p class="auth-note">
+            Los datos con asterisco son obligatorios. La foto de perfil quedará guardada para usarla luego en tu perfil.
+        </p>
 
-<form id="usuarioForm" class="mx-auto mt-4" style="max-width: 500px;" method="post" action='@Url.Action("GuardarRegistro", "Home")' novalidate>
-    <div class="mb-3">
-        <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
-        <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" />
-    </div>
-    <div class="mb-3">
-        <label for="Contraseña" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="Contraseña" name="Contraseña" />
-    </div>
-    <div class="mb-3">
-        <label for="Nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="Nombre" name="Nombre" />
-    </div>
-    <div class="mb-3">
-        <label for="Apellido" class="form-label">Apellido</label>
-        <input type="text" class="form-control" id="Apellido" name="Apellido" />
-    </div>
-    <div class="mb-3">
-        <label for="Email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="Email" name="Email" />
-    </div>
-    <div class="mb-3">
-        <label for="TipoUsuario" class="form-label">Tipo de usuario</label>
-        <select class="form-select" id="TipoUsuario" name="TipoUsuario">
-            <option value="">Seleccione un tipo</option>
-            <option value="Alumno">Alumno</option>
-            <option value="Docente">Docente</option>
-            <option value="Coordinador">Coordinador</option>
-            <option value="Padre">Padre</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar usuario</button>
-</form>
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">@ViewBag.ErrorMessage</div>
+        }
+
+        <form method="post" action='@Url.Action("GuardarRegistroMayor", "Home")' enctype="multipart/form-data">
+            <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
+                <div class="field">
+                    <label for="Email">Correo electrónico *</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" required />
+                </div>
+
+                <div class="field">
+                    <label for="NombreUsuario">Nombre de usuario *</label>
+                    <input type="text" id="NombreUsuario" name="NombreUsuario" autocomplete="username" required />
+                </div>
+
+                <div class="field">
+                    <label for="Contrasena">Contraseña *</label>
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" required />
+                </div>
+
+                <div class="field">
+                    <label for="Telefono">Número telefónico</label>
+                    <input type="tel" id="Telefono" name="Telefono" autocomplete="tel" />
+                </div>
+
+                <div class="field field--full upload-field">
+                    <label for="FotoPerfil">Cargar foto de perfil</label>
+                    <label class="upload-button" for="FotoPerfil" data-file-label="FotoPerfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </label>
+                    <input type="file" id="FotoPerfil" name="FotoPerfil" accept="image/*" />
+                    <span class="upload-filename" data-file-name="FotoPerfil">Ningún archivo seleccionado</span>
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+                <button class="auth-button" type="submit">Registrarse</button>
+            </div>
+
+            <div class="auth-links">
+                Ya tenés una cuenta? <a href='@Url.Action("Ingresar", "Home")'>Iniciar sesión</a>
+                · <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
+            </div>
+        </form>
+    </section>
+</main>
 

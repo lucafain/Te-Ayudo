@@ -7,10 +7,12 @@ namespace TeAyudo.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IWebHostEnvironment _environment;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment environment)
     {
         _logger = logger;
+        _environment = environment;
     }
 
     public IActionResult Index()
@@ -55,7 +57,45 @@ public class HomeController : Controller
     // Cada acción devuelve su vista de Views/Home.
     public IActionResult Ingresar()
     {
-        return View();
+        return View("Login");
+    }
+
+    [HttpPost]
+    public IActionResult Login(string Email, string Contrasena)
+    {
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            ViewBag.ErrorMessage = "Debe completar el email.";
+            return View("Login");
+        }
+
+        if (string.IsNullOrWhiteSpace(Contrasena))
+        {
+            ViewBag.ErrorMessage = "Debe completar la contraseña.";
+            return View("Login");
+        }
+
+        BD bd = new BD();
+        Usuarios? usuario;
+
+        try
+        {
+            usuario = bd.ObtenerUsuarioPorCredenciales(Email, Contrasena);
+        }
+        catch
+        {
+            ViewBag.ErrorMessage = "No se pudo acceder a la base de datos.";
+            return View("Login");
+        }
+
+        if (usuario == null)
+        {
+            ViewBag.ErrorMessage = "Email o contraseña incorrectos.";
+            return View("Login");
+        }
+
+        HttpContext.Session.SetString("EmailLogueado", usuario.Email ?? string.Empty);
+        return RedirectToAction("Perfil");
     }
 
     public IActionResult SolicitarTarea()
@@ -73,7 +113,7 @@ public class HomeController : Controller
     {
         ViewData["Title"] = "Registro para jóvenes";
         ViewData["Descripcion"] = "Este será el acceso al registro para jóvenes que quieran trabajar en Te Ayudo.";
-        return View("Registro");
+        return View("Trabajar");
     }
 
     public IActionResult RegistroMayor()
@@ -81,6 +121,169 @@ public class HomeController : Controller
         ViewData["Title"] = "Registro para solicitar ayuda";
         ViewData["Descripcion"] = "Este será el acceso al registro para adultos mayores que necesiten ayuda.";
         return View("Registro");
+    }
+
+    [HttpPost]
+    public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
+    {
+        if (user == null)
+        {
+            ViewBag.ErrorMessage = "Debe completar los datos del registro.";
+            return View("Registro");
+        }
+
+        user.TipoUsuario = "Adulto mayor";
+        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        user.FechaRegistro = DateTime.Now;
+
+        BD bd = new BD();
+        bool resultado;
+
+        try
+        {
+            resultado = bd.GuardarUsuario(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al guardar registro de adulto mayor para {Email}", user.Email);
+            ViewBag.ErrorMessage = "No se pudo guardar el registro en la base de datos.";
+            return View("Registro");
+        }
+
+        if (resultado)
+        {
+            ViewBag.SuccessMessage = "Registro exitoso. Ahora puede iniciar sesión.";
+            return View("Login");
+        }
+
+        bool emailExiste = !string.IsNullOrWhiteSpace(user.Email) && bd.ObtenerUsuarioPorEmail(user.Email) != null;
+        ViewBag.ErrorMessage = emailExiste
+            ? "El email ya existe. Por favor, elige otro."
+            : "No se pudo guardar el registro en la base de datos.";
+        return View("Registro");
+    }
+
+    [HttpPost]
+    public IActionResult GuardarRegistroJoven(Usuarios user, IFormFile? FotoPerfil, IFormFile? CvArchivo, bool AceptaTerminos = false)
+    {
+        if (user == null)
+        {
+            ViewBag.ErrorMessage = "Debe completar los datos del registro.";
+            return View("Trabajar");
+        }
+
+        if (!AceptaTerminos)
+        {
+            ViewBag.ErrorMessage = "Debe aceptar los términos y condiciones.";
+            return View("Trabajar");
+        }
+
+        user.TipoUsuario = "Adolecente";
+        user.AceptaTerminos = AceptaTerminos;
+        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        user.CvRuta = GuardarArchivo(CvArchivo, "uploads/cv");
+        user.FechaRegistro = DateTime.Now;
+
+        BD bd = new BD();
+        bool resultado;
+
+        try
+        {
+            resultado = bd.GuardarUsuario(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al guardar registro de joven para {Email}", user.Email);
+            ViewBag.ErrorMessage = "No se pudo guardar el registro en la base de datos.";
+            return View("Trabajar");
+        }
+
+        if (resultado)
+        {
+            ViewBag.SuccessMessage = "Registro exitoso. Ahora puede iniciar sesión.";
+            return View("Login");
+        }
+
+        bool emailExiste = !string.IsNullOrWhiteSpace(user.Email) && bd.ObtenerUsuarioPorEmail(user.Email) != null;
+        ViewBag.ErrorMessage = emailExiste
+            ? "El email ya existe. Por favor, elige otro."
+            : "No se pudo guardar el registro en la base de datos.";
+        return View("Trabajar");
+    }
+
+    public IActionResult OlvideContrasena()
+    {
+        return View("olvideContraseña");
+    }
+
+    [HttpPost]
+    public IActionResult OlvideContrasena(string Email)
+    {
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            ViewBag.ErrorMessage = "Debe ingresar un email.";
+            return View("olvideContraseña");
+        }
+
+        BD bd = new BD();
+        Usuarios? usuario = bd.ObtenerUsuarioPorEmail(Email);
+
+        if (usuario == null)
+        {
+            ViewBag.ErrorMessage = "No existe un usuario con ese email.";
+            return View("olvideContraseña");
+        }
+
+        ViewBag.Contrasena = usuario.Contrasena ?? "La recuperación de contraseña aún no está implementada.";
+        return View("MostrarContraseña");
+    }
+
+    public IActionResult Perfil()
+    {
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        if (string.IsNullOrEmpty(emailSesion))
+        {
+            return RedirectToAction("Login");
+        }
+
+        BD bd = new BD();
+        Usuarios? usuario;
+
+        try
+        {
+            usuario = bd.ObtenerUsuarioPorEmail(emailSesion);
+        }
+        catch
+        {
+            HttpContext.Session.Remove("EmailLogueado");
+            HttpContext.Session.Clear();
+            ViewBag.ErrorMessage = "No se pudo acceder a la base de datos.";
+            return View("Login");
+        }
+        if (usuario == null)
+        {
+            HttpContext.Session.Remove("EmailLogueado");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+        ViewBag.NombreUsuario = usuario.Email;
+        ViewBag.Nombre = usuario.Nombre;
+        ViewBag.Apellido = usuario.Apellido;
+        ViewBag.TipoUsuario = usuario.TipoUsuario;
+        ViewBag.FotoPerfilRuta = usuario.FotoPerfilRuta;
+        ViewBag.Telefono = usuario.Telefono;
+        ViewBag.AmbitoLaboral = usuario.AmbitoLaboral;
+        ViewBag.LinkedIn = usuario.LinkedIn;
+
+        return View("perfil");
+    }
+
+    public IActionResult CerrarSesion()
+    {
+        HttpContext.Session.Remove("EmailLogueado");
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index");
     }
 
     public IActionResult Privacy()
@@ -92,5 +295,26 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private string? GuardarArchivo(IFormFile? archivo, string subcarpeta)
+    {
+        if (archivo == null || archivo.Length == 0)
+        {
+            return null;
+        }
+
+        string webRootPath = _environment.WebRootPath;
+        string folderPath = Path.Combine(webRootPath, subcarpeta.Replace('/', Path.DirectorySeparatorChar));
+        Directory.CreateDirectory(folderPath);
+
+        string extension = Path.GetExtension(archivo.FileName);
+        string fileName = $"{Guid.NewGuid():N}{extension}";
+        string fullPath = Path.Combine(folderPath, fileName);
+
+        using FileStream stream = System.IO.File.Create(fullPath);
+        archivo.CopyTo(stream);
+
+        return $"/{subcarpeta}/{fileName}".Replace("\\", "/");
     }
 }

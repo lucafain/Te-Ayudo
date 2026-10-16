@@ -1,39 +1,45 @@
 @{
     ViewData["Title"] = "Login";
 }
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Iniciar sesión</h1>
+        <div class="auth-divider"></div>
 
-<!-- Generar una View Index que tenga las opciones Login y Registro
-Que ambas te lleven a su propia view
-agregar al controler los respectivos metodos y return View() -->
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="auth-alert">@ViewBag.SuccessMessage</div>
+        }
 
-<!--Agregar un mensaje (con JS) en las view que digan si se pudo guardar el usuario (o no porque ya existia)
-y si se pudo hacer el login o no -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">@ViewBag.ErrorMessage</div>
+        }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Login</h1>
-    <p class="lead">Ingrese sus credenciales para acceder.</p>
-</div>
+        <form method="post" action='@Url.Action("Login", "Home")'>
+            <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
+                <div class="field">
+                    <label for="Email">Correo electrónico</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" required />
+                </div>
 
-@if (ViewBag.SuccessMessage != null)
-{
-    <div class="alert alert-success">@ViewBag.SuccessMessage</div>
-}
+                <div class="field">
+                    <label for="Contrasena">Contraseña</label>
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="current-password" required />
+                </div>
+            </div>
 
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-}
+            <div class="auth-actions">
+                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+                <button class="auth-button" type="submit">Iniciar sesión</button>
+            </div>
 
-<form id="loginForm" class="mx-auto mt-4" style="max-width: 400px;" method="post" action='@Url.Action("Login", "Home")'>
-    <div class="mb-3">
-        <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
-        <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" />
-    </div>
-    <div class="mb-3">
-        <label for="Contraseña" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="Contraseña" name="Contraseña" />
-    </div>
-    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-    <a class="btn btn-link" href='@Url.Action("OlvideContrasena", "Home")'>Olvidé mi contraseña</a>
-</form>
+            <div class="auth-links">
+                Todavía no tenés una cuenta? <a href='@Url.Action("RegistroMayor", "Home")'>Registrarse</a>
+                · <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
+                · <a href='@Url.Action("OlvideContrasena", "Home")'>Olvidé mi contraseña</a>
+            </div>
+        </form>
+    </section>
+</main>
 

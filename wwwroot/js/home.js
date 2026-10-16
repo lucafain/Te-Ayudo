@@ -15,3 +15,18 @@ navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click',
 
 const year = document.querySelector('#year');
 if (year) year.textContent = new Date().getFullYear();
+
+document.querySelectorAll('input[type="file"]').forEach(input => {
+  const fileName = document.querySelector(`[data-file-name="${input.id}"]`);
+  const uploadButton = document.querySelector(`[data-file-label="${input.id}"]`);
+
+  if (!fileName || !uploadButton) {
+    return;
+  }
+
+  input.addEventListener('change', () => {
+    fileName.textContent = input.files && input.files.length > 0
+      ? input.files[0].name
+      : 'Ningún archivo seleccionado';
+  });
+});

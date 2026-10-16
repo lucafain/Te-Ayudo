@@ -1,9 +1,29 @@
+using TeAyudo.Models;
+using Microsoft.Data.SqlClient;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
+BD.ConnectionString = builder.Configuration.GetConnectionString("TeAyudoDb")
+    ?? "Server=(localdb)\\MSSQLLocalDB;Database=TeAyudo;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
 
 var app = builder.Build();
+
+SqlConnectionStringBuilder connectionInfo = new(BD.ConnectionString);
+app.Logger.LogInformation("Base de datos activa: {DataSource} / {Database}", connectionInfo.DataSource, connectionInfo.InitialCatalog);
+
+try
+{
+    BD.EnsureDatabaseReady();
+}
+catch (Exception ex)
+{
+    app.Logger.LogWarning(ex, "No se pudo inicializar la base de datos al arrancar. La app seguirá abierta y el error se mostrará al usar funciones que dependan de BD.");
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -15,6 +35,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

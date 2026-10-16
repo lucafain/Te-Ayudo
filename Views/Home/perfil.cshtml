@@ -2,19 +2,36 @@
     ViewData["Title"] = "Perfil";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Perfil de usuario</h1>
-    <p class="lead">Estos son los datos de la sesión iniciada.</p>
-</div>
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Perfil de usuario</h1>
+        <div class="auth-divider"></div>
 
-<div class="card mx-auto mt-4" style="max-width: 600px;">
-    <div class="card-body">
-        <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
-        <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
-        <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
-        <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
+        <div class="text-center" style="margin-bottom: 18px;">
+            @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfilRuta))
+            {
+                <img class="profile-photo" src="@ViewBag.FotoPerfilRuta" alt="Foto de perfil" />
+            }
+            else
+            {
+                <div class="profile-photo profile-photo--empty">Sin foto</div>
+            }
+        </div>
 
-        <a class="btn btn-secondary" asp-action="CerrarSesion" asp-controller="Home">Cerrar sesión</a>
-    </div>
-</div>
+        <div class="auth-note">
+            <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
+            <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
+            <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
+            <p><strong>Email:</strong> @ViewBag.NombreUsuario</p>
+            <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
+            <p><strong>Teléfono:</strong> @ViewBag.Telefono</p>
+            <p><strong>Ámbito laboral:</strong> @ViewBag.AmbitoLaboral</p>
+            <p><strong>LinkedIn:</strong> @ViewBag.LinkedIn</p>
+        </div>
+
+        <div class="auth-actions">
+            <a class="auth-button" href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
+        </div>
+    </section>
+</main>
 

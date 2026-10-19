@@ -1,10 +1,14 @@
 using Microsoft.Data.SqlClient;
+using System.Data;
+using Dapper;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace TeAyudo.Models;
 
 public class BD 
 {
-    public static string ConnectionString { get; set; } = string.Empty;
+    public static string ConnectionString { get; set; } = @"Server=localhost;DataBase=NombreBase;Integrated Security=True;TrustServerCertificate=True;";
     private static bool _databaseReady;
     private static readonly object DatabaseLock = new();
 
@@ -137,6 +141,22 @@ public class BD
             return false;
         }
 
+        usuario.Email = usuario.Email.Trim();
+        usuario.NombreUsuario = LimpiarTexto(usuario.NombreUsuario);
+        usuario.Nombre = LimpiarTexto(usuario.Nombre);
+        usuario.Apellido = LimpiarTexto(usuario.Apellido);
+        usuario.Telefono = LimpiarTexto(usuario.Telefono);
+        usuario.Provincia = LimpiarTexto(usuario.Provincia);
+        usuario.Direccion = LimpiarTexto(usuario.Direccion);
+        usuario.Calle = LimpiarTexto(usuario.Calle);
+        usuario.CodigoPostal = LimpiarTexto(usuario.CodigoPostal);
+        usuario.TipoUsuario = LimpiarTexto(usuario.TipoUsuario);
+        usuario.Contrasena = LimpiarTexto(usuario.Contrasena);
+        usuario.FotoPerfilRuta = LimpiarTexto(usuario.FotoPerfilRuta);
+        usuario.AmbitoLaboral = LimpiarTexto(usuario.AmbitoLaboral);
+        usuario.LinkedIn = LimpiarTexto(usuario.LinkedIn);
+        usuario.CvRuta = LimpiarTexto(usuario.CvRuta);
+
         if (ObtenerUsuarioPorEmail(usuario.Email) != null)
         {
             return false;
@@ -172,6 +192,8 @@ public class BD
             return null;
         }
 
+        email = email.Trim();
+
         const string sql = """
             SELECT TOP 1 IdUsuario, NombreUsuario, Nombre, Apellido, Email, Telefono, Provincia, Direccion, Calle, CodigoPostal, FechaRegistro, TipoUsuario, Contrasena, FotoPerfilRuta, AmbitoLaboral, LinkedIn, CvRuta, AceptaTerminos
             FROM Usuarios
@@ -180,7 +202,7 @@ public class BD
 
         using SqlConnection connection = CrearConexion();
         using SqlCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@Email", email);
+        command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email });
         connection.Open();
 
         using SqlDataReader reader = command.ExecuteReader();
@@ -194,6 +216,9 @@ public class BD
             return null;
         }
 
+        email = email.Trim();
+        contrasena = contrasena.Trim();
+
         const string sql = """
             SELECT TOP 1 IdUsuario, NombreUsuario, Nombre, Apellido, Email, Telefono, Provincia, Direccion, Calle, CodigoPostal, FechaRegistro, TipoUsuario, Contrasena, FotoPerfilRuta, AmbitoLaboral, LinkedIn, CvRuta, AceptaTerminos
             FROM Usuarios
@@ -202,8 +227,8 @@ public class BD
 
         using SqlConnection connection = CrearConexion();
         using SqlCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@Email", email);
-        command.Parameters.AddWithValue("@Contrasena", contrasena);
+        command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email });
+        command.Parameters.Add(new SqlParameter("@Contrasena", SqlDbType.NVarChar, 200) { Value = contrasena });
         connection.Open();
 
         using SqlDataReader reader = command.ExecuteReader();
@@ -220,11 +245,32 @@ public class BD
 
         using SqlConnection connection = CrearConexion();
         using SqlCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@IdUsuario", id);
+        command.Parameters.Add(new SqlParameter("@IdUsuario", SqlDbType.Int) { Value = id });
         connection.Open();
 
         using SqlDataReader reader = command.ExecuteReader();
         return reader.Read() ? MapUsuario(reader) : null;
+    }
+
+    // Ejemplo usando Dapper: Obtener lista de Patentes (Query)
+    public List<Patente> LevantarPatentes()
+    {
+        const string query = "SELECT * FROM Patentes";
+        using SqlConnection connection = CrearConexion();
+        connection.Open();
+        var patentes = connection.Query<Patente>(query).ToList();
+        return patentes;
+    }
+
+    // Ejemplo usando Dapper: Obtener una patente por matrícula (QueryFirstOrDefault)
+    public Patente? LevantarPatente(string patente)
+    {
+        if (string.IsNullOrWhiteSpace(patente)) return null;
+        const string query = "SELECT Matricula, FechaCompra FROM Patentes WHERE Matricula = @pPatente";
+        using SqlConnection connection = CrearConexion();
+        connection.Open();
+        var miPatente = connection.QueryFirstOrDefault<Patente>(query, new { pPatente = patente });
+        return miPatente;
     }
 
     private static SqlConnection CrearConexion()
@@ -236,23 +282,36 @@ public class BD
 
     private static void AgregarParametros(SqlCommand command, Usuarios usuario)
     {
-        command.Parameters.AddWithValue("@NombreUsuario", (object?)usuario.NombreUsuario ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Nombre", (object?)usuario.Nombre ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Apellido", (object?)usuario.Apellido ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Email", (object?)usuario.Email ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Telefono", (object?)usuario.Telefono ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Provincia", (object?)usuario.Provincia ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Direccion", (object?)usuario.Direccion ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Calle", (object?)usuario.Calle ?? DBNull.Value);
-        command.Parameters.AddWithValue("@CodigoPostal", (object?)usuario.CodigoPostal ?? DBNull.Value);
-        command.Parameters.AddWithValue("@FechaRegistro", usuario.FechaRegistro == default ? DateTime.Now : usuario.FechaRegistro);
-        command.Parameters.AddWithValue("@TipoUsuario", (object?)usuario.TipoUsuario ?? DBNull.Value);
-        command.Parameters.AddWithValue("@Contrasena", (object?)usuario.Contrasena ?? DBNull.Value);
-        command.Parameters.AddWithValue("@FotoPerfilRuta", (object?)usuario.FotoPerfilRuta ?? DBNull.Value);
-        command.Parameters.AddWithValue("@AmbitoLaboral", (object?)usuario.AmbitoLaboral ?? DBNull.Value);
-        command.Parameters.AddWithValue("@LinkedIn", (object?)usuario.LinkedIn ?? DBNull.Value);
-        command.Parameters.AddWithValue("@CvRuta", (object?)usuario.CvRuta ?? DBNull.Value);
-        command.Parameters.AddWithValue("@AceptaTerminos", usuario.AceptaTerminos);
+        AddTextParameter(command, "@NombreUsuario", 100, usuario.NombreUsuario);
+        AddTextParameter(command, "@Nombre", 100, usuario.Nombre);
+        AddTextParameter(command, "@Apellido", 100, usuario.Apellido);
+        AddTextParameter(command, "@Email", 150, usuario.Email);
+        AddTextParameter(command, "@Telefono", 30, usuario.Telefono);
+        AddTextParameter(command, "@Provincia", 100, usuario.Provincia);
+        AddTextParameter(command, "@Direccion", 150, usuario.Direccion);
+        AddTextParameter(command, "@Calle", 150, usuario.Calle);
+        AddTextParameter(command, "@CodigoPostal", 20, usuario.CodigoPostal);
+        command.Parameters.Add(new SqlParameter("@FechaRegistro", SqlDbType.DateTime2) { Value = usuario.FechaRegistro == default ? DateTime.Now : usuario.FechaRegistro });
+        AddTextParameter(command, "@TipoUsuario", 30, usuario.TipoUsuario);
+        AddTextParameter(command, "@Contrasena", 200, usuario.Contrasena);
+        AddTextParameter(command, "@FotoPerfilRuta", 260, usuario.FotoPerfilRuta);
+        AddTextParameter(command, "@AmbitoLaboral", 120, usuario.AmbitoLaboral);
+        AddTextParameter(command, "@LinkedIn", 300, usuario.LinkedIn);
+        AddTextParameter(command, "@CvRuta", 260, usuario.CvRuta);
+        command.Parameters.Add(new SqlParameter("@AceptaTerminos", SqlDbType.Bit) { Value = usuario.AceptaTerminos });
+    }
+
+    private static void AddTextParameter(SqlCommand command, string name, int size, string? value)
+    {
+        command.Parameters.Add(new SqlParameter(name, SqlDbType.NVarChar, size)
+        {
+            Value = string.IsNullOrWhiteSpace(value) ? DBNull.Value : value.Trim()
+        });
+    }
+
+    private static string? LimpiarTexto(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
     private static Usuarios MapUsuario(SqlDataReader reader)

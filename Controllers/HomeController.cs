@@ -57,7 +57,14 @@ public class HomeController : Controller
     // Cada acción devuelve su vista de Views/Home.
     public IActionResult Ingresar()
     {
-        return View("Login");
+        return RedirectToAction(nameof(Login));
+    }
+
+    [HttpGet]
+    public IActionResult Login()
+    {
+        ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+        return View();
     }
 
     [HttpPost]
@@ -132,8 +139,23 @@ public class HomeController : Controller
             return View("Registro");
         }
 
+        if (!ModelState.IsValid)
+        {
+            ViewBag.ErrorMessage = "Por favor complete los campos requeridos correctamente.";
+            return View("Registro");
+        }
+
         user.TipoUsuario = "Adulto mayor";
-        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        try
+        {
+            user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "No se pudo guardar la foto de perfil para {Email}", user.Email);
+            // continuar sin foto
+            user.FotoPerfilRuta = null;
+        }
         user.FechaRegistro = DateTime.Now;
 
         BD bd = new BD();
@@ -146,14 +168,15 @@ public class HomeController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al guardar registro de adulto mayor para {Email}", user.Email);
-            ViewBag.ErrorMessage = "No se pudo guardar el registro en la base de datos.";
+            // Mostrar detalle para depuración local (remover o suavizar para producción)
+            ViewBag.ErrorMessage = $"No se pudo guardar el registro en la base de datos. Detalle: {ex.Message}";
             return View("Registro");
         }
 
         if (resultado)
         {
-            ViewBag.SuccessMessage = "Registro exitoso. Ahora puede iniciar sesión.";
-            return View("Login");
+            TempData["SuccessMessage"] = "Registro exitoso. Ahora puede iniciar sesión.";
+            return RedirectToAction(nameof(Login));
         }
 
         bool emailExiste = !string.IsNullOrWhiteSpace(user.Email) && bd.ObtenerUsuarioPorEmail(user.Email) != null;
@@ -200,8 +223,8 @@ public class HomeController : Controller
 
         if (resultado)
         {
-            ViewBag.SuccessMessage = "Registro exitoso. Ahora puede iniciar sesión.";
-            return View("Login");
+            TempData["SuccessMessage"] = "Registro exitoso. Ahora puede iniciar sesión.";
+            return RedirectToAction(nameof(Login));
         }
 
         bool emailExiste = !string.IsNullOrWhiteSpace(user.Email) && bd.ObtenerUsuarioPorEmail(user.Email) != null;
@@ -243,7 +266,7 @@ public class HomeController : Controller
         string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
         if (string.IsNullOrEmpty(emailSesion))
         {
-            return RedirectToAction("Login");
+            return RedirectToAction(nameof(Login));
         }
 
         BD bd = new BD();
@@ -306,15 +329,23 @@ public class HomeController : Controller
 
         string webRootPath = _environment.WebRootPath;
         string folderPath = Path.Combine(webRootPath, subcarpeta.Replace('/', Path.DirectorySeparatorChar));
-        Directory.CreateDirectory(folderPath);
+        try
+        {
+            Directory.CreateDirectory(folderPath);
 
-        string extension = Path.GetExtension(archivo.FileName);
-        string fileName = $"{Guid.NewGuid():N}{extension}";
-        string fullPath = Path.Combine(folderPath, fileName);
+            string extension = Path.GetExtension(archivo.FileName);
+            string fileName = $"{Guid.NewGuid():N}{extension}";
+            string fullPath = Path.Combine(folderPath, fileName);
 
-        using FileStream stream = System.IO.File.Create(fullPath);
-        archivo.CopyTo(stream);
+            using FileStream stream = System.IO.File.Create(fullPath);
+            archivo.CopyTo(stream);
 
-        return $"/{subcarpeta}/{fileName}".Replace("\\", "/");
+            return $"/{subcarpeta}/{fileName}".Replace("\\", "/");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error al guardar archivo en {Folder}", folderPath);
+            return null;
+        }
     }
 }

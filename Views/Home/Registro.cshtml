@@ -16,7 +16,21 @@
             <div class="auth-alert">@ViewBag.ErrorMessage</div>
         }
 
-        <form method="post" action='@Url.Action("GuardarRegistroMayor", "Home")' enctype="multipart/form-data">
+        @* Anti-forgery token and validation summary *@
+        @Html.AntiForgeryToken()
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="auth-alert">
+                <ul>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@err.ErrorMessage</li>
+                }
+                </ul>
+            </div>
+        }
+
+        <form method="post" action='@Url.Action("GuardarRegistroMayor", "Home")' enctype="multipart/form-data" id="formRegistro">
             <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
                 <div class="field">
                     <label for="Email">Correo electrónico *</label>
@@ -62,6 +76,16 @@
                 · <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
             </div>
         </form>
+
+
     </section>
+
+    
+
 </main>
 
+
+
+ 
+
+   

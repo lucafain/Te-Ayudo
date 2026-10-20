@@ -14,7 +14,7 @@ public class HomeController : Controller
         _logger = logger;
         _environment = environment;
     }
-
+    
     public IActionResult Index()
     {
         // Los contenidos de la portada se envían a la vista con un modelo simple.

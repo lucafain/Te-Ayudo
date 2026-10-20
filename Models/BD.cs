@@ -252,26 +252,7 @@ public class BD
         return reader.Read() ? MapUsuario(reader) : null;
     }
 
-    // Ejemplo usando Dapper: Obtener lista de Patentes (Query)
-    public List<Patente> LevantarPatentes()
-    {
-        const string query = "SELECT * FROM Patentes";
-        using SqlConnection connection = CrearConexion();
-        connection.Open();
-        var patentes = connection.Query<Patente>(query).ToList();
-        return patentes;
-    }
-
-    // Ejemplo usando Dapper: Obtener una patente por matrícula (QueryFirstOrDefault)
-    public Patente? LevantarPatente(string patente)
-    {
-        if (string.IsNullOrWhiteSpace(patente)) return null;
-        const string query = "SELECT Matricula, FechaCompra FROM Patentes WHERE Matricula = @pPatente";
-        using SqlConnection connection = CrearConexion();
-        connection.Open();
-        var miPatente = connection.QueryFirstOrDefault<Patente>(query, new { pPatente = patente });
-        return miPatente;
-    }
+    
 
     private static SqlConnection CrearConexion()
     {

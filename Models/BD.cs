@@ -325,4 +325,39 @@ public class BD
         int ordinal = reader.GetOrdinal(columnName);
         return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
     }
+
+
+        public static Usuarios? ObtenerHistorialJoven(int idJoven)
+    {
+        return ObtenerUsuarioPorId(idJoven);
+    }
+
+    public static List<Usuarios> ObtenerUltimosAyudados(int idJoven)
+    {
+        List<Usuarios> lista = new List<Usuarios>();
+        const string sql = @"
+            SELECT u.IdUsuario, u.NombreUsuario, u.Nombre, u.Apellido, u.Email, u.Telefono, 
+                u.Provincia, u.Direccion, u.Calle, u.CodigoPostal, u.FechaRegistro, 
+                u.TipoUsuario, u.Contrasena, u.FotoPerfilRuta, u.AmbitoLaboral, u.LinkedIn, u.CvRuta, u.AceptaTerminos
+            FROM Usuarios u
+            WHERE u.TipoUsuario = 'Adulto'";
+
+        using (SqlConnection connection = CrearConexion())
+        using (SqlCommand command = new(sql, connection))
+        {
+            connection.Open();
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    lista.Add(MapUsuario(reader));
+                }
+            }
+        }
+        return lista;
+    }
+
+
+
+
 }

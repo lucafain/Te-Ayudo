@@ -1,0 +1,112 @@
+@{
+    ViewData["Title"] = "Explorar";
+}
+
+<header class="header-navegacion-principal">
+    <div class="header-contenedor-logo">
+        <img src="~/images/logo-teayudo.png" alt="Te Ayudo Logo" class="header-imagen-logo">
+    </div>
+    <nav class="header-menu-botones">
+        <a asp-controller="Explorar" asp-action="Explorar" class="boton-navegacion">Explorá</a>
+        <a asp-controller="Home" asp-action="PreguntasFrecuentes" class="boton-navegacion">Preguntas frecuentes</a>
+        <a asp-controller="Joven" asp-action="Registro" class="boton-navegacion">Sumate como joven</a>
+        <a asp-controller="Ayuda" asp-action="Solicitar" class="boton-navegacion">Solicitar ayuda</a>
+    </nav>
+</header>
+
+<section class="seccion-contenedor-principal seccion-explorar-mapa">
+    <div class="contenedor-mapa-zona">
+        <iframe 
+            class="mapa-ubicacion-iframe"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13136.068307238214!2d-58.4418!3d-34.5912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca0d6c4a5bb7%3A0x247a3e5c92c7d9c6!2sVilla%20Crespo%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+</section>
+
+<section class="seccion-contenedor-principal seccion-historial-joven">
+    <h2 class="titulo-seccion-general">Historial</h2>
+    <div class="tarjeta-resumen-usuario">
+        <img src="~/img/@(string.IsNullOrEmpty(ViewBag.Joven?.FotoPerfilRuta) ? "user.svg" : ViewBag.Joven.FotoPerfilRuta)" alt="Foto Joven" class="avatar-resumen-joven">
+        <div class="detalles-resumen-joven">
+            <h3 class="nombre-resumen-joven">@ViewBag.Joven?.Nombre @ViewBag.Joven?.Apellido</h3>
+            <p class="conteo-ayudas-joven">21 ayudas realizadas</p>
+        </div>
+    </div>
+</section>
+
+<section class="seccion-contenedor-principal seccion-ultimos-ayudados">
+    <h2 class="titulo-seccion-general">Ultimos ayudados</h2>
+    <div class="contenedor-lista-ayudados">
+        
+        @if (ViewBag.UltimosAyudados != null && ViewBag.UltimosAyudados.Count > 0)
+        {
+            int posicion = 1;
+            foreach (var adulto in ViewBag.UltimosAyudados)
+            {
+                <div class="item-tarjeta-ayudado">
+                    <div class="ayudado-info-usuario">
+                        <img src="~/img/@(string.IsNullOrEmpty(adulto.FotoPerfilRuta) ? "user.svg" : adulto.FotoPerfilRuta)" alt="@adulto.Nombre" class="imagen-avatar-ayudado">
+                        <span class="nombre-usuario-ayudado">@adulto.Nombre @adulto.Apellido</span>
+                    </div>
+                    <span class="posicion-ranking-numero">#@posicion</span>
+                </div>
+                posicion++;
+            }
+        }
+        else
+        {
+            <div class="item-tarjeta-ayudado">
+                <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+            </div>
+        }
+
+    </div>
+</section>
+
+<footer class="pie-pagina-sitio">
+    <div class="footer-bloque-superior">
+        <div class="footer-contenedor-logo">
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo Logo" class="footer-imagen-logo">
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Te Ayudo</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Desarrolladores</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Nuestra historia</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Categorías</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Explora</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Preguntas frecuentes</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Sumate como joven</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Explora</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Preguntas frecuentes</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Ayuda</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Términos y condiciones</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Centro de ayuda</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bloque-inferior">
+        <div class="footer-redes-sociales">
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-instagram"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-x-twitter"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-facebook-f"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-tiktok"></span></a>
+        </div>
+        <p class="footer-texto-copyright">© @DateTime.Now.Year Te Ayudo. Todos los derechos Reservados.</p>
+    </div>
+</footer>

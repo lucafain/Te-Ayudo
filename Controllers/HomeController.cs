@@ -352,4 +352,14 @@ public IActionResult GuardarRegistroMayor([FromForm] Usuarios user, [FromForm] I
             return null;
         }
     }
+
+    public IActionResult Explorar()
+    {
+        int idJovenLogueado = 1; // ID de ejemplo o tomado de Session
+
+        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+
+        return View();
+    }
 }

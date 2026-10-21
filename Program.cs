@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
+
 BD.ConnectionString = builder.Configuration.GetConnectionString("TeAyudoDb")
     ?? "Server=(localdb)\\MSSQLLocalDB;Database=TeAyudo;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
 

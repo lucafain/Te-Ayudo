@@ -16,24 +16,55 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        ViewBag.Titulo = "Donde encontrás lo que buscás";
+        // Slide 13, 14 y 15: Colecciones (Dictionary con ContainsKey, Arrays y Listas)
+        Dictionary<string, string> textosHome = new Dictionary<string, string>();
+        textosHome.Add("Titulo", "Donde encontrás lo que buscás");
+        textosHome.Add("AyudaTitulo", "Recibí la ayuda que buscás");
+        textosHome.Add("AyudaTexto", "Seleccionamos a quienes pueden acompañarte.");
+        textosHome.Add("TrabajoTitulo", "¿Sos joven y querés ganar experiencia laboral?");
+        textosHome.Add("TrabajoTexto", "Formá parte de las historias de Te Ayudo.");
+
+        // Slide 15: Verificar siempre si existe la clave antes de acceder en un Dictionary
+        if (textosHome.ContainsKey("Titulo"))
+        {
+            ViewBag.Titulo = textosHome["Titulo"];
+        }
+        if (textosHome.ContainsKey("AyudaTitulo"))
+        {
+            ViewBag.AyudaTitulo = textosHome["AyudaTitulo"];
+        }
+        if (textosHome.ContainsKey("AyudaTexto"))
+        {
+            ViewBag.AyudaTexto = textosHome["AyudaTexto"];
+        }
+        if (textosHome.ContainsKey("TrabajoTitulo"))
+        {
+            ViewBag.TrabajoTitulo = textosHome["TrabajoTitulo"];
+        }
+        if (textosHome.ContainsKey("TrabajoTexto"))
+        {
+            ViewBag.TrabajoTexto = textosHome["TrabajoTexto"];
+        }
+
+        // Slide 14: Array (en la definición indicamos cuántos elementos va a tener)
+        string[] arrayPresentacion = new string[2];
+        arrayPresentacion[0] = "Jóvenes brindan ayuda que los adultos requieren.";
+        arrayPresentacion[1] = "Adultos reciben asistencia a cambio de un monto accesible.";
 
         List<string> listaPresentacion = new List<string>();
-        listaPresentacion.Add("Jóvenes brindan ayuda que los adultos requieren.");
-        listaPresentacion.Add("Adultos reciben asistencia a cambio de un monto accesible.");
+        foreach (string item in arrayPresentacion)
+        {
+            listaPresentacion.Add(item);
+        }
         ViewBag.Presentacion = listaPresentacion;
 
+        // Slide 14: Lista (tamaño ilimitado de elementos)
         List<string> listaSobreNosotros = new List<string>();
         listaSobreNosotros.Add("En Te Ayudo creemos que ayudarnos entre generaciones puede cambiar la forma en la que vivimos.");
         listaSobreNosotros.Add("Creamos un espacio que conecta a jóvenes universitarios con adultos para que puedan ayudarse en tareas cotidianas.");
         listaSobreNosotros.Add("Los jóvenes tienen la posibilidad de ganar experiencia y aprender, mientras que los adultos encuentran una forma sencilla y segura de recibir la ayuda que necesitan.");
         listaSobreNosotros.Add("Buscamos acompañar a quien lo necesita y a quien puede ayudar, con el cuidado que las personas de nuestra comunidad merecen.");
         ViewBag.SobreNosotros = listaSobreNosotros;
-
-        ViewBag.AyudaTitulo = "Recibí la ayuda que buscás";
-        ViewBag.AyudaTexto = "Seleccionamos a quienes pueden acompañarte.";
-        ViewBag.TrabajoTitulo = "¿Sos joven y querés ganar experiencia laboral?";
-        ViewBag.TrabajoTexto = "Formá parte de las historias de Te Ayudo.";
 
         List<ContenidoItem> listaPasos = new List<ContenidoItem>();
         listaPasos.Add(new ContenidoItem("Publicá", "Publicás la ayuda que precisás y elegís un momento.", "pen.png"));
@@ -68,8 +99,9 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(string Email, string Contrasena)
+    public IActionResult Login(string? Email = "", string? Contrasena = "")
     {
+        // Slide 12: Métodos y propiedades para tipos de datos STRING (.Length, .IndexOf, .Replace, .ToLower)
         if (string.IsNullOrEmpty(Email) || Email.Length == 0)
         {
             ViewBag.ErrorMessage = "Debe completar el email.";
@@ -97,6 +129,7 @@ public class HomeController : Controller
             return View("Login");
         }
 
+        // Slide 104 y 105: Sessions (almacenamiento clave-valor en servidor)
         HttpContext.Session.SetString("EmailLogueado", usuario.Email ?? "");
         HttpContext.Session.SetInt32("IdUsuarioLogueado", usuario.IdUsuario);
         return RedirectToAction("Perfil", "Home");
@@ -113,7 +146,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult SolicitarTarea(string Titulo, string Descripcion, string Zona, string Contacto)
+    public IActionResult SolicitarTarea(string? Titulo = "", string? Descripcion = "", string? Zona = "", string? Contacto = "")
     {
         if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion))
         {
@@ -143,7 +176,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarRegistroMayor(string Email, string NombreUsuario, string Contrasena, string Telefono, IFormFile? FotoPerfil)
+    public IActionResult GuardarRegistroMayor(string? Email = "", string? NombreUsuario = "", string? Contrasena = "", string? Telefono = "", IFormFile? FotoPerfil = null, string? TipoUsuario = "Adulto mayor")
     {
         // Validación con métodos string (Slide 12)
         if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(NombreUsuario) || string.IsNullOrEmpty(Contrasena))
@@ -158,13 +191,19 @@ public class HomeController : Controller
             return View("Registro");
         }
 
+        if (Contrasena.Length < 4)
+        {
+            ViewBag.ErrorMessage = "La contraseña debe tener al menos 4 caracteres.";
+            return View("Registro");
+        }
+
         // Slide 46: Tomar los datos del form y guardarlos en un objeto
         Usuarios user = new Usuarios();
         user.Email = Email.Replace(" ", "").ToLower();
         user.NombreUsuario = NombreUsuario;
         user.Contrasena = Contrasena;
         user.Telefono = Telefono;
-        user.TipoUsuario = "Adulto mayor";
+        user.TipoUsuario = string.IsNullOrEmpty(TipoUsuario) ? "Adulto mayor" : TipoUsuario;
         user.FechaRegistro = DateTime.Now;
         user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
 
@@ -172,7 +211,7 @@ public class HomeController : Controller
 
         if (resultado)
         {
-            // Slide 33 y 50: RedirectToAction con paso de parámetros anónimos
+            // Slide 33 y 50: RedirectToAction con paso de parámetros con new { ... }
             return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
         }
 
@@ -181,12 +220,24 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarRegistroJoven(string Email, string Nombre, string Apellido, string AmbitoLaboral, string Contrasena, string LinkedIn, string Telefono, IFormFile? FotoPerfil, IFormFile? CvArchivo, bool AceptaTerminos = false)
+    public IActionResult GuardarRegistroJoven(string? Email = "", string? Nombre = "", string? Apellido = "", string? AmbitoLaboral = "", string? Contrasena = "", string? LinkedIn = "", string? Telefono = "", IFormFile? FotoPerfil = null, IFormFile? CvArchivo = null, bool AceptaTerminos = false, string? TipoUsuario = "Adolescente")
     {
         // Validación en controller
         if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena) || string.IsNullOrEmpty(AmbitoLaboral))
         {
             ViewBag.ErrorMessage = "Debe completar los datos obligatorios del registro.";
+            return View("Trabajar");
+        }
+
+        if (Email.IndexOf("@") == -1)
+        {
+            ViewBag.ErrorMessage = "Debe ingresar un correo electrónico válido.";
+            return View("Trabajar");
+        }
+
+        if (Contrasena.Length < 4)
+        {
+            ViewBag.ErrorMessage = "Debe ingresar una contraseña de al menos 4 caracteres.";
             return View("Trabajar");
         }
 
@@ -206,18 +257,20 @@ public class HomeController : Controller
         user.LinkedIn = LinkedIn;
         user.Telefono = Telefono;
 
-        // Slide 12: Métodos para tipos string (IndexOf, Substring)
+        // Slide 12: Métodos para tipos string (.IndexOf, .Substring, .ToUpper, char index)
         int posArroba = user.Email.IndexOf("@");
         if (posArroba > 0)
         {
-            user.NombreUsuario = user.Email.Substring(0, posArroba);
+            string baseNombre = user.Email.Substring(0, posArroba);
+            char primeraLetra = baseNombre.ToUpper()[0];
+            user.NombreUsuario = baseNombre.Length > 1 ? primeraLetra + baseNombre.Substring(1) : baseNombre;
         }
         else
         {
             user.NombreUsuario = user.Email;
         }
 
-        user.TipoUsuario = "Adolescente";
+        user.TipoUsuario = string.IsNullOrEmpty(TipoUsuario) ? "Adolescente" : TipoUsuario;
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
         user.CvRuta = GuardarArchivo(CvArchivo, "uploads/cv");
@@ -227,7 +280,7 @@ public class HomeController : Controller
 
         if (resultado)
         {
-            // Slide 33 y 50: RedirectToAction pasando parámetro
+            // Slide 33 y 50: RedirectToAction pasando parámetro con new { ... }
             return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
         }
 
@@ -241,11 +294,11 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult OlvideContrasena(string Email)
+    public IActionResult OlvideContrasena(string? Email = "")
     {
-        if (string.IsNullOrEmpty(Email))
+        if (string.IsNullOrEmpty(Email) || Email.IndexOf("@") == -1)
         {
-            ViewBag.ErrorMessage = "Debe ingresar un email.";
+            ViewBag.ErrorMessage = "Debe ingresar un email válido.";
             return View("olvideContraseña");
         }
 

@@ -19,6 +19,7 @@
         <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
 
         <form action='@Url.Action("GuardarRegistroJoven", "Home")' method="post" enctype="multipart/form-data" id="formTrabajar">
+            <input type="hidden" name="TipoUsuario" value="Adolescente" />
             <div class="auth-grid">
                 <div class="field">
                     <label for="Email">Correo electrónico *</label>

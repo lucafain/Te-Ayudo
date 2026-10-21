@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Te-Ayudo-main\**" />
+    <Content Remove="Te-Ayudo-main\**" />
+    <EmbeddedResource Remove="Te-Ayudo-main\**" />
+    <None Remove="Te-Ayudo-main\**" />
     <Compile Remove="Models\PasswordHelper.cs" />
     <Compile Remove="Models\HomeViewModel.cs" />
+    <Compile Remove="Controllers\Registro.cs" />
   </ItemGroup>
 
   <ItemGroup>

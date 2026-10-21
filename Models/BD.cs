@@ -7,7 +7,7 @@ namespace TeAyudo.Models;
 
 public static class BD
 {
-    private static string _connectionString = @"Server=(localdb)\MSSQLLocalDB;DataBase=TeAyudo;Trusted_Connection=True;TrustServerCertificate=True;";
+    private static string _connectionString = @"Server=(localdb)\MSSQLLocalDB;DataBase=Te_Ayudo;Trusted_Connection=True;TrustServerCertificate=True;";
 
     public static void InicializarBD()
     {

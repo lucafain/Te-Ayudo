@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using TeAyudo.Models;
 
@@ -6,94 +7,89 @@ namespace TeAyudo.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly IWebHostEnvironment _environment;
 
-    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment environment)
+    public HomeController(IWebHostEnvironment environment)
     {
-        _logger = logger;
         _environment = environment;
     }
-    
+
     public IActionResult Index()
     {
-        var modelo = new HomeViewModel
-        {
-            Titulo = "Donde encontrás lo que buscás",
-            Presentacion = new[] {
-                "Jóvenes brindan ayuda que los adultos requieren.",
-                "Adultos reciben asistencia a cambio de un monto accesible."
-            },
-            SobreNosotros = new[] {
-                "En Te Ayudo creemos que ayudarnos entre generaciones puede cambiar la forma en la que vivimos.",
-                "Creamos un espacio que conecta a jóvenes universitarios con adultos para que puedan ayudarse en tareas cotidianas.",
-                "Los jóvenes tienen la posibilidad de ganar experiencia y aprender, mientras que los adultos encuentran una forma sencilla y segura de recibir la ayuda que necesitan.",
-                "Buscamos acompañar a quien lo necesita y a quien puede ayudar, con el cuidado que las personas de nuestra comunidad merecen."
-            },
-            AyudaTitulo = "Recibí la ayuda que buscás",
-            AyudaTexto = "Seleccionamos a quienes pueden acompañarte.",
-            TrabajoTitulo = "¿Sos joven y querés ganar experiencia laboral?",
-            TrabajoTexto = "Formá parte de las historias de Te Ayudo.",
-            Pasos = new[] {
-                new ContenidoItem { Titulo = "Publicá", Texto = "Publicás la ayuda que precisás y elegís un momento.", Icono = "pen.png" },
-                new ContenidoItem { Titulo = "Encontrá", Texto = "Buscás a alguien que pueda ayudarte.", Icono = "alarm.png" },
-                new ContenidoItem { Titulo = "Conectate", Texto = "Coordinás los detalles entre ambas partes.", Icono = "circle-check.png" }
-            },
-            Valores = new[] {
-                new ContenidoItem { Titulo = "Seguridad", Texto = "Tu tranquilidad es nuestra prioridad. Promovemos el respeto y el cuidado entre las personas de nuestra comunidad.", Icono = "circle-check.png" },
-                new ContenidoItem { Titulo = "Confianza", Texto = "Creemos en la confianza entre las personas. Cada encuentro es una oportunidad para conocerse y construir una buena relación.", Icono = "pen.png" },
-                new ContenidoItem { Titulo = "Comunicación", Texto = "Todo es más fácil cuando nos entendemos. Conversá para coordinar la ayuda, acordar los detalles y resolver cualquier duda.", Icono = "alarm.png" }
-            },
-            Preguntas = new[] {
-                new ContenidoItem { Titulo = "¿Qué es Te Ayudo?", Texto = "Un espacio que conecta a jóvenes con adultos que necesitan ayuda con tareas cotidianas." },
-                new ContenidoItem { Titulo = "¿Cómo solicito ayuda?", Texto = "Desde Solicitar ayuda podés acceder a la sección de registro para adultos mayores. El formulario todavía no está habilitado." },
-                new ContenidoItem { Titulo = "¿Cómo puedo sumarme?", Texto = "Desde Trabajá con nosotros podés acceder a la sección de registro para jóvenes. El formulario todavía no está habilitado." }
-            }
-        };
-        return View(modelo);
-    }
+        ViewBag.Titulo = "Donde encontrás lo que buscás";
 
-   
+        List<string> listaPresentacion = new List<string>();
+        listaPresentacion.Add("Jóvenes brindan ayuda que los adultos requieren.");
+        listaPresentacion.Add("Adultos reciben asistencia a cambio de un monto accesible.");
+        ViewBag.Presentacion = listaPresentacion;
+
+        List<string> listaSobreNosotros = new List<string>();
+        listaSobreNosotros.Add("En Te Ayudo creemos que ayudarnos entre generaciones puede cambiar la forma en la que vivimos.");
+        listaSobreNosotros.Add("Creamos un espacio que conecta a jóvenes universitarios con adultos para que puedan ayudarse en tareas cotidianas.");
+        listaSobreNosotros.Add("Los jóvenes tienen la posibilidad de ganar experiencia y aprender, mientras que los adultos encuentran una forma sencilla y segura de recibir la ayuda que necesitan.");
+        listaSobreNosotros.Add("Buscamos acompañar a quien lo necesita y a quien puede ayudar, con el cuidado que las personas de nuestra comunidad merecen.");
+        ViewBag.SobreNosotros = listaSobreNosotros;
+
+        ViewBag.AyudaTitulo = "Recibí la ayuda que buscás";
+        ViewBag.AyudaTexto = "Seleccionamos a quienes pueden acompañarte.";
+        ViewBag.TrabajoTitulo = "¿Sos joven y querés ganar experiencia laboral?";
+        ViewBag.TrabajoTexto = "Formá parte de las historias de Te Ayudo.";
+
+        List<ContenidoItem> listaPasos = new List<ContenidoItem>();
+        listaPasos.Add(new ContenidoItem("Publicá", "Publicás la ayuda que precisás y elegís un momento.", "pen.png"));
+        listaPasos.Add(new ContenidoItem("Encontrá", "Buscás a alguien que pueda ayudarte.", "alarm.png"));
+        listaPasos.Add(new ContenidoItem("Conectate", "Coordinás los detalles entre ambas partes.", "circle-check.png"));
+        ViewBag.Pasos = listaPasos;
+
+        List<ContenidoItem> listaValores = new List<ContenidoItem>();
+        listaValores.Add(new ContenidoItem("Seguridad", "Tu tranquilidad es nuestra prioridad. Promovemos el respeto y el cuidado entre las personas de nuestra comunidad.", "circle-check.png"));
+        listaValores.Add(new ContenidoItem("Confianza", "Creemos en la confianza entre las personas. Cada encuentro es una oportunidad para conocerse y construir una buena relación.", "pen.png"));
+        listaValores.Add(new ContenidoItem("Comunicación", "Todo es más fácil cuando nos entendemos. Conversá para coordinar la ayuda, acordar los detalles y resolver cualquier duda.", "alarm.png"));
+        ViewBag.Valores = listaValores;
+
+        List<ContenidoItem> listaPreguntas = new List<ContenidoItem>();
+        listaPreguntas.Add(new ContenidoItem("¿Qué es Te Ayudo?", "Un espacio que conecta a jóvenes con adultos que necesitan ayuda con tareas cotidianas."));
+        listaPreguntas.Add(new ContenidoItem("¿Cómo solicito ayuda?", "Desde Solicitar ayuda podés acceder al formulario de solicitud o al registro para adultos mayores."));
+        listaPreguntas.Add(new ContenidoItem("¿Cómo puedo sumarme?", "Desde Trabajá con nosotros podés acceder al registro para jóvenes y subir tu CV."));
+        ViewBag.Preguntas = listaPreguntas;
+
+        return View();
+    }
 
     public IActionResult Ingresar()
     {
-        return RedirectToAction(nameof(Login));
+        return RedirectToAction("Login", "Home");
     }
 
-    [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? mensaje = null)
     {
-        ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+        ViewBag.SuccessMessage = mensaje;
         return View();
     }
 
     [HttpPost]
     public IActionResult Login(string Email, string Contrasena)
     {
-        if (string.IsNullOrWhiteSpace(Email))
+        if (string.IsNullOrEmpty(Email) || Email.Length == 0)
         {
             ViewBag.ErrorMessage = "Debe completar el email.";
             return View("Login");
         }
 
-        if (string.IsNullOrWhiteSpace(Contrasena))
+        if (Email.IndexOf("@") == -1)
+        {
+            ViewBag.ErrorMessage = "El email ingresado no es válido.";
+            return View("Login");
+        }
+
+        if (string.IsNullOrEmpty(Contrasena) || Contrasena.Length == 0)
         {
             ViewBag.ErrorMessage = "Debe completar la contraseña.";
             return View("Login");
         }
 
-        BD bd = new BD();
-        Usuarios? usuario;
-
-        try
-        {
-            usuario = bd.ObtenerUsuarioPorCredenciales(Email, Contrasena);
-        }
-        catch
-        {
-            ViewBag.ErrorMessage = "No se pudo acceder a la base de datos.";
-            return View("Login");
-        }
+        string emailLimpio = Email.Replace(" ", "").ToLower();
+        Usuarios? usuario = BD.ObtenerUsuarioPorCredenciales(emailLimpio, Contrasena);
 
         if (usuario == null)
         {
@@ -101,12 +97,31 @@ public class HomeController : Controller
             return View("Login");
         }
 
-        HttpContext.Session.SetString("EmailLogueado", usuario.Email ?? string.Empty);
-        return RedirectToAction("Perfil");
+        HttpContext.Session.SetString("EmailLogueado", usuario.Email ?? "");
+        HttpContext.Session.SetInt32("IdUsuarioLogueado", usuario.IdUsuario);
+        return RedirectToAction("Perfil", "Home");
     }
 
     public IActionResult SolicitarTarea()
     {
+        string? email = HttpContext.Session.GetString("EmailLogueado");
+        if (!string.IsNullOrEmpty(email))
+        {
+            ViewBag.UsuarioActual = BD.ObtenerUsuarioPorEmail(email);
+        }
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult SolicitarTarea(string Titulo, string Descripcion, string Zona, string Contacto)
+    {
+        if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion))
+        {
+            ViewBag.ErrorMessage = "Por favor complete el título y la descripción de la ayuda que necesita.";
+            return View();
+        }
+
+        ViewBag.SuccessMessage = "¡Tu solicitud de ayuda (" + Titulo + ") ha sido recibida! Pronto nos pondremos en contacto.";
         return View();
     }
 
@@ -117,85 +132,61 @@ public class HomeController : Controller
 
     public IActionResult RegistroJoven()
     {
-        ViewData["Title"] = "Registro para jóvenes";
-        ViewData["Descripcion"] = "Este será el acceso al registro para jóvenes que quieran trabajar en Te Ayudo.";
+        ViewBag.Title = "Registro para jóvenes";
         return View("Trabajar");
     }
 
     public IActionResult RegistroMayor()
     {
-        ViewData["Title"] = "Registro para solicitar ayuda";
-        ViewData["Descripcion"] = "Este será el acceso al registro para adultos mayores que necesiten ayuda.";
+        ViewBag.Title = "Registro para solicitar ayuda";
         return View("Registro");
     }
 
     [HttpPost]
-[ValidateAntiForgeryToken]
-public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
-{
-    if (user == null)
+    public IActionResult GuardarRegistroMayor(string Email, string NombreUsuario, string Contrasena, string Telefono, IFormFile? FotoPerfil)
     {
-        ViewBag.ErrorMessage = "Debe completar los datos del registro.";
-        return View("Registro");
-    }
-
-    ModelState.Remove("IdUsuario");
-    ModelState.Remove("TipoUsuario");
-    ModelState.Remove("FechaRegistro");
-    ModelState.Remove("FotoPerfilRuta");
-    ModelState.Remove("AceptaTerminos"); 
-
-    if (!ModelState.IsValid)
-    {
-        ViewBag.ErrorMessage = "Por favor complete los campos requeridos correctamente.";
-        return View("Registro");
-    }
-
-    user.TipoUsuario = "Adulto mayor";
-    user.FechaRegistro = DateTime.Now;
-
-    try
-    {
-        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error al guardar la foto de perfil para {Email}", user.Email);
-        ViewBag.ErrorMessage = "No se pudo guardar la foto de perfil.";
-        return View("Registro");
-    }
-
-    BD bd = new BD();
-    bool resultado = false;
-
-    try
-    {
-        resultado = bd.GuardarUsuario(user);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error al guardar registro en BD para {Email}", user.Email);
-        ViewBag.ErrorMessage = "Error interno al guardar en la base de datos.";
-        return View("Registro");
-    }
-
-    if (resultado)
-    {
-        TempData["SuccessMessage"] = "Registro exitoso. Ahora puede iniciar sesión.";
-        return RedirectToAction(nameof(Login)); // Retorno de éxito
-    }
-
-    ViewBag.ErrorMessage = "El email ya existe o no se pudo guardar el registro.";
-    return View("Registro"); // Retorno final por defecto si falla el guardado
-}
-
-
-    [HttpPost]
-    public IActionResult GuardarRegistroJoven(Usuarios user, IFormFile? FotoPerfil, IFormFile? CvArchivo, bool AceptaTerminos = false)
-    {
-        if (user == null)
+        // Validación con métodos string (Slide 12)
+        if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(NombreUsuario) || string.IsNullOrEmpty(Contrasena))
         {
-            ViewBag.ErrorMessage = "Debe completar los datos del registro.";
+            ViewBag.ErrorMessage = "Por favor complete todos los campos obligatorios.";
+            return View("Registro");
+        }
+
+        if (Email.IndexOf("@") == -1)
+        {
+            ViewBag.ErrorMessage = "El correo electrónico no es válido.";
+            return View("Registro");
+        }
+
+        // Slide 46: Tomar los datos del form y guardarlos en un objeto
+        Usuarios user = new Usuarios();
+        user.Email = Email.Replace(" ", "").ToLower();
+        user.NombreUsuario = NombreUsuario;
+        user.Contrasena = Contrasena;
+        user.Telefono = Telefono;
+        user.TipoUsuario = "Adulto mayor";
+        user.FechaRegistro = DateTime.Now;
+        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+
+        bool resultado = BD.GuardarUsuario(user);
+
+        if (resultado)
+        {
+            // Slide 33 y 50: RedirectToAction con paso de parámetros anónimos
+            return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
+        }
+
+        ViewBag.ErrorMessage = "El email ya existe o no se pudo guardar el registro.";
+        return View("Registro");
+    }
+
+    [HttpPost]
+    public IActionResult GuardarRegistroJoven(string Email, string Nombre, string Apellido, string AmbitoLaboral, string Contrasena, string LinkedIn, string Telefono, IFormFile? FotoPerfil, IFormFile? CvArchivo, bool AceptaTerminos = false)
+    {
+        // Validación en controller
+        if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena) || string.IsNullOrEmpty(AmbitoLaboral))
+        {
+            ViewBag.ErrorMessage = "Debe completar los datos obligatorios del registro.";
             return View("Trabajar");
         }
 
@@ -205,36 +196,42 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
             return View("Trabajar");
         }
 
-        user.TipoUsuario = "Adolecente";
+        // Slide 46: Guardar en objeto
+        Usuarios user = new Usuarios();
+        user.Email = Email.Replace(" ", "").ToLower();
+        user.Nombre = Nombre;
+        user.Apellido = Apellido;
+        user.AmbitoLaboral = AmbitoLaboral;
+        user.Contrasena = Contrasena;
+        user.LinkedIn = LinkedIn;
+        user.Telefono = Telefono;
+
+        // Slide 12: Métodos para tipos string (IndexOf, Substring)
+        int posArroba = user.Email.IndexOf("@");
+        if (posArroba > 0)
+        {
+            user.NombreUsuario = user.Email.Substring(0, posArroba);
+        }
+        else
+        {
+            user.NombreUsuario = user.Email;
+        }
+
+        user.TipoUsuario = "Adolescente";
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
         user.CvRuta = GuardarArchivo(CvArchivo, "uploads/cv");
         user.FechaRegistro = DateTime.Now;
 
-        BD bd = new BD();
-        bool resultado;
-
-        try
-        {
-            resultado = bd.GuardarUsuario(user);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al guardar registro de joven para {Email}", user.Email);
-            ViewBag.ErrorMessage = "No se pudo guardar el registro en la base de datos.";
-            return View("Trabajar");
-        }
+        bool resultado = BD.GuardarUsuario(user);
 
         if (resultado)
         {
-            TempData["SuccessMessage"] = "Registro exitoso. Ahora puede iniciar sesión.";
-            return RedirectToAction(nameof(Login));
+            // Slide 33 y 50: RedirectToAction pasando parámetro
+            return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
         }
 
-        bool emailExiste = !string.IsNullOrWhiteSpace(user.Email) && bd.ObtenerUsuarioPorEmail(user.Email) != null;
-        ViewBag.ErrorMessage = emailExiste
-            ? "El email ya existe. Por favor, elige otro."
-            : "No se pudo guardar el registro en la base de datos.";
+        ViewBag.ErrorMessage = "El email ya existe. Por favor, elegí otro.";
         return View("Trabajar");
     }
 
@@ -246,14 +243,14 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
     [HttpPost]
     public IActionResult OlvideContrasena(string Email)
     {
-        if (string.IsNullOrWhiteSpace(Email))
+        if (string.IsNullOrEmpty(Email))
         {
             ViewBag.ErrorMessage = "Debe ingresar un email.";
             return View("olvideContraseña");
         }
 
-        BD bd = new BD();
-        Usuarios? usuario = bd.ObtenerUsuarioPorEmail(Email);
+        string emailLimpio = Email.Replace(" ", "").ToLower();
+        Usuarios? usuario = BD.ObtenerUsuarioPorEmail(emailLimpio);
 
         if (usuario == null)
         {
@@ -261,7 +258,7 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
             return View("olvideContraseña");
         }
 
-        ViewBag.Contrasena = usuario.Contrasena ?? "La recuperación de contraseña aún no está implementada.";
+        ViewBag.Contrasena = usuario.Contrasena;
         return View("MostrarContraseña");
     }
 
@@ -270,28 +267,14 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
         string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
         if (string.IsNullOrEmpty(emailSesion))
         {
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction("Login", "Home");
         }
 
-        BD bd = new BD();
-        Usuarios? usuario;
-
-        try
-        {
-            usuario = bd.ObtenerUsuarioPorEmail(emailSesion);
-        }
-        catch
-        {
-            HttpContext.Session.Remove("EmailLogueado");
-            HttpContext.Session.Clear();
-            ViewBag.ErrorMessage = "No se pudo acceder a la base de datos.";
-            return View("Login");
-        }
+        Usuarios? usuario = BD.ObtenerUsuarioPorEmail(emailSesion);
         if (usuario == null)
         {
-            HttpContext.Session.Remove("EmailLogueado");
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Home");
         }
 
         ViewBag.NombreUsuario = usuario.NombreUsuario ?? usuario.Email;
@@ -310,8 +293,27 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
     public IActionResult CerrarSesion()
     {
         HttpContext.Session.Remove("EmailLogueado");
+        HttpContext.Session.Remove("IdUsuarioLogueado");
         HttpContext.Session.Clear();
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult Explorar()
+    {
+        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
+
+        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+
+        return View();
+    }
+
+    // Endpoint para peticiones server-side FETCH (Slides 142-146 del PDF)
+    [HttpGet]
+    public IActionResult VerDetalleAyudado(int idUsuario)
+    {
+        Usuarios? usuario = BD.ObtenerUsuarioPorId(idUsuario);
+        return Json(usuario);
     }
 
     public IActionResult Privacy()
@@ -319,7 +321,6 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
         return View();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
@@ -332,35 +333,17 @@ public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
             return null;
         }
 
-        string webRootPath = _environment.WebRootPath;
-        string folderPath = Path.Combine(webRootPath, subcarpeta.Replace('/', Path.DirectorySeparatorChar));
-        try
+        string folderPath = Path.Combine(_environment.WebRootPath, subcarpeta);
+        Directory.CreateDirectory(folderPath);
+
+        string nombreArchivo = archivo.FileName.Replace(" ", "_");
+        string fullPath = Path.Combine(folderPath, nombreArchivo);
+
+        using (FileStream stream = System.IO.File.Create(fullPath))
         {
-            Directory.CreateDirectory(folderPath);
-
-            string extension = Path.GetExtension(archivo.FileName);
-            string fileName = $"{Guid.NewGuid():N}{extension}";
-            string fullPath = Path.Combine(folderPath, fileName);
-
-            using FileStream stream = System.IO.File.Create(fullPath);
             archivo.CopyTo(stream);
-
-            return $"/{subcarpeta}/{fileName}".Replace("\\", "/");
         }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error al guardar archivo en {Folder}", folderPath);
-            return null;
-        }
-    }
 
-    public IActionResult Explorar()
-    {
-        int idJovenLogueado = 1; // ID de ejemplo o tomado de Session
-
-        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
-        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
-
-        return View();
+        return "/" + subcarpeta + "/" + nombreArchivo;
     }
 }

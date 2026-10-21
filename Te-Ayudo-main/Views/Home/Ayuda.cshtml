@@ -1,0 +1,196 @@
+@{
+    ViewData["Title"] = "Solicitar una tarea"; string? tipoUsuario = ViewBag.TipoUsuario as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header class="header">
+        <a class="logo" asp-controller="Home" asp-action="Index">
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button" href="#como-funciona">
+                Explorá
+            </a>
+
+            <a class="nav-button" href="#preguntas">
+                Preguntas frecuentes
+            </a>
+
+            <a class="nav-button" href="#trabaja">
+                Trabajá con nosotros
+            </a>
+
+            <a class="nav-button nav-help" href="#adultos">
+                Solicita tus ayudas
+            </a>
+
+            <a class="nav-button login"
+            asp-controller="Home"
+            asp-action="Ingresar">
+                <img class="login-icon" src="~/img/user.svg" alt="" />
+                Iniciar sesión
+            </a>
+        </nav>
+    </header>
+    <main class="wrap destination">
+        <!-- Depende cuál sea el nombre que le pongamos al tipo de usuario -->
+        @if (tipoUsuario == "Joven")
+        {
+            <h1>Ayudas para realizar</h1>
+        }
+        else
+        {
+            <h1>Ayudas pedidas</h1>
+        }
+        <section class="task-list">
+            <div class="grid_3x2">
+                <h2>Hacer las compras</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div>
+            </div>
+            <div>
+                <h2>Pasear al perro</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div>
+            </div>
+            <div>
+                <h2>Limpiar el baño</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div>
+            </div>
+            <div>
+               <h2>Barrer el comedor</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div> 
+            </div>
+            <div>
+                <h2>Limpiar las ventanas</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div>
+            </div>
+            <div>
+                <h2>Lavar los platos</h2>
+                <div class="flexbox">
+                    @if (tipoUsuario == "Joven")
+                    {
+                        <button class="success">Ver más</button>
+                    }
+                    else
+                    {
+                        <button class="success">Modificar</button>
+                        <button class="error">Cancelar</button>
+                    }
+                </div>
+            </div>
+            @if (tipoUsuario == "Joven")
+            {
+                <button class="principal">Realizá una nueva Ayuda</button>
+            }
+            else{
+                <button class="principal">Solicitar una nueva Ayuda</button>
+            }
+        </section>
+        
+    </main>
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" asp-controller="Home" asp-action="Index">
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href="#nosotros">Nuestra historia</a>
+                <a href="#valores">Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Explorá</h3>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#adultos">Solicita tus ayudas</a>
+            </div>
+
+            <div>
+                <h3>Trabajá con nosotros</h3>
+                <a href="#trabaja">Conocé la propuesta</a>
+                <a asp-controller="Home" asp-action="RegistroJoven">
+                    Sumate
+                </a>
+            </div>
+
+            <div>
+                <h3>Ayuda</h3>
+                <a href="#preguntas">Preguntas frecuentes</a>
+                <a asp-controller="Home" asp-action="Ingresar">
+                    Iniciar sesión
+                </a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</body>
+</html>

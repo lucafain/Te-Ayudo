@@ -1,11 +1,9 @@
-@model TeAyudo.Models.HomeViewModel
-
 @{
     ViewData["Title"] = "Inicio";
 }
 
 <header class="header">
-    <a class="logo" asp-controller="Home" asp-action="Index">
+    <a class="logo" href='@Url.Action("Index", "Home")'>
         <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
     </a>
 
@@ -17,7 +15,7 @@
     </button>
 
     <nav id="navigation" aria-label="Navegación principal">
-        <a class="nav-button" href="#como-funciona">
+        <a class="nav-button" href='@Url.Action("Explorar", "Home")'>
             Explorá
         </a>
 
@@ -33,9 +31,7 @@
             Solicita tus ayudas
         </a>
 
-        <a class="nav-button login"
-           asp-controller="Home"
-           asp-action="Ingresar">
+        <a class="nav-button login" href='@Url.Action("Ingresar", "Home")'>
             <img class="login-icon" src="~/img/user.svg" alt="" />
             Iniciar sesión
         </a>
@@ -44,10 +40,10 @@
 
 <main class="page" id="inicio">
     <section class="hero">
-        <h1>@Model.Titulo</h1>
+        <h1>@ViewBag.Titulo</h1>
 
         <ul>
-            @foreach (var texto in Model.Presentacion)
+            @foreach (string texto in ViewBag.Presentacion)
             {
                 <li>@texto</li>
             }
@@ -63,24 +59,22 @@
         <div class="about-copy">
             <h2>SOBRE NOSOTROS</h2>
 
-            @foreach (var texto in Model.SobreNosotros)
+            @foreach (string texto in ViewBag.SobreNosotros)
             {
                 <p>@texto</p>
             }
 
             <p>
-                <strong>Te Ayudo. @Model.Titulo.</strong>
+                <strong>Te Ayudo. @ViewBag.Titulo.</strong>
             </p>
         </div>
     </section>
 
     <section class="callout panel" id="adultos">
-        <h2>@Model.AyudaTitulo</h2>
-        <p>@Model.AyudaTexto</p>
+        <h2>@ViewBag.AyudaTitulo</h2>
+        <p>@ViewBag.AyudaTexto</p>
 
-        <a class="button"
-           asp-controller="Home"
-           asp-action="RegistroMayor">
+        <a class="button" href='@Url.Action("RegistroMayor", "Home")'>
             Solicitar ayuda
         </a>
     </section>
@@ -89,7 +83,7 @@
         <h2>¿Cómo funciona?</h2>
 
         <div class="steps">
-            @foreach (var paso in Model.Pasos)
+            @foreach (ContenidoItem paso in ViewBag.Pasos)
             {
                 <article>
                     <h3>@paso.Titulo</h3>
@@ -106,20 +100,16 @@
 
         <p class="ready">¡Y listo!</p>
 
-        <a class="button"
-           asp-controller="Home"
-           asp-action="RegistroMayor">
+        <a class="button" href='@Url.Action("RegistroMayor", "Home")'>
             Solicitar ayuda
         </a>
     </section>
 
     <section class="work panel" id="trabaja">
-        <h2>@Model.TrabajoTitulo</h2>
-        <p>@Model.TrabajoTexto</p>
+        <h2>@ViewBag.TrabajoTitulo</h2>
+        <p>@ViewBag.TrabajoTexto</p>
 
-        <a class="button"
-           asp-controller="Home"
-           asp-action="RegistroJoven">
+        <a class="button" href='@Url.Action("RegistroJoven", "Home")'>
             Trabajá con nosotros
         </a>
     </section>
@@ -128,7 +118,7 @@
         <h2>Lo que nos representa</h2>
 
         <div class="value-grid">
-            @foreach (var valor in Model.Valores)
+            @foreach (ContenidoItem valor in ViewBag.Valores)
             {
                 <article>
                     <h3>@valor.Titulo</h3>
@@ -147,7 +137,7 @@
     <section class="faq panel" id="preguntas">
         <h2>Preguntas frecuentes</h2>
 
-        @foreach (var pregunta in Model.Preguntas)
+        @foreach (ContenidoItem pregunta in ViewBag.Preguntas)
         {
             <details>
                 <summary>@pregunta.Titulo</summary>
@@ -159,7 +149,7 @@
 
 <footer>
     <div class="footer-content page">
-        <a class="logo" asp-controller="Home" asp-action="Index">
+        <a class="logo" href='@Url.Action("Index", "Home")'>
             <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
         </a>
 
@@ -171,14 +161,15 @@
 
         <div>
             <h3>Explorá</h3>
+            <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
             <a href="#como-funciona">Cómo funciona</a>
-            <a href="#adultos">Solicita tus ayudas</a>
+            <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
         </div>
 
         <div>
             <h3>Trabajá con nosotros</h3>
             <a href="#trabaja">Conocé la propuesta</a>
-            <a asp-controller="Home" asp-action="RegistroJoven">
+            <a href='@Url.Action("RegistroJoven", "Home")'>
                 Sumate
             </a>
         </div>
@@ -186,7 +177,7 @@
         <div>
             <h3>Ayuda</h3>
             <a href="#preguntas">Preguntas frecuentes</a>
-            <a asp-controller="Home" asp-action="Ingresar">
+            <a href='@Url.Action("Ingresar", "Home")'>
                 Iniciar sesión
             </a>
         </div>

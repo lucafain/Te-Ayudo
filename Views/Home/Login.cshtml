@@ -16,16 +16,18 @@
             <div class="auth-alert">@ViewBag.ErrorMessage</div>
         }
 
-        <form method="post" action='@Url.Action("Login", "Home")'>
+        <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+        <form action='@Url.Action("Login", "Home")' method="post" id="formLogin">
             <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
                 <div class="field">
                     <label for="Email">Correo electrónico</label>
-                    <input type="email" id="Email" name="Email" autocomplete="email" required />
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
                 </div>
 
                 <div class="field">
                     <label for="Contrasena">Contraseña</label>
-                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="current-password" required />
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="current-password" />
                 </div>
             </div>
 
@@ -42,4 +44,3 @@
         </form>
     </section>
 </main>
-

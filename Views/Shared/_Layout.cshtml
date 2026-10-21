@@ -1,6 +1,16 @@
 <!doctype html>
-<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Te Ayudo conecta jóvenes y adultos mayores para resolver tareas cotidianas y compartir conocimientos."><title>@ViewData["Title"] · Te Ayudo</title><link rel="stylesheet" href="@Url.Content("~/css/home.css")"><script src="@Url.Content("~/js/home.js")" defer></script></head>
+<html lang="es-AR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Te Ayudo conecta jóvenes y adultos mayores para resolver tareas cotidianas y compartir conocimientos.">
+    <title>@ViewData["Title"] · Te Ayudo</title>
+    <link rel="stylesheet" href="@Url.Content("~/css/home.css")">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="@Url.Content("~/js/home.js")" defer></script>
+</head>
 <body>
 @RenderBody()
 @await RenderSectionAsync("Scripts", required: false)
-</body></html>
+</body>
+</html>

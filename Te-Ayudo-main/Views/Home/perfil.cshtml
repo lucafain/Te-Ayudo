@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Perfil de usuario</h1>
+        <div class="auth-divider"></div>
+
+        <div class="text-center" style="margin-bottom: 18px;">
+            @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfilRuta))
+            {
+                string fotoRuta = (string)ViewBag.FotoPerfilRuta;
+                string fotoUrl = fotoRuta.StartsWith("/") || fotoRuta.StartsWith("~") ? Url.Content(fotoRuta) : Url.Content("~/" + fotoRuta);
+                <img class="profile-photo" src="@fotoUrl" alt="Foto de perfil" />
+            }
+            else
+            {
+                <div class="profile-photo profile-photo--empty">Sin foto</div>
+            }
+        </div>
+
+        <div class="auth-note">
+            <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
+            <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
+            <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
+            <p><strong>Email:</strong> @(ViewBag.Email ?? ViewBag.NombreUsuario)</p>
+            <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
+            <p><strong>Teléfono:</strong> @ViewBag.Telefono</p>
+            <p><strong>Ámbito laboral:</strong> @ViewBag.AmbitoLaboral</p>
+            <p><strong>LinkedIn:</strong> @ViewBag.LinkedIn</p>
+        </div>
+
+        <div class="auth-actions">
+            <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+            <a class="auth-button" href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
+        </div>
+    </section>
+</main>
+

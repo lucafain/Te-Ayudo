@@ -1,15 +1,22 @@
-    @{
+@{
     ViewData["Title"] = "Tu contraseña";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-5">Tu contraseña actual</h1>
-    <p class="lead">La información asociada a tu email es:</p>
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Tu contraseña actual</h1>
+        <div class="auth-divider"></div>
 
-    <div class="alert alert-info fs-4 fw-bold mx-auto" style="max-width: 400px;">
-        @ViewBag.Contrasena
-    </div>
+        <p class="auth-note">
+            La contraseña asociada a tu correo electrónico es:
+        </p>
 
-    <a class="btn btn-secondary" href='@Url.Action("Login", "Home")'>Volver al login</a>
-</div>
+        <div style="background-color: #edf0e5; border: 2px dashed #285548; padding: 18px; border-radius: 14px; text-align: center; font-size: 1.35rem; font-weight: 800; color: #285548; margin: 18px 0;">
+            @ViewBag.Contrasena
+        </div>
 
+        <div class="auth-actions" style="margin-top: 24px;">
+            <a class="auth-button" href='@Url.Action("Login", "Home")'>Volver al login</a>
+        </div>
+    </section>
+</main>

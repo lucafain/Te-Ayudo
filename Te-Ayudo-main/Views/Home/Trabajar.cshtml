@@ -1,0 +1,103 @@
+@{
+    ViewData["Title"] = "Trabajá con nosotros";
+}
+
+<main class="auth-page">
+    <section class="auth-card">
+        <h1 class="auth-title">Trabajá con nosotros</h1>
+        <div class="auth-divider"></div>
+
+        <p class="auth-note">
+            Este formulario es para jóvenes. Vas a poder dejar tus datos, subir tu foto de perfil y adjuntar tu CV.
+        </p>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">@ViewBag.ErrorMessage</div>
+        }
+
+        <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+        <form action='@Url.Action("GuardarRegistroJoven", "Home")' method="post" enctype="multipart/form-data" id="formTrabajar">
+            <div class="auth-grid">
+                <div class="field">
+                    <label for="Email">Correo electrónico *</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
+                </div>
+
+                <div class="field">
+                    <label for="Nombre">Nombre (opcional)</label>
+                    <input type="text" id="Nombre" name="Nombre" autocomplete="given-name" />
+                </div>
+
+                <div class="field">
+                    <label for="Apellido">Apellido (opcional)</label>
+                    <input type="text" id="Apellido" name="Apellido" autocomplete="family-name" />
+                </div>
+
+                <div class="field">
+                    <label for="AmbitoLaboral">Ámbito laboral al que apunta *</label>
+                    <input type="text" id="AmbitoLaboral" name="AmbitoLaboral" />
+                </div>
+
+                <div class="field">
+                    <label for="Contrasena">Contraseña *</label>
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" />
+                </div>
+
+                <div class="field">
+                    <label for="LinkedIn">Perfil de LinkedIn (preferible)</label>
+                    <input type="url" id="LinkedIn" name="LinkedIn" placeholder="https://www.linkedin.com/in/..." />
+                </div>
+
+                <div class="field">
+                    <label for="Telefono">Número telefónico (opcional)</label>
+                    <input type="tel" id="Telefono" name="Telefono" autocomplete="tel" />
+                </div>
+
+                <div class="field upload-field">
+                    <label for="CvArchivo">Subir mi CV</label>
+                    <label class="upload-button" for="CvArchivo" data-file-label="CvArchivo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </label>
+                    <input type="file" id="CvArchivo" name="CvArchivo" accept=".pdf,.doc,.docx" />
+                    <span class="upload-filename" data-file-name="CvArchivo">Ningún archivo seleccionado</span>
+                </div>
+
+                <div class="field field--full upload-field">
+                    <label for="FotoPerfil">Cargar foto de perfil</label>
+                    <label class="upload-button" for="FotoPerfil" data-file-label="FotoPerfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </label>
+                    <input type="file" id="FotoPerfil" name="FotoPerfil" accept="image/*" />
+                    <span class="upload-filename" data-file-name="FotoPerfil">Ningún archivo seleccionado</span>
+                </div>
+
+                <div class="field field--full terms-check">
+                    <label for="AceptaTerminos">
+                        <input type="checkbox" id="AceptaTerminos" name="AceptaTerminos" value="true" />
+                        <span>He leído y acepto los términos y condiciones.</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+                <button class="auth-button" type="submit">Aplicar</button>
+            </div>
+
+            <div class="auth-links">
+                Todavía no tenés tu perfil de LinkedIn? <a href="https://www.linkedin.com/signup" target="_blank" rel="noreferrer">Crear mi perfil de LinkedIn</a><br />
+                Todavía no tenés un CV? <a href="https://www.canva.com/es_mx/crear/curriculum-vitae/" target="_blank" rel="noreferrer">Crear mi CV</a>
+            </div>
+        </form>
+    </section>
+</main>

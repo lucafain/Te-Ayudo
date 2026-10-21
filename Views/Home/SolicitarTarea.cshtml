@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Solicitar ayuda";
+    Usuarios? usuario = ViewBag.UsuarioActual;
+}
+
+<main class="auth-page">
+    <section class="auth-card">
+        <h1 class="auth-title">Solicitar una ayuda</h1>
+        <div class="auth-divider"></div>
+
+        <p class="auth-note">
+            Contanos qué tarea o acompañamiento necesitás. Te conectaremos con jóvenes capacitados y de confianza de tu zona.
+        </p>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="auth-alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+        <form action='@Url.Action("SolicitarTarea", "Home")' method="post" id="formSolicitar">
+            <div class="auth-grid">
+                <div class="field field--full">
+                    <label for="Titulo">Título de la ayuda que necesitás *</label>
+                    <input type="text" id="Titulo" name="Titulo" placeholder="Ej: Acompañamiento a trámites, clases de celular, compras..." />
+                </div>
+
+                <div class="field field--full">
+                    <label for="Descripcion">Descripción detallada *</label>
+                    <textarea id="Descripcion" name="Descripcion" rows="4" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #c7d2bd; font-family: inherit; font-size: 1rem; resize: vertical;" placeholder="Explicá brevemente qué necesitás, días u horarios sugeridos..."></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="Zona">Zona o barrio (opcional)</label>
+                    <input type="text" id="Zona" name="Zona" value='@(usuario?.Direccion ?? "")' placeholder="Ej: Villa Crespo, Palermo, etc." />
+                </div>
+
+                <div class="field">
+                    <label for="Contacto">Teléfono o correo de contacto</label>
+                    <input type="text" id="Contacto" name="Contacto" value='@(usuario?.Telefono ?? usuario?.Email ?? "")' placeholder="Tu teléfono o email" />
+                </div>
+            </div>
+
+            <div class="auth-actions" style="margin-top: 24px;">
+                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+                <button class="auth-button" type="submit">Enviar solicitud</button>
+            </div>
+
+            <div class="auth-links">
+                ¿Todavía no tenés cuenta? <a href='@Url.Action("RegistroMayor", "Home")'>Registrate como adulto mayor</a>
+                · ¿Sos joven y querés ayudar? <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
+            </div>
+        </form>
+    </section>
+</main>

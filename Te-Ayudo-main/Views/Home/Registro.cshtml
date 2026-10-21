@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<main class="auth-page">
+    <section class="auth-card auth-card--narrow">
+        <h1 class="auth-title">Registrarse</h1>
+        <div class="auth-divider"></div>
+
+        <p class="auth-note">
+            Los datos con asterisco son obligatorios. La foto de perfil quedará guardada para usarla luego en tu perfil.
+        </p>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">@ViewBag.ErrorMessage</div>
+        }
+
+        <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+        <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" enctype="multipart/form-data" id="formRegistro">
+            <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
+                <div class="field">
+                    <label for="Email">Correo electrónico *</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
+                </div>
+
+                <div class="field">
+                    <label for="NombreUsuario">Nombre de usuario *</label>
+                    <input type="text" id="NombreUsuario" name="NombreUsuario" autocomplete="username" />
+                </div>
+
+                <div class="field">
+                    <label for="Contrasena">Contraseña *</label>
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" />
+                </div>
+
+                <div class="field">
+                    <label for="Telefono">Número telefónico</label>
+                    <input type="tel" id="Telefono" name="Telefono" autocomplete="tel" />
+                </div>
+
+                <div class="field field--full upload-field">
+                    <label for="FotoPerfil">Cargar foto de perfil</label>
+                    <label class="upload-button" for="FotoPerfil" data-file-label="FotoPerfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </label>
+                    <input type="file" id="FotoPerfil" name="FotoPerfil" accept="image/*" />
+                    <span class="upload-filename" data-file-name="FotoPerfil">Ningún archivo seleccionado</span>
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+                <button class="auth-button" type="submit">Registrarse</button>
+            </div>
+
+            <div class="auth-links">
+                Ya tenés una cuenta? <a href='@Url.Action("Ingresar", "Home")'>Iniciar sesión</a>
+                · <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
+            </div>
+        </form>
+    </section>
+</main>

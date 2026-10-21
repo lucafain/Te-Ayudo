@@ -1,0 +1,190 @@
+@{
+    ViewData["Title"] = "Página Principal Joven";
+}
+
+<header class="header-navegacion-principal">
+    <div class="header-contenedor-logo">
+        <img src="~/images/logo-teayudo.png" alt="Te Ayudo Logo" class="header-imagen-logo">
+    </div>
+    <nav class="header-menu-botones">
+        <a asp-controller="Explorar" asp-action="Explorar" class="boton-navegacion">Explorá</a>
+        <a asp-controller="Home" asp-action="PreguntasFrecuentes" class="boton-navegacion">Preguntas Frecuentes</a>
+        <a asp-controller="Joven" asp-action="Registro" class="boton-navegacion">Sumate como joven</a>
+        <a asp-controller="Ayuda" asp-action="Perfil" class="boton-navegacion">Perfil</a>
+    </nav>
+</header>
+
+<section class="banner-bienvenida-usuario">
+    <div class="banner-contenido-texto">
+        <h1 class="banner-titulo-bienvenida">Bienvenido, <span class="texto-resaltado-verde">(Nombre)</span></h1>
+        <h2 class="banner-subtitulo-busqueda">Dónde encontrás lo que <span class="texto-resaltado-verde">buscás</span></h2>
+    </div>
+</section>
+
+<section class="seccion-contenedor-principal seccion-acciones-usuario">
+    <h2 class="titulo-seccion-general">¿Qué necesitas hacer?</h2>
+    <div class="grid-tarjetas-acciones">
+        
+        <a asp-controller="Tareas" asp-action="Index" class="tarjeta-accion-opcion tarjeta-accion-seleccionada">
+            <div class="tarjeta-accion-caja-icono">
+                <span class="icono-fontawesome fas fa-clipboard-list"></span>
+            </div>
+            <p class="tarjeta-accion-etiqueta">Tareas a <span class="texto-enfasis-negrita">realizar</span></p>
+        </a>
+
+        <a asp-controller="Conversaciones" asp-action="Index" class="tarjeta-accion-opcion">
+            <div class="tarjeta-accion-caja-icono">
+                <span class="icono-fontawesome fas fa-comments"></span>
+            </div>
+            <p class="tarjeta-accion-etiqueta">Ver <span class="texto-enfasis-negrita">conversaciones</span></p>
+        </a>
+
+        <a asp-controller="Notificaciones" asp-action="Index" class="tarjeta-accion-opcion">
+            <div class="tarjeta-accion-caja-icono contenedor-notificacion-badge">
+                <span class="icono-fontawesome fas fa-bell"></span>
+                <span class="badge-numero-notificaciones">3</span>
+            </div>
+            <p class="tarjeta-accion-etiqueta">Ver <span class="texto-enfasis-negrita">notificaciones</span></p>
+        </a>
+
+    </div>
+</section>
+
+<section class="seccion-contenedor-principal seccion-consejos-comunidad">
+    <h2 class="titulo-seccion-general">Consejos de trabajo</h2>
+    <div class="grid-tarjetas-consejos">
+        
+        <div class="tarjeta-consejo-item">
+            <div class="tarjeta-consejo-caja-icono">
+                <span class="icono-fontawesome fas fa-clock icono-consejo-principal"></span>
+                <span class="icono-fontawesome fas fa-check-circle badge-tilde-verificacion"></span>
+            </div>
+            <p class="tarjeta-consejo-descripcion">La puntualidad es fundamental para los adultos. Procurá llegar 15 minutos antes de la hora de la tarea para recibir una mejor reseña y ser mejor valorado.</p>
+        </div>
+
+        <div class="tarjeta-consejo-item">
+            <div class="tarjeta-consejo-caja-icono">
+                <span class="icono-fontawesome fas fa-user-friends icono-consejo-principal"></span>
+                <span class="icono-fontawesome fas fa-check-circle badge-tilde-verificacion"></span>
+            </div>
+            <p class="tarjeta-consejo-descripcion">El respeto es primordial en nuestra comunidad. Recordá que esto busca que todos salgan beneficiados. Hagamos una comunidad mejor.</p>
+        </div>
+
+        <div class="tarjeta-consejo-item">
+            <div class="tarjeta-consejo-caja-icono">
+                <span class="icono-fontawesome fas fa-book-reader icono-consejo-principal"></span>
+                <span class="icono-fontawesome fas fa-check-circle badge-tilde-verificacion"></span>
+            </div>
+            <p class="tarjeta-consejo-descripcion">El aprendizaje es fundamental para ambas partes. Aprendé del adulto y que el adulto aprenda de vos. Todos aprendemos de los demás.</p>
+        </div>
+
+    </div>
+</section>
+
+<section class="seccion-contenedor-principal seccion-historial-actividades">
+    <h2 class="titulo-seccion-general">Ultimas actividades</h2>
+    <div class="contenedor-lista-actividades">
+        
+        <div class="item-tarjeta-actividad">
+            <div class="actividad-columna-usuario">
+                <img src="~/images/user1.jpg" alt="Julián Pérez" class="imagen-avatar-usuario">
+                <span class="nombre-usuario-actividad">Julián Pérez</span>
+            </div>
+            <div class="actividad-columna-detalles">
+                <p class="texto-trabajo-realizado">Trabajo realizado: Carpintería</p>
+                <p class="texto-precio-trabajo">Precio: 5000$</p>
+            </div>
+            <div class="actividad-columna-fecha">
+                <span class="texto-fecha-realizacion">Fecha: 4/7/25</span>
+            </div>
+        </div>
+
+        <div class="item-tarjeta-actividad">
+            <div class="actividad-columna-usuario">
+                <img src="~/images/user2.jpg" alt="Ariela massa" class="imagen-avatar-usuario">
+                <span class="nombre-usuario-actividad">Ariela massa</span>
+            </div>
+            <div class="actividad-columna-detalles">
+                <p class="texto-trabajo-realizado">Trabajo realizado: Jardinería</p>
+                <p class="texto-precio-trabajo">Precio: 5000$</p>
+            </div>
+            <div class="actividad-columna-fecha">
+                <span class="texto-fecha-realizacion">Fecha: 5/4/25</span>
+            </div>
+        </div>
+
+        <div class="item-tarjeta-actividad">
+            <div class="actividad-columna-usuario">
+                <img src="~/images/user3.jpg" alt="Rita Díaz" class="imagen-avatar-usuario">
+                <span class="nombre-usuario-actividad">Rita Díaz</span>
+            </div>
+            <div class="actividad-columna-detalles">
+                <p class="texto-trabajo-realizado">Trabajo realizado: Comprar algo</p>
+                <p class="texto-precio-trabajo">Precio: 5000$</p>
+            </div>
+            <div class="actividad-columna-fecha">
+                <span class="texto-fecha-realizacion">Fecha: 2/4/25</span>
+            </div>
+        </div>
+
+        <div class="item-tarjeta-actividad">
+            <div class="actividad-columna-usuario">
+                <img src="~/images/user4.jpg" alt="Tomas martínez" class="imagen-avatar-usuario">
+                <span class="nombre-usuario-actividad">Tomas martínez</span>
+            </div>
+            <div class="actividad-columna-detalles">
+                <p class="texto-trabajo-realizado">Trabajo realizado: Retirar un pedido</p>
+                <p class="texto-precio-trabajo">Precio: 5000$</p>
+            </div>
+            <div class="actividad-columna-fecha">
+                <span class="texto-fecha-realizacion">Fecha: 8/3/25</span>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<footer class="pie-pagina-sitio">
+    <div class="footer-bloque-superior">
+        <div class="footer-contenedor-logo">
+            <img src="~/images/logo-teayudo.png" alt="Te Ayudo Logo" class="footer-imagen-logo">
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Te Ayudo</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Desarrolladores</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Nuestra Historia</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Categorías</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Explorá</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Preguntas frecuentes</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Sumate como joven</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Explorá</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Preguntas frecuentes</a></li>
+            </ul>
+        </div>
+        <div class="footer-columna-enlaces">
+            <h4 class="footer-titulo-columna">Ayuda</h4>
+            <ul class="footer-lista-navegacion">
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Términos y condiciones</a></li>
+                <li class="footer-item-lista"><a href="#" class="footer-enlace-menu">Centro de ayuda</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bloque-inferior">
+        <div class="footer-redes-sociales">
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-instagram"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-x-twitter"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-facebook-f"></span></a>
+            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-tiktok"></span></a>
+        </div>
+        <p class="footer-texto-copyright">© @DateTime.Now.Year Te Ayudo. Todos los derechos Reservados.</p>
+    </div>
+</footer>

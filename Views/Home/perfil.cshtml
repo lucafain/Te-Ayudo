@@ -10,7 +10,9 @@
         <div class="text-center" style="margin-bottom: 18px;">
             @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfilRuta))
             {
-                <img class="profile-photo" src="@ViewBag.FotoPerfilRuta" alt="Foto de perfil" />
+                string fotoRuta = (string)ViewBag.FotoPerfilRuta;
+                string fotoUrl = fotoRuta.StartsWith("/") || fotoRuta.StartsWith("~") ? Url.Content(fotoRuta) : Url.Content("~/" + fotoRuta);
+                <img class="profile-photo" src="@fotoUrl" alt="Foto de perfil" />
             }
             else
             {
@@ -30,8 +32,8 @@
         </div>
 
         <div class="auth-actions">
+            <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
             <a class="auth-button" href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
         </div>
     </section>
 </main>
-

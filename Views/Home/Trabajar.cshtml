@@ -16,21 +16,33 @@
             <div class="auth-alert">@ViewBag.ErrorMessage</div>
         }
 
-        <form method="post" action='@Url.Action("GuardarRegistroJoven", "Home")' enctype="multipart/form-data">
+        <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+        <form action='@Url.Action("GuardarRegistroJoven", "Home")' method="post" enctype="multipart/form-data" id="formTrabajar">
             <div class="auth-grid">
                 <div class="field">
                     <label for="Email">Correo electrónico *</label>
-                    <input type="email" id="Email" name="Email" autocomplete="email" required />
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
+                </div>
+
+                <div class="field">
+                    <label for="Nombre">Nombre (opcional)</label>
+                    <input type="text" id="Nombre" name="Nombre" autocomplete="given-name" />
+                </div>
+
+                <div class="field">
+                    <label for="Apellido">Apellido (opcional)</label>
+                    <input type="text" id="Apellido" name="Apellido" autocomplete="family-name" />
                 </div>
 
                 <div class="field">
                     <label for="AmbitoLaboral">Ámbito laboral al que apunta *</label>
-                    <input type="text" id="AmbitoLaboral" name="AmbitoLaboral" required />
+                    <input type="text" id="AmbitoLaboral" name="AmbitoLaboral" />
                 </div>
 
                 <div class="field">
                     <label for="Contrasena">Contraseña *</label>
-                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" required />
+                    <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" />
                 </div>
 
                 <div class="field">

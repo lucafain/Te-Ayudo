@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Solicitar una tarea";
+    ViewData["Title"] = "Solicitar una tarea"; string? tipoUsuario = ViewBag.TipoUsuario as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@
     </header>
     <main class="wrap destination">
         <!-- Depende cuál sea el nombre que le pongamos al tipo de usuario -->
-        @if (@TipoUsuario == "Joven")
+        @if (tipoUsuario == "Joven")
         {
             <h1>Ayudas para realizar</h1>
         }
@@ -60,7 +60,7 @@
             <div class="grid_3x2">
                 <h2>Hacer las compras</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
                     {
                         <button class="success">Ver más</button>
                     }
@@ -74,7 +74,7 @@
             <div>
                 <h2>Pasear al perro</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
                     {
                         <button class="success">Ver más</button>
                     }
@@ -88,7 +88,7 @@
             <div>
                 <h2>Limpiar el baño</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
                     {
                         <button class="success">Ver más</button>
                     }
@@ -102,7 +102,8 @@
             <div>
                <h2>Barrer el comedor</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
+                
                     {
                         <button class="success">Ver más</button>
                     }
@@ -116,7 +117,7 @@
             <div>
                 <h2>Limpiar las ventanas</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
                     {
                         <button class="success">Ver más</button>
                     }
@@ -130,7 +131,7 @@
             <div>
                 <h2>Lavar los platos</h2>
                 <div class="flexbox">
-                    @if (@TipoUsuario == "Joven")
+                    @if (tipoUsuario == "Joven")
                     {
                         <button class="success">Ver más</button>
                     }
@@ -141,7 +142,7 @@
                     }
                 </div>
             </div>
-            @if (@TipoUsuario == "Joven")
+            @if (tipoUsuario == "Joven")
             {
                 <button class="principal">Realizá una nueva Ayuda</button>
             }

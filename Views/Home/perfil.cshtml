@@ -22,7 +22,7 @@
             <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
             <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
             <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
-            <p><strong>Email:</strong> @ViewBag.NombreUsuario</p>
+            <p><strong>Email:</strong> @(ViewBag.Email ?? ViewBag.NombreUsuario)</p>
             <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
             <p><strong>Teléfono:</strong> @ViewBag.Telefono</p>
             <p><strong>Ámbito laboral:</strong> @ViewBag.AmbitoLaboral</p>

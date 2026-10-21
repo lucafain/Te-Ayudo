@@ -131,7 +131,7 @@ public class HomeController : Controller
 
     [HttpPost]
 [ValidateAntiForgeryToken]
-public IActionResult GuardarRegistroMayor([FromForm] Usuarios user, [FromForm] IFormFile? FotoPerfil)
+public IActionResult GuardarRegistroMayor(Usuarios user, IFormFile? FotoPerfil)
 {
     if (user == null)
     {
@@ -156,7 +156,7 @@ public IActionResult GuardarRegistroMayor([FromForm] Usuarios user, [FromForm] I
 
     try
     {
-        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "wwwroot/img");
+        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
     }
     catch (Exception ex)
     {
@@ -182,7 +182,7 @@ public IActionResult GuardarRegistroMayor([FromForm] Usuarios user, [FromForm] I
     if (resultado)
     {
         TempData["SuccessMessage"] = "Registro exitoso. Ahora puede iniciar sesión.";
-        return RedirectToAction("Ingresar", "Home"); // Retorno de éxito
+        return RedirectToAction(nameof(Login)); // Retorno de éxito
     }
 
     ViewBag.ErrorMessage = "El email ya existe o no se pudo guardar el registro.";
@@ -294,7 +294,8 @@ public IActionResult GuardarRegistroMayor([FromForm] Usuarios user, [FromForm] I
             return RedirectToAction("Login");
         }
 
-        ViewBag.NombreUsuario = usuario.Email;
+        ViewBag.NombreUsuario = usuario.NombreUsuario ?? usuario.Email;
+        ViewBag.Email = usuario.Email;
         ViewBag.Nombre = usuario.Nombre;
         ViewBag.Apellido = usuario.Apellido;
         ViewBag.TipoUsuario = usuario.TipoUsuario;

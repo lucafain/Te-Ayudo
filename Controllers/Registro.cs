@@ -164,7 +164,7 @@ public class RegistroController : Controller
             return RedirectToAction("Login");
         }
 
-        ViewBag.NombreUsuario = usuario.Email;
+        ViewBag.NombreUsuario = usuario.NombreUsuario ?? usuario.Email;
         ViewBag.Email = usuario.Email;
         ViewBag.Nombre = usuario.Nombre;
         ViewBag.Apellido = usuario.Apellido;

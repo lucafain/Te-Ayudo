@@ -1,147 +1,168 @@
 @{
-    ViewData["Title"] = "Explorar";
+    ViewData["Title"] = "Explorá";
 }
 
-<header class="header-navegacion-principal">
-    <a href='@Url.Action("Index", "Home")' class="header-contenedor-logo">
-        <img src="~/img/logo-teayudo.png" alt="Te Ayudo Logo" class="header-imagen-logo">
+<header class="header">
+    <a class="logo" href='@Url.Action("Index", "Home")'>
+        <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
     </a>
-    <nav class="header-menu-botones">
-        <a href='@Url.Action("Explorar", "Home")' class="boton-navegacion">Explorá</a>
-        <a href='@Url.Action("Index", "Home")#preguntas' class="boton-navegacion">Preguntas frecuentes</a>
-        <a href='@Url.Action("RegistroJoven", "Home")' class="boton-navegacion">Sumate como joven</a>
-        <a href='@Url.Action("SolicitarTarea", "Home")' class="boton-navegacion">Solicitar ayuda</a>
-        <a href='@Url.Action("Perfil", "Home")' class="boton-navegacion" style="background-color: #285548;">Mi Cuenta</a>
+
+    <button class="menu-toggle"
+            aria-expanded="false"
+            aria-controls="navigation"
+            aria-label="Abrir menú">
+        ☰
+    </button>
+
+    <nav id="navigation" aria-label="Navegación principal">
+        <a class="nav-button" href='@Url.Action("Explorar", "Home")'>
+            Explorá
+        </a>
+
+        <a class="nav-button" href='@Url.Action("Index", "Home")#preguntas'>
+            Preguntas frecuentes
+        </a>
+
+        <a class="nav-button" href='@Url.Action("RegistroJoven", "Home")'>
+            Trabajá con nosotros
+        </a>
+
+        <a class="nav-button nav-help" href='@Url.Action("SolicitarTarea", "Home")'>
+            Solicita tus ayudas
+        </a>
+
+        <a class="nav-button login" href='@Url.Action("Perfil", "Home")'>
+            <img class="login-icon" src="~/img/user.svg" alt="" />
+            Mi cuenta
+        </a>
     </nav>
 </header>
 
-<section class="seccion-contenedor-principal seccion-explorar-mapa">
-    <div class="contenedor-mapa-zona">
-        <iframe 
-            class="mapa-ubicacion-iframe"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13136.068307238214!2d-58.4418!3d-34.5912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca0d6c4a5bb7%3A0x247a3e5c92c7d9c6!2sVilla%20Crespo%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000" 
-            allowfullscreen="" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-</section>
-
-<section class="seccion-contenedor-principal seccion-historial-joven">
-    <h2 class="titulo-seccion-general">Historial</h2>
-    <div class="tarjeta-resumen-usuario">
-        @{
-            string rutaFotoJoven = (string?)ViewBag.Joven?.FotoPerfilRuta ?? "";
-            string srcJoven = string.IsNullOrEmpty(rutaFotoJoven)
-                ? Url.Content("~/img/user.svg")
-                : Url.Content("~" + rutaFotoJoven);
-            string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
-            if (string.IsNullOrEmpty(nombreJoven))
-            {
-                nombreJoven = ViewBag.Joven?.NombreUsuario ?? "Joven de la comunidad";
-            }
-        }
-        <img src="@srcJoven" alt="Foto Joven" class="avatar-resumen-joven">
-        <div class="detalles-resumen-joven">
-            <h3 class="nombre-resumen-joven">@nombreJoven</h3>
-            <p class="conteo-ayudas-joven">21 ayudas realizadas</p>
+<main class="page" id="explorar">
+    <section class="panel seccion-explorar-mapa">
+        <h2>Mapa de nuestra comunidad</h2>
+        <div class="contenedor-mapa-zona">
+            <iframe
+                class="mapa-ubicacion-iframe"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13136.068307238214!2d-58.4418!3d-34.5912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca0d6c4a5bb7%3A0x247a3e5c92c7d9c6!2sVilla%20Crespo%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="seccion-contenedor-principal seccion-ultimos-ayudados">
-    <h2 class="titulo-seccion-general">Ultimos ayudados</h2>
-    <div class="contenedor-lista-ayudados">
-        
-        @{
-            List<Usuarios>? listaAyudados = ViewBag.UltimosAyudados as List<Usuarios>;
-        }
-        @if (listaAyudados != null && listaAyudados.Count > 0)
-        {
-            int posicion = 1;
-            foreach (Usuarios adulto in listaAyudados)
-            {
-                string rutaFotoAdulto = adulto.FotoPerfilRuta ?? "";
-                string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
+    <section class="panel seccion-historial-joven">
+        <h2>Historial</h2>
+        <div class="tarjeta-resumen-usuario">
+            @{
+                string rutaFotoJoven = (string?)ViewBag.Joven?.FotoPerfilRuta ?? "";
+                string srcJoven = string.IsNullOrEmpty(rutaFotoJoven)
                     ? Url.Content("~/img/user.svg")
-                    : Url.Content("~" + rutaFotoAdulto);
-                string nombreAdulto = ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim();
-                if (string.IsNullOrEmpty(nombreAdulto))
+                    : Url.Content("~" + rutaFotoJoven);
+                string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
+                if (string.IsNullOrEmpty(nombreJoven))
                 {
-                    nombreAdulto = adulto.NombreUsuario ?? "Adulto mayor";
+                    nombreJoven = ViewBag.Joven?.NombreUsuario ?? "Joven de la comunidad";
                 }
-
-                <div class="item-tarjeta-ayudado">
-                    <div class="ayudado-info-usuario">
-                        <img src="@srcAdulto" alt="@nombreAdulto" class="imagen-avatar-ayudado">
-                        <span class="nombre-usuario-ayudado">@nombreAdulto</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <button type="button" class="boton-navegacion" style="border: none; background-color: #285548; cursor: pointer;" onclick="verInfoAyudado(@adulto.IdUsuario)">Ver más info</button>
-                        <span class="posicion-ranking-numero">#@posicion</span>
-                    </div>
-                </div>
-                posicion++;
             }
-        }
-        else
-        {
-            <div class="item-tarjeta-ayudado">
-                <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+            <img src="@srcJoven" alt="Foto Joven" class="avatar-resumen-joven" />
+            <div class="detalles-resumen-joven">
+                <h3 class="nombre-resumen-joven">@nombreJoven</h3>
+                <p class="conteo-ayudas-joven">21 ayudas realizadas</p>
             </div>
-        }
+        </div>
+    </section>
 
+    <section class="panel seccion-ultimos-ayudados">
+        <h2>Últimos ayudados</h2>
+        <div class="contenedor-lista-ayudados">
+            @{
+                List<Usuarios>? listaAyudados = ViewBag.UltimosAyudados as List<Usuarios>;
+            }
+            @if (listaAyudados != null && listaAyudados.Count > 0)
+            {
+                int posicion = 1;
+                foreach (Usuarios adulto in listaAyudados)
+                {
+                    string rutaFotoAdulto = adulto.FotoPerfilRuta ?? "";
+                    string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
+                        ? Url.Content("~/img/user.svg")
+                        : Url.Content("~" + rutaFotoAdulto);
+                    string nombreAdulto = ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim();
+                    if (string.IsNullOrEmpty(nombreAdulto))
+                    {
+                        nombreAdulto = adulto.NombreUsuario ?? "Adulto mayor";
+                    }
+
+                    <div class="item-tarjeta-ayudado">
+                        <div class="ayudado-info-usuario">
+                            <img src="@srcAdulto" alt="@nombreAdulto" class="imagen-avatar-ayudado" />
+                            <span class="nombre-usuario-ayudado">@nombreAdulto</span>
+                        </div>
+                        <div class="ayudado-acciones">
+                            <button type="button" class="button" onclick="verInfoAyudado(@adulto.IdUsuario)">Ver más info</button>
+                            <span class="posicion-ranking-numero">#@posicion</span>
+                        </div>
+                    </div>
+                    posicion++;
+                }
+            }
+            else
+            {
+                <div class="item-tarjeta-ayudado">
+                    <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+                </div>
+            }
+        </div>
+
+        <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
+            <h3 id="detalleNombre"></h3>
+            <p id="detalleEmail"></p>
+            <p id="detalleTelefono"></p>
+            <p id="detalleTipo"></p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-content page">
+        <a class="logo" href='@Url.Action("Index", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <div>
+            <h3>Te Ayudo</h3>
+            <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+            <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+        </div>
+
+        <div>
+            <h3>Explorá</h3>
+            <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+            <a href='@Url.Action("Index", "Home")#como-funciona'>Cómo funciona</a>
+            <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+        </div>
+
+        <div>
+            <h3>Trabajá con nosotros</h3>
+            <a href='@Url.Action("Index", "Home")#trabaja'>Conocé la propuesta</a>
+            <a href='@Url.Action("RegistroJoven", "Home")'>
+                Sumate
+            </a>
+        </div>
+
+        <div>
+            <h3>Ayuda</h3>
+            <a href='@Url.Action("Index", "Home")#preguntas'>Preguntas frecuentes</a>
+            <a href='@Url.Action("Ingresar", "Home")'>
+                Iniciar sesión
+            </a>
+        </div>
     </div>
 
-    <div id="contenedorDetalleFetch" style="display: none; max-width: 650px; margin: 20px auto 0 auto; background-color: #ffffff; border: 2px solid #285548; border-radius: 25px; padding: 20px; text-align: left;">
-        <h3 id="detalleNombre" style="margin-bottom: 8px; color: #285548;"></h3>
-        <p id="detalleEmail" style="margin: 4px 0;"></p>
-        <p id="detalleTelefono" style="margin: 4px 0;"></p>
-        <p id="detalleTipo" style="margin: 4px 0;"></p>
-    </div>
-</section>
-
-<footer class="pie-pagina-sitio">
-    <div class="footer-bloque-superior">
-        <div class="footer-contenedor-logo">
-            <img src="~/img/logo-teayudo.png" alt="Te Ayudo Logo" class="footer-imagen-logo">
-        </div>
-        <div class="footer-columna-enlaces">
-            <h4 class="footer-titulo-columna">Te Ayudo</h4>
-            <ul class="footer-lista-navegacion">
-                <li class="footer-item-lista"><a href='@Url.Action("Index", "Home")' class="footer-enlace-menu">Inicio</a></li>
-                <li class="footer-item-lista"><a href='@Url.Action("Index", "Home")#nosotros' class="footer-enlace-menu">Nuestra historia</a></li>
-            </ul>
-        </div>
-        <div class="footer-columna-enlaces">
-            <h4 class="footer-titulo-columna">Categorías</h4>
-            <ul class="footer-lista-navegacion">
-                <li class="footer-item-lista"><a href='@Url.Action("Explorar", "Home")' class="footer-enlace-menu">Explorá</a></li>
-                <li class="footer-item-lista"><a href='@Url.Action("Index", "Home")#preguntas' class="footer-enlace-menu">Preguntas frecuentes</a></li>
-            </ul>
-        </div>
-        <div class="footer-columna-enlaces">
-            <h4 class="footer-titulo-columna">Sumate como joven</h4>
-            <ul class="footer-lista-navegacion">
-                <li class="footer-item-lista"><a href='@Url.Action("RegistroJoven", "Home")' class="footer-enlace-menu">Trabajá con nosotros</a></li>
-                <li class="footer-item-lista"><a href='@Url.Action("Index", "Home")#trabaja' class="footer-enlace-menu">Propuesta</a></li>
-            </ul>
-        </div>
-        <div class="footer-columna-enlaces">
-            <h4 class="footer-titulo-columna">Ayuda</h4>
-            <ul class="footer-lista-navegacion">
-                <li class="footer-item-lista"><a href='@Url.Action("SolicitarTarea", "Home")' class="footer-enlace-menu">Solicitar ayuda</a></li>
-                <li class="footer-item-lista"><a href='@Url.Action("Login", "Home")' class="footer-enlace-menu">Iniciar sesión</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bloque-inferior">
-        <div class="footer-redes-sociales">
-            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-instagram"></span></a>
-            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-x-twitter"></span></a>
-            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-facebook-f"></span></a>
-            <a href="#" class="footer-enlace-red-social"><span class="icono-fontawesome fab fa-tiktok"></span></a>
-        </div>
-        <p class="footer-texto-copyright">© @DateTime.Now.Year Te Ayudo. Todos los derechos Reservados.</p>
-    </div>
+    <p class="copyright">
+        © <span id="year">2026</span> Te Ayudo.
+        Todos los derechos reservados.
+    </p>
 </footer>

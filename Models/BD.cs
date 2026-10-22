@@ -16,7 +16,7 @@ public static class BD
             string masterConnectionString = @"Server=(localdb)\MSSQLLocalDB;DataBase=master;Trusted_Connection=True;TrustServerCertificate=True;";
             using (SqlConnection masterDb = new SqlConnection(masterConnectionString))
             {
-                string sqlCrearBase = "IF DB_ID('TeAyudo') IS NULL CREATE DATABASE TeAyudo;";
+                string sqlCrearBase = "IF DB_ID('Te_Ayudo') IS NULL CREATE DATABASE Te_Ayudo;";
                 masterDb.Execute(sqlCrearBase);
             }
         }

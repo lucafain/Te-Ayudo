@@ -99,7 +99,7 @@
             {
                 foreach (Tareas tarea in misTareas)
                 {
-                    DateTime fechaMostrar = tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion;
+                    DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
                     <div class="item-tarjeta-ayudado">
                         <div class="ayudado-info-usuario" style="text-align: left; display: block;">
                             <span class="nombre-usuario-ayudado">@tarea.Titulo</span>

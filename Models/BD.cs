@@ -132,6 +132,10 @@ public static class BD
             posiblesValores.Add("lugar", tarea.Lugar);
             posiblesValores.Add("diaTarea", tarea.DiaTarea);
             posiblesValores.Add("horaTarea", tarea.HoraTarea);
+            // Nombres alternativos que puede tener la columna en la BD
+            posiblesValores.Add("diaFecha", tarea.DiaTarea.Date.Add(tarea.HoraTarea));
+            posiblesValores.Add("horaFecha", tarea.HoraTarea);
+            posiblesValores.Add("hora", tarea.HoraTarea);
             posiblesValores.Add("aclaracion", tarea.Aclaracion);
             posiblesValores.Add("monto", tarea.Monto);
             posiblesValores.Add("tipoLugar", tarea.TipoLugar);

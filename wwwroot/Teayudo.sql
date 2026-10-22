@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Te_Ayudo]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  Database [Te_Ayudo]    Script Date: 22/10/2026 08:58:30 ******/
 CREATE DATABASE [Te_Ayudo]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -79,10 +79,10 @@ ALTER DATABASE [Te_Ayudo] SET QUERY_STORE = OFF
 GO
 USE [Te_Ayudo]
 GO
-/****** Object:  User [alumno]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  User [alumno]    Script Date: 22/10/2026 08:58:30 ******/
 CREATE USER [alumno] FOR LOGIN [alumno] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  Table [dbo].[Mensajes]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  Table [dbo].[Mensajes]    Script Date: 22/10/2026 08:58:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,7 +99,7 @@ CREATE TABLE [dbo].[Mensajes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Postulaciones]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  Table [dbo].[Postulaciones]    Script Date: 22/10/2026 08:58:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -117,7 +117,7 @@ CREATE TABLE [dbo].[Postulaciones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tareas]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  Table [dbo].[Tareas]    Script Date: 22/10/2026 08:58:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -141,7 +141,7 @@ CREATE TABLE [dbo].[Tareas](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Usuarios]    Script Date: 21/10/2026 13:37:37 ******/
+/****** Object:  Table [dbo].[Usuarios]    Script Date: 22/10/2026 08:58:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -185,6 +185,280 @@ ALTER TABLE [dbo].[Postulaciones]  WITH CHECK ADD  CONSTRAINT [FK_Postulaciones_
 REFERENCES [dbo].[Usuarios] ([IdUsuario])
 GO
 ALTER TABLE [dbo].[Postulaciones] CHECK CONSTRAINT [FK_Postulaciones_Usuarios]
+GO
+/****** Object:  StoredProcedure [dbo].[BuscarTareasPorLugar]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[BuscarTareasPorLugar]
+    @lugar VARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Tareas WHERE lugar LIKE '%' + @lugar + '%' AND estado = 1
+END
+GO
+/****** Object:  StoredProcedure [dbo].[CalificarPostulacion]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[CalificarPostulacion]
+    @IdPostulacion INT,
+    @calificacion FLOAT,
+    @puntual BIT
+AS
+BEGIN
+    UPDATE Postulaciones SET calificacion = @calificacion, puntual = @puntual WHERE IdPostulacion = @IdPostulacion
+END
+GO
+/****** Object:  StoredProcedure [dbo].[CambiarEstadoPostulacion]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[CambiarEstadoPostulacion]
+    @IdPostulacion INT,
+    @estado VARCHAR(50)
+AS
+BEGIN
+    UPDATE Postulaciones SET estado = @estado WHERE IdPostulacion = @IdPostulacion
+END
+GO
+/****** Object:  StoredProcedure [dbo].[CambiarEstadoTarea]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[CambiarEstadoTarea]
+    @IdTarea INT,
+    @estado BIT
+AS
+BEGIN
+    UPDATE Tareas SET estado = @estado WHERE IdTarea = @IdTarea
+END
+GO
+/****** Object:  StoredProcedure [dbo].[CrearPostulacion]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[CrearPostulacion]
+    @IdUsuario INT,
+    @IdTarea INT
+AS
+BEGIN
+    INSERT INTO Postulaciones (IdUsuario, IdTarea, estado, calificacion, puntual) VALUES (@IdUsuario, @IdTarea, 'Pendiente', NULL, NULL)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[EnviarMensaje]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[EnviarMensaje]
+    @contenido VARCHAR(MAX),
+    @IdEmisor INT,
+    @IdReceptor INT
+AS
+BEGIN
+    INSERT INTO Mensajes (contenido, fechaEnvio, IdEmisor, IdReceptor) VALUES (@contenido, GETDATE(), @IdEmisor, @IdReceptor)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[IniciarSesion]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[IniciarSesion]
+    @email VARCHAR(50),
+    @contrasena VARCHAR(50)
+AS
+BEGIN
+    SELECT IdUsuario, nombre, apellido, email, tipoUsuario FROM Usuarios WHERE email = @email AND contrasena = @contrasena
+END
+GO
+/****** Object:  StoredProcedure [dbo].[ModificarUsuario]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ModificarUsuario]
+    @IdUsuario INT,
+    @nombre VARCHAR(50),
+    @apellido VARCHAR(50),
+    @email VARCHAR(50),
+    @provincia VARCHAR(50),
+    @direccion INT,
+    @calle VARCHAR(100),
+    @codigoPostal VARCHAR(8),
+    @contrasena VARCHAR(50),
+    @fotoPerfil VARCHAR(MAX)
+AS
+BEGIN
+    UPDATE Usuarios SET nombre = @nombre, apellido = @apellido, email = @email, provincia = @provincia, direccion = @direccion, calle = @calle, codigoPostal = @codigoPostal, contrasena = @contrasena, fotoPerfil = @fotoPerfil WHERE IdUsuario = @IdUsuario
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarConversacion]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[MostrarConversacion]
+    @IdUsuario1 INT,
+    @IdUsuario2 INT
+AS
+BEGIN
+    SELECT * FROM Mensajes WHERE (IdEmisor = @IdUsuario1 AND IdReceptor = @IdUsuario2) OR (IdEmisor = @IdUsuario2 AND IdReceptor = @IdUsuario1) ORDER BY fechaEnvio
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarMensajesRecibidos]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MostrarMensajesRecibidos]
+    @IdReceptor INT
+AS
+BEGIN
+    SELECT M.IdMensaje, M.contenido, M.fechaEnvio, M.IdEmisor, U.nombre, U.apellido FROM Mensajes M INNER JOIN Usuarios U ON M.IdEmisor = U.IdUsuario WHERE M.IdReceptor = @IdReceptor ORDER BY M.fechaEnvio DESC
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarPerfil]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MostrarPerfil]
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT IdUsuario, nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, fotoPerfil FROM Usuarios WHERE IdUsuario = @IdUsuario
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesCompletas]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[MostrarPostulacionesCompletas]
+    @IdTarea INT
+AS
+BEGIN
+    SELECT P.IdPostulacion, P.estado, P.calificacion, P.puntual, U.IdUsuario, U.nombre, U.apellido, T.IdTarea, T.titulo, T.descripcion, T.lugar, T.diaTarea, T.horaTarea, T.monto FROM Postulaciones P INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario INNER JOIN Tareas T ON P.IdTarea = T.IdTarea WHERE T.IdTarea = @IdTarea
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesUsuario]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[MostrarPostulacionesUsuario]
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT * FROM Postulaciones WHERE IdUsuario = @IdUsuario
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarPostulantesTarea]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[MostrarPostulantesTarea]
+    @IdTarea INT
+AS
+BEGIN
+    SELECT U.IdUsuario, U.nombre, U.apellido, U.email, P.IdPostulacion, P.estado, P.calificacion, P.puntual FROM Postulaciones P INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario WHERE P.IdTarea = @IdTarea
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarTareasConUsuarios]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[MostrarTareasConUsuarios]
+AS
+BEGIN
+    SELECT T.IdTarea, T.titulo, T.descripcion, T.estado, T.fechaCreacion, T.lugar, T.diaTarea, T.horaTarea, T.aclaracion, T.monto, T.tipoLugar, U.IdUsuario, U.nombre, U.apellido FROM Tareas T INNER JOIN Usuarios U ON T.IdUsuarioSolicitante = U.IdUsuario
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarTareasDisponibles]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MostrarTareasDisponibles]
+AS
+BEGIN
+    SELECT * FROM Tareas WHERE estado = 1
+END
+GO
+/****** Object:  StoredProcedure [dbo].[MostrarTareasUsuario]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MostrarTareasUsuario]
+    @IdUsuarioSolicitante INT
+AS
+BEGIN
+    SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @IdUsuarioSolicitante
+END
+GO
+/****** Object:  StoredProcedure [dbo].[PublicarTarea]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[PublicarTarea]
+    @titulo VARCHAR(50),
+    @descripcion VARCHAR(50),
+    @lugar VARCHAR(50),
+    @diaTarea DATE,
+    @horaTarea TIME,
+    @aclaracion VARCHAR(MAX),
+    @monto FLOAT,
+    @tipoLugar VARCHAR(50),
+    @IdUsuarioSolicitante INT
+AS
+BEGIN
+    INSERT INTO Tareas (titulo, descripcion, estado, fechaCreacion, lugar, diaTarea, horaTarea, aclaracion, monto, tipoLugar, IdUsuarioSolicitante) VALUES (@titulo, @descripcion, 1, GETDATE(), @lugar, @diaTarea, @horaTarea, @aclaracion, @monto, @tipoLugar, @IdUsuarioSolicitante)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[RegistrarUsuario]    Script Date: 22/10/2026 08:58:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[RegistrarUsuario]
+    @nombre VARCHAR(50),
+    @apellido VARCHAR(50),
+    @email VARCHAR(50),
+    @provincia VARCHAR(50),
+    @direccion INT,
+    @calle VARCHAR(100),
+    @codigoPostal VARCHAR(8),
+    @tipoUsuario BIT,
+    @contrasena VARCHAR(50),
+    @aceptaTerminos BIT,
+    @fotoPerfil VARCHAR(MAX)
+AS
+BEGIN
+    INSERT INTO Usuarios (nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, contrasena, aceptaTerminos, fotoPerfil) VALUES (@nombre, @apellido, @email, @provincia, @direccion, @calle, @codigoPostal, GETDATE(), @tipoUsuario, @contrasena, @aceptaTerminos, @fotoPerfil)
+END
 GO
 USE [master]
 GO

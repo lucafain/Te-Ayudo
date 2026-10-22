@@ -174,7 +174,7 @@ function verInfoAyudado(idUsuario) {
                 let calle = datos.calle || datos.Calle || '';
                 let direccion = datos.direccion || datos.Direccion || '';
                 let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
-                let tipoTexto = tipoBool ? 'Adulto mayor' : 'Joven';
+                let tipoTexto = tipoBool ? 'Joven' : 'Adulto mayor';
 
                 let nombreCompleto = (nombre + ' ' + apellido).trim();
                 if (nombreCompleto === '') {

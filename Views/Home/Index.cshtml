@@ -15,7 +15,7 @@
     </button>
 
     <nav id="navigation" aria-label="Navegación principal">
-        <a class="nav-button" href='@Url.Action("Explorar", "Home")'>
+        <a class="nav-button" href='@Url.Action("PrincipalJoven", "Home")'>
             Explorá
         </a>
 
@@ -23,11 +23,11 @@
             Preguntas frecuentes
         </a>
 
-        <a class="nav-button" href="#trabaja">
+        <a class="nav-button" href='@Url.Action("RegistroJoven", "Home")'>
             Trabajá con nosotros
         </a>
 
-        <a class="nav-button nav-help" href="#adultos">
+        <a class="nav-button nav-help" href='@Url.Action("RegistroMayor", "Home")'>
             Solicita tus ayudas
         </a>
 
@@ -161,7 +161,7 @@
 
         <div>
             <h3>Explorá</h3>
-            <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+            <a href='@Url.Action("PrincipalJoven", "Home")'>Mapa y comunidad</a>
             <a href="#como-funciona">Cómo funciona</a>
             <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
         </div>

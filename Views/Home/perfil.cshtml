@@ -31,8 +31,15 @@
             <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
         </div>
 
-        <div class="auth-actions">
-            <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+        <div class="auth-actions" style="gap: 12px;">
+            @if (ViewBag.EsJoven == true)
+            {
+                <a class="auth-button auth-button--secondary" href='@Url.Action("PrincipalJoven", "Home")'>Ir al inicio</a>
+            }
+            else
+            {
+                <a class="auth-button auth-button--secondary" href='@Url.Action("PrincipalAdulto", "Home")'>Ir al inicio</a>
+            }
             <a class="auth-button" href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
         </div>
     </section>

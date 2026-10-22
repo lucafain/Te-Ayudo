@@ -198,6 +198,7 @@ public class HomeController : Controller
         }
 
         // Slide 46: Tomar los datos del form y guardarlos en un objeto
+        // tipoUsuario = false (0) es Adulto
         Usuarios user = new Usuarios();
         user.Nombre = Nombre;
         user.Apellido = Apellido;
@@ -207,7 +208,7 @@ public class HomeController : Controller
         user.Direccion = Direccion;
         user.CodigoPostal = CodigoPostal ?? "";
         user.FechaRegistro = DateTime.Now;
-        user.TipoUsuario = true; // true (1) = Adulto mayor
+        user.TipoUsuario = false; // false = Adulto
         user.Contrasena = Contrasena;
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfil = GuardarArchivo(FotoPerfil, "uploads/perfiles") ?? "/img/user.svg";
@@ -216,8 +217,13 @@ public class HomeController : Controller
 
         if (resultado)
         {
-            // Slide 33 y 50: RedirectToAction con paso de parámetros con new { ... }
-            return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
+            Usuarios? usuarioGuardado = BD.ObtenerUsuarioPorEmail(user.Email);
+            if (usuarioGuardado != null)
+            {
+                HttpContext.Session.SetString("EmailLogueado", usuarioGuardado.Email);
+                HttpContext.Session.SetInt32("IdUsuarioLogueado", usuarioGuardado.IdUsuario);
+            }
+            return RedirectToAction("Perfil", "Home");
         }
 
         ViewBag.ErrorMessage = "El email ya existe o no se pudo guardar el registro.";
@@ -253,6 +259,7 @@ public class HomeController : Controller
         }
 
         // Slide 46: Guardar en objeto
+        // tipoUsuario = true (1) es Joven
         Usuarios user = new Usuarios();
         user.Nombre = Nombre;
         user.Apellido = Apellido;
@@ -262,7 +269,7 @@ public class HomeController : Controller
         user.Direccion = Direccion;
         user.CodigoPostal = CodigoPostal ?? "";
         user.FechaRegistro = DateTime.Now;
-        user.TipoUsuario = false; // false (0) = Joven
+        user.TipoUsuario = true; // true = Joven
         user.Contrasena = Contrasena;
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfil = GuardarArchivo(FotoPerfil, "uploads/perfiles") ?? "/img/user.svg";
@@ -271,8 +278,13 @@ public class HomeController : Controller
 
         if (resultado)
         {
-            // Slide 33 y 50: RedirectToAction pasando parámetro con new { ... }
-            return RedirectToAction("Login", "Home", new { mensaje = "Registro exitoso. Ahora puede iniciar sesión." });
+            Usuarios? usuarioGuardado = BD.ObtenerUsuarioPorEmail(user.Email);
+            if (usuarioGuardado != null)
+            {
+                HttpContext.Session.SetString("EmailLogueado", usuarioGuardado.Email);
+                HttpContext.Session.SetInt32("IdUsuarioLogueado", usuarioGuardado.IdUsuario);
+            }
+            return RedirectToAction("Perfil", "Home");
         }
 
         ViewBag.ErrorMessage = "El email ya existe. Por favor, elegí otro.";
@@ -328,10 +340,36 @@ public class HomeController : Controller
         ViewBag.Calle = usuario.Calle;
         ViewBag.Direccion = usuario.Direccion;
         ViewBag.CodigoPostal = usuario.CodigoPostal;
-        ViewBag.TipoUsuario = usuario.TipoUsuario ? "Adulto mayor" : "Joven";
+        ViewBag.EsJoven = usuario.TipoUsuario; // true = Joven, false = Adulto
+        ViewBag.TipoUsuario = usuario.TipoUsuario ? "Joven" : "Adulto mayor";
         ViewBag.FotoPerfil = usuario.FotoPerfil;
 
         return View("perfil");
+    }
+
+    public IActionResult PrincipalJoven()
+    {
+        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
+
+        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+
+        return View("PrincipalJoven");
+    }
+
+    public IActionResult PrincipalAdulto()
+    {
+        int idAdultoLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
+
+        ViewBag.Adulto = BD.ObtenerUsuarioPorId(idAdultoLogueado);
+        ViewBag.Jovenes = BD.ObtenerJovenesDisponibles();
+
+        return View("PrincipalAdulto");
+    }
+
+    public IActionResult Explorar()
+    {
+        return RedirectToAction("PrincipalJoven", "Home");
     }
 
     public IActionResult CerrarSesion()
@@ -340,16 +378,6 @@ public class HomeController : Controller
         HttpContext.Session.Remove("IdUsuarioLogueado");
         HttpContext.Session.Clear();
         return RedirectToAction("Index", "Home");
-    }
-
-    public IActionResult Explorar()
-    {
-        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
-
-        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
-        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
-
-        return View();
     }
 
     // Endpoint para peticiones server-side FETCH (Slides 142-146 del PDF)

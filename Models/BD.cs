@@ -81,7 +81,18 @@ public static class BD
         return ObtenerUsuarioPorId(idJoven);
     }
 
+    // tipoUsuario = 0 (false) son los Adultos
     public static List<Usuarios> ObtenerUltimosAyudados(int idJoven)
+    {
+        string sql = "SELECT * FROM Usuarios WHERE tipoUsuario = 0";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            return connection.Query<Usuarios>(sql).ToList();
+        }
+    }
+
+    // tipoUsuario = 1 (true) son los Jóvenes
+    public static List<Usuarios> ObtenerJovenesDisponibles()
     {
         string sql = "SELECT * FROM Usuarios WHERE tipoUsuario = 1";
         using (SqlConnection connection = new SqlConnection(_connectionString))

@@ -75,6 +75,44 @@
     </section>
 
     <section class="panel seccion-ultimos-ayudados">
+        <h2>Tareas solicitadas por adultos</h2>
+        <div class="contenedor-lista-ayudados">
+            @{
+                List<Tareas>? tareasDisponibles = ViewBag.TareasDisponibles as List<Tareas>;
+            }
+            @if (tareasDisponibles != null && tareasDisponibles.Count > 0)
+            {
+                foreach (Tareas tarea in tareasDisponibles)
+                {
+                    DateTime fechaMostrar = tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion;
+                    <div class="item-tarjeta-ayudado">
+                        <div class="ayudado-info-usuario" style="text-align: left; display: block;">
+                            <span class="nombre-usuario-ayudado">@tarea.Titulo</span>
+                            <p style="font-size: 14px; margin-top: 4px;">@tarea.Descripcion</p>
+                            <p style="font-size: 13px; color: #555; margin-top: 4px;">
+                                Lugar: @tarea.Lugar · Fecha: @fechaMostrar.ToString("dd/MM/yyyy")
+                                @if (!string.IsNullOrEmpty(tarea.Aclaracion))
+                                {
+                                    <span> · @tarea.Aclaracion</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="ayudado-acciones">
+                            <button type="button" class="button" onclick="verInfoAyudado(@tarea.IdUsuarioSolicitante)">Ver solicitante</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="item-tarjeta-ayudado">
+                    <span class="nombre-usuario-ayudado">Aún no hay tareas solicitadas disponibles.</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="panel seccion-ultimos-ayudados">
         <h2>Últimos ayudados</h2>
         <div class="contenedor-lista-ayudados">
             @{

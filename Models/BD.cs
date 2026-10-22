@@ -36,6 +36,15 @@ public static class BD
         }
     }
 
+    public static Usuarios? ObtenerPrimerUsuario()
+    {
+        string sql = "SELECT TOP 1 * FROM Usuarios";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            return connection.QueryFirstOrDefault<Usuarios>(sql);
+        }
+    }
+
     public static bool GuardarUsuario(Usuarios usuario)
     {
         if (usuario == null || string.IsNullOrEmpty(usuario.Email))
@@ -98,6 +107,74 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             return connection.Query<Usuarios>(sql).ToList();
+        }
+    }
+
+    public static bool GuardarTarea(Tareas tarea)
+    {
+        if (tarea == null || string.IsNullOrEmpty(tarea.Titulo) || string.IsNullOrEmpty(tarea.Descripcion))
+        {
+            return false;
+        }
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            // Leemos las columnas que REALMENTE tiene la tabla Tareas en SQL Server,
+            // así nunca se manda una columna que no existe (ej: diaTarea / horaTarea).
+            List<string> columnasTabla = connection.Query<string>(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tareas'").ToList();
+
+            Dictionary<string, object?> posiblesValores = new Dictionary<string, object?>();
+            posiblesValores.Add("titulo", tarea.Titulo);
+            posiblesValores.Add("descripcion", tarea.Descripcion);
+            posiblesValores.Add("estado", tarea.Estado);
+            posiblesValores.Add("fechaCreacion", tarea.FechaCreacion);
+            posiblesValores.Add("lugar", tarea.Lugar);
+            posiblesValores.Add("diaTarea", tarea.DiaTarea);
+            posiblesValores.Add("horaTarea", tarea.HoraTarea);
+            posiblesValores.Add("aclaracion", tarea.Aclaracion);
+            posiblesValores.Add("monto", tarea.Monto);
+            posiblesValores.Add("tipoLugar", tarea.TipoLugar);
+            posiblesValores.Add("IdUsuarioSolicitante", tarea.IdUsuarioSolicitante);
+
+            List<string> columnasInsert = new List<string>();
+            List<string> parametrosInsert = new List<string>();
+            DynamicParameters parametros = new DynamicParameters();
+
+            foreach (string columnaTabla in columnasTabla)
+            {
+                foreach (KeyValuePair<string, object?> par in posiblesValores)
+                {
+                    if (par.Key.ToLower() == columnaTabla.ToLower())
+                    {
+                        columnasInsert.Add(columnaTabla);
+                        parametrosInsert.Add("@" + columnaTabla);
+                        parametros.Add(columnaTabla, par.Value);
+                    }
+                }
+            }
+
+            string sql = "INSERT INTO Tareas (" + string.Join(", ", columnasInsert) + ") VALUES (" + string.Join(", ", parametrosInsert) + ")";
+            int registrosAfectados = connection.Execute(sql, parametros);
+            return registrosAfectados > 0;
+        }
+    }
+
+    public static List<Tareas> ObtenerTareasPorSolicitante(int idUsuarioSolicitante)
+    {
+        string sql = "SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @pId ORDER BY IdTarea DESC";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            return connection.Query<Tareas>(sql, new { pId = idUsuarioSolicitante }).ToList();
+        }
+    }
+
+    public static List<Tareas> ObtenerTareasDisponibles()
+    {
+        string sql = "SELECT * FROM Tareas WHERE estado = 1 ORDER BY IdTarea DESC";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            return connection.Query<Tareas>(sql).ToList();
         }
     }
 }

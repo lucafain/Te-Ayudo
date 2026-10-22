@@ -25,7 +25,7 @@ body {
     margin: 0;
     background: var(--crema);
     color: var(--texto);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
     font-size: 16px;
     line-height: 1.5;
 }
@@ -35,8 +35,15 @@ a {
     text-decoration: none;
 }
 
+button,
+input,
+select,
+textarea {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: inherit;
+}
+
 button {
-    font: inherit;
     cursor: pointer;
 }
 
@@ -47,19 +54,27 @@ p {
     margin: 0;
 }
 
+h1,
+h2,
+h3,
+.auth-title,
+.solicitar-main-title,
+.nombre-resumen-joven,
+.ready {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+}
+
 h1 {
     font-size: 32px;
-    font-weight: 500;
 }
 
 h2 {
     font-size: 25px;
-    font-weight: 500;
 }
 
 h3 {
     font-size: 19px;
-    font-weight: 500;
 }
 
 a:focus-visible,
@@ -133,6 +148,7 @@ nav {
     font-weight: 500;
     line-height: 20px;
     text-align: center;
+    white-space: nowrap;
 
     cursor: pointer;
     transition: background-color 0.2s;
@@ -314,7 +330,6 @@ nav .login:active {
 .ready {
     margin: 15px 0 20px;
     font-size: 32px;
-    font-weight: bold;
 }
 
 
@@ -409,39 +424,58 @@ footer {
 
 .auth-card {
     width: min(760px, 100%);
-    padding: 28px 32px 18px;
+    padding: 28px 32px 24px;
     border-radius: 28px;
-    background: #73c33c;
-    color: #101010;
+    background: #6dc22e;
+    color: #000000;
 }
 
 .auth-card--narrow {
-    width: min(420px, 100%);
+    width: min(470px, 100%);
+}
+
+.auth-card--registro-adulto {
+    width: min(780px, 100%);
+    padding: 32px 54px 26px;
+    border-radius: 32px;
 }
 
 .auth-title {
     margin: 0;
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 36px;
     text-align: center;
+    color: #000000;
 }
 
 .auth-divider {
     height: 1px;
     margin: 18px 0 22px;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.65);
 }
 
 .auth-note {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
     font-size: 14px;
     line-height: 1.45;
+}
+
+.required-star {
+    color: #e60000;
+    font-weight: 700;
 }
 
 .auth-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px 26px;
+}
+
+.form-centered-column {
+    max-width: 310px;
+    margin: 22px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .field {
@@ -454,19 +488,105 @@ footer {
 
 .field label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
     font-size: 16px;
+    color: #000000;
 }
 
 .field input,
 .field select {
     width: 100%;
-    min-height: 40px;
+    min-height: 44px;
     border: 0;
     border-radius: 999px;
-    padding: 10px 16px;
-    background: #fff;
+    padding: 10px 18px;
+    background: #f0f0f0;
     color: #111;
+}
+
+.input-with-icons {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icons input {
+    padding-right: 72px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: 0;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #111;
+}
+
+/* SOLICITAR AYUDA */
+
+.solicitar-wrapper {
+    width: min(400px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.solicitar-main-title {
+    font-size: 40px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.auth-card--solicitar {
+    width: 100%;
+    padding: 26px 28px 30px;
+    border-radius: 36px;
+    background: #6dc22e;
+}
+
+.form-solicitar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-solicitar .field input {
+    min-height: 56px;
+    background: #ffffff;
+    font-size: 16px;
+}
+
+.input-titulo-ayuda::placeholder {
+    color: #4f5f58;
+    font-size: 17px;
+}
+
+.solicitar-divider {
+    margin: 4px 4px 2px;
+}
+
+.input-with-left-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-left-icon {
+    position: absolute;
+    left: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.input-with-left-icon input {
+    padding-left: 48px !important;
 }
 
 .field input[type="file"] {
@@ -507,46 +627,60 @@ footer {
 
 .field small {
     display: block;
-    margin-top: 5px;
-    font-size: 12px;
+    margin-top: 4px;
+    padding-left: 6px;
+    font-size: 11px;
+    color: #000000;
 }
 
 .auth-actions {
     display: flex;
     justify-content: center;
-    margin-top: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 22px;
 }
 
 .auth-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 132px;
-    padding: 12px 28px;
+    min-width: 150px;
+    padding: 12px 26px;
     border: 0;
     border-radius: 999px;
-    background: #0b8034;
+    background: #0d6e2b;
     color: #fff;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
     text-decoration: none;
 }
 
+.auth-button:hover {
+    background: #095721;
+}
+
 .auth-links {
-    margin-top: 12px;
+    margin-top: 10px;
     text-align: center;
     font-size: 14px;
 }
 
 .auth-links a {
-    color: #1d4ed8;
+    color: #0044cc;
+    margin-left: 6px;
 }
 
 .auth-alert {
     margin-bottom: 14px;
     padding: 12px 14px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.78);
+    color: #8b0000;
+    font-weight: 500;
 }
 
 .profile-photo {
@@ -571,7 +705,8 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .auth-card {
+    .auth-card,
+    .auth-card--registro-adulto {
         padding: 24px 18px 16px;
     }
 }
@@ -586,7 +721,6 @@ footer {
 .footer-content h3 {
     margin: 15px 0 10px;
     font-size: 13px;
-    font-weight: bold;
 }
 
 .footer-content a:not(.logo) {
@@ -805,7 +939,6 @@ footer {
 
 .nombre-resumen-joven {
     font-size: 22px;
-    font-weight: 700;
     margin: 0;
     color: #ffffff;
 }

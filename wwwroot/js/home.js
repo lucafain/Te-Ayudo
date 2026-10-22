@@ -39,6 +39,16 @@ for (let i = 0; i < inputsArchivo.length; i++) {
     }
 }
 
+let btnTogglePassword = document.getElementById('btnTogglePassword');
+if (btnTogglePassword != null) {
+    btnTogglePassword.addEventListener('click', function () {
+        let inputPass = document.getElementById('Contrasena');
+        if (inputPass != null) {
+            inputPass.type = inputPass.type === 'password' ? 'text' : 'password';
+        }
+    });
+}
+
 function mostrarErrorFormulario(motivo) {
     let cajaError = document.getElementById('mensajeErrorJs');
     if (cajaError != null) {
@@ -52,18 +62,24 @@ function mostrarErrorFormulario(motivo) {
 let formLogin = document.getElementById('formLogin');
 if (formLogin != null) {
     formLogin.addEventListener('submit', function (evento) {
-        let email = document.getElementById('Email').value;
+        let email = document.getElementById('Email').value.trim();
         let contrasena = document.getElementById('Contrasena').value;
 
-        if (email === '' || email.indexOf('@') === -1) {
+        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
             evento.preventDefault();
             mostrarErrorFormulario('Debe ingresar un correo electrónico válido.');
             return;
         }
 
-        if (contrasena === '') {
+        if (email.length > 50) {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar su contraseña.');
+            mostrarErrorFormulario('El correo electrónico no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (contrasena === '' || contrasena.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe ingresar una contraseña válida (máximo 50 caracteres).');
             return;
         }
     });
@@ -72,20 +88,33 @@ if (formLogin != null) {
 let formRegistro = document.getElementById('formRegistro');
 if (formRegistro != null) {
     formRegistro.addEventListener('submit', function (evento) {
-        let nombre = document.getElementById('Nombre').value;
-        let apellido = document.getElementById('Apellido').value;
-        let email = document.getElementById('Email').value;
+        let email = document.getElementById('Email').value.trim();
+        let nombre = document.getElementById('Nombre').value.trim();
         let contrasena = document.getElementById('Contrasena').value;
+        let inputTelefono = document.getElementById('Telefono');
+        let telefono = inputTelefono != null ? inputTelefono.value.trim() : '';
 
-        if (nombre === '' || apellido === '') {
+        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
             evento.preventDefault();
-            mostrarErrorFormulario('El nombre y el apellido son obligatorios.');
+            mostrarErrorFormulario('El correo electrónico es obligatorio y debe tener un formato válido.');
             return;
         }
 
-        if (email === '' || email.indexOf('@') === -1) {
+        if (email.length > 50) {
             evento.preventDefault();
-            mostrarErrorFormulario('El correo electrónico es obligatorio y debe ser válido.');
+            mostrarErrorFormulario('El correo electrónico no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (nombre === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('El nombre de usuario es obligatorio.');
+            return;
+        }
+
+        if (nombre.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El nombre de usuario no puede superar los 50 caracteres.');
             return;
         }
 
@@ -94,16 +123,32 @@ if (formRegistro != null) {
             mostrarErrorFormulario('La contraseña es obligatoria y debe tener al menos 4 caracteres.');
             return;
         }
+
+        if (contrasena.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('La contraseña no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (telefono !== '' && isNaN(Number(telefono.replace(/[-+ ]/g, '')))) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El número telefónico solo puede contener números.');
+            return;
+        }
     });
 }
 
 let formTrabajar = document.getElementById('formTrabajar');
 if (formTrabajar != null) {
     formTrabajar.addEventListener('submit', function (evento) {
-        let nombre = document.getElementById('Nombre').value;
-        let apellido = document.getElementById('Apellido').value;
-        let email = document.getElementById('Email').value;
+        let nombre = document.getElementById('Nombre').value.trim();
+        let apellido = document.getElementById('Apellido').value.trim();
+        let email = document.getElementById('Email').value.trim();
         let contrasena = document.getElementById('Contrasena').value;
+        let provincia = document.getElementById('Provincia').value.trim();
+        let calle = document.getElementById('Calle').value.trim();
+        let direccion = document.getElementById('Direccion').value.trim();
+        let codigoPostal = document.getElementById('CodigoPostal').value.trim();
         let acepta = document.getElementById('AceptaTerminos').checked;
 
         if (nombre === '' || apellido === '') {
@@ -112,15 +157,45 @@ if (formTrabajar != null) {
             return;
         }
 
-        if (email === '' || email.indexOf('@') === -1) {
+        if (nombre.length > 50 || apellido.length > 50) {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar un correo electrónico válido.');
+            mostrarErrorFormulario('El nombre y el apellido no pueden superar los 50 caracteres.');
             return;
         }
 
-        if (contrasena === '' || contrasena.length < 4) {
+        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.length > 50) {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar una contraseña de al menos 4 caracteres.');
+            mostrarErrorFormulario('Debe ingresar un correo electrónico válido (máximo 50 caracteres).');
+            return;
+        }
+
+        if (contrasena === '' || contrasena.length < 4 || contrasena.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('La contraseña debe tener entre 4 y 50 caracteres.');
+            return;
+        }
+
+        if (provincia === '' || provincia.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe ingresar su provincia (máximo 50 caracteres).');
+            return;
+        }
+
+        if (calle === '' || calle.length > 100) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe ingresar su calle (máximo 100 caracteres).');
+            return;
+        }
+
+        if (direccion === '' || isNaN(Number(direccion)) || Number(direccion) < 0) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe ingresar una altura/número de dirección válido.');
+            return;
+        }
+
+        if (codigoPostal === '' || codigoPostal.length > 8) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe ingresar un código postal válido (máximo 8 caracteres).');
             return;
         }
 
@@ -135,8 +210,8 @@ if (formTrabajar != null) {
 let formOlvide = document.getElementById('formOlvide');
 if (formOlvide != null) {
     formOlvide.addEventListener('submit', function (evento) {
-        let email = document.getElementById('Email').value;
-        if (email === '' || email.indexOf('@') === -1) {
+        let email = document.getElementById('Email').value.trim();
+        if (email === '' || email.indexOf('@') === -1 || email.length > 50) {
             evento.preventDefault();
             mostrarErrorFormulario('Debe ingresar un correo electrónico válido para buscar su contraseña.');
             return;
@@ -147,12 +222,70 @@ if (formOlvide != null) {
 let formSolicitar = document.getElementById('formSolicitar');
 if (formSolicitar != null) {
     formSolicitar.addEventListener('submit', function (evento) {
-        let titulo = document.getElementById('Titulo').value;
-        let descripcion = document.getElementById('Descripcion').value;
+        let titulo = document.getElementById('Titulo').value.trim();
+        let descripcion = document.getElementById('Descripcion').value.trim();
+        let lugar = document.getElementById('Lugar').value.trim();
+        let diaHora = document.getElementById('DiaHora').value.trim();
 
-        if (titulo === '' || descripcion === '') {
+        if (titulo === '') {
             evento.preventDefault();
-            mostrarErrorFormulario('Por favor complete el título y la descripción de la ayuda que necesita.');
+            mostrarErrorFormulario('Por favor ingresá el nombre de la ayuda que necesitás.');
+            return;
+        }
+
+        if (titulo.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El nombre de la ayuda no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (descripcion === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Por favor completá la descripción de la ayuda.');
+            return;
+        }
+
+        if (descripcion.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('La descripción no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (lugar === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Por favor indicá el lugar donde necesitás la ayuda.');
+            return;
+        }
+
+        if (lugar.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El lugar no puede superar los 50 caracteres.');
+            return;
+        }
+
+        if (diaHora === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Por favor seleccioná el día y la hora en el calendario.');
+            return;
+        }
+
+        let fechaElegida = new Date(diaHora);
+        if (isNaN(fechaElegida.getTime())) {
+            evento.preventDefault();
+            mostrarErrorFormulario('La fecha y hora elegidas no son válidas.');
+            return;
+        }
+
+        if (fechaElegida < new Date()) {
+            evento.preventDefault();
+            mostrarErrorFormulario('La fecha y hora de la ayuda no pueden ser anteriores a hoy.');
+            return;
+        }
+
+        let aclaracion = document.getElementById('Aclaracion').value.trim();
+        if (aclaracion.length > 500) {
+            evento.preventDefault();
+            mostrarErrorFormulario('Las aclaraciones no pueden superar los 500 caracteres.');
             return;
         }
     });

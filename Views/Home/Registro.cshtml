@@ -1,14 +1,18 @@
 @{
-    ViewData["Title"] = "Registro";
+    ViewData["Title"] = "Registrarse";
 }
 
 <main class="auth-page">
-    <section class="auth-card">
+    <section class="auth-card auth-card--registro-adulto">
         <h1 class="auth-title">Registrarse</h1>
         <div class="auth-divider"></div>
 
         <p class="auth-note">
-            Los datos con asterisco son obligatorios. La foto de perfil quedará guardada para usarla luego en tu perfil.
+            Los datos opcionales le permitirán utilizar la aplicación con normalidad, por lo que recomendamos completar todo desde un principio. Igualmente, le daremos la posibilidad de completar y modificar los datos si que desee una vez que se registró.
+        </p>
+
+        <p class="auth-note">
+            <span class="required-star">*</span> Los datos que tienen un asterísco en rojo a su derecha son obligatorios.
         </p>
 
         @if (ViewBag.ErrorMessage != null)
@@ -18,70 +22,46 @@
 
         <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
 
-        <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" enctype="multipart/form-data" id="formRegistro">
-            <div class="auth-grid">
-                <div class="field">
-                    <label for="Nombre">Nombre *</label>
-                    <input type="text" id="Nombre" name="Nombre" autocomplete="given-name" />
-                </div>
+        <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" id="formRegistro" class="form-centered-column">
+            <div class="field">
+                <label for="Email">Correo electrónico <span class="required-star">*</span></label>
+                <input type="email" id="Email" name="Email" autocomplete="email" />
+            </div>
 
-                <div class="field">
-                    <label for="Apellido">Apellido *</label>
-                    <input type="text" id="Apellido" name="Apellido" autocomplete="family-name" />
-                </div>
+            <div class="field">
+                <label for="Nombre">Nombre de usuario <span class="required-star">*</span></label>
+                <input type="text" id="Nombre" name="Nombre" autocomplete="username" />
+                <small>No uses tu nombre real</small>
+            </div>
 
-                <div class="field">
-                    <label for="Email">Correo electrónico *</label>
-                    <input type="email" id="Email" name="Email" autocomplete="email" />
-                </div>
-
-                <div class="field">
-                    <label for="Contrasena">Contraseña *</label>
+            <div class="field">
+                <label for="Contrasena">Contraseña <span class="required-star">*</span></label>
+                <div class="input-with-icons">
                     <input type="password" id="Contrasena" name="Contrasena" autocomplete="new-password" />
-                </div>
-
-                <div class="field">
-                    <label for="Provincia">Provincia *</label>
-                    <input type="text" id="Provincia" name="Provincia" placeholder="Ej: Buenos Aires, CABA..." />
-                </div>
-
-                <div class="field">
-                    <label for="Calle">Calle *</label>
-                    <input type="text" id="Calle" name="Calle" placeholder="Ej: Av. Corrientes" />
-                </div>
-
-                <div class="field">
-                    <label for="Direccion">Altura / Número *</label>
-                    <input type="number" id="Direccion" name="Direccion" value="0" />
-                </div>
-
-                <div class="field">
-                    <label for="CodigoPostal">Código postal *</label>
-                    <input type="text" id="CodigoPostal" name="CodigoPostal" maxlength="8" />
-                </div>
-
-                <div class="field field--full upload-field">
-                    <label for="FotoPerfil">Cargar foto de perfil</label>
-                    <label class="upload-button" for="FotoPerfil" data-file-label="FotoPerfil">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                    <button type="button" class="password-toggle-btn" id="btnTogglePassword" aria-label="Mostrar u ocultar contraseña">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
                         </svg>
-                    </label>
-                    <input type="file" id="FotoPerfil" name="FotoPerfil" accept="image/*" />
-                    <span class="upload-filename" data-file-name="FotoPerfil">Ningún archivo seleccionado</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
+            <div class="field">
+                <label for="Telefono">Número telefónico</label>
+                <input type="text" id="Telefono" name="Telefono" autocomplete="tel" />
+            </div>
+
             <div class="auth-actions">
-                <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
                 <button class="auth-button" type="submit">Registrarse</button>
             </div>
 
             <div class="auth-links">
                 Ya tenés una cuenta? <a href='@Url.Action("Ingresar", "Home")'>Iniciar sesión</a>
-                · <a href='@Url.Action("RegistroJoven", "Home")'>Trabajá con nosotros</a>
             </div>
         </form>
     </section>

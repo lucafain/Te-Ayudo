@@ -146,15 +146,86 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult SolicitarTarea(string? Titulo = "", string? Descripcion = "", string? Zona = "", string? Contacto = "")
+    public IActionResult SolicitarTarea(string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? DiaHora = "", string? Aclaracion = "", string? TipoLugar = "Domicilio", double Monto = 0)
     {
-        if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion))
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? usuarioActual = null;
+        if (!string.IsNullOrEmpty(emailSesion))
         {
-            ViewBag.ErrorMessage = "Por favor complete el título y la descripción de la ayuda que necesita.";
+            usuarioActual = BD.ObtenerUsuarioPorEmail(emailSesion);
+            ViewBag.UsuarioActual = usuarioActual;
+        }
+
+        int idSolicitante = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (usuarioActual != null ? usuarioActual.IdUsuario : 1);
+        if (BD.ObtenerUsuarioPorId(idSolicitante) == null)
+        {
+            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
+            if (primerUsuario != null)
+            {
+                idSolicitante = primerUsuario.IdUsuario;
+            }
+        }
+
+        if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion) || string.IsNullOrEmpty(Lugar) || string.IsNullOrEmpty(DiaHora))
+        {
+            ViewBag.ErrorMessage = "Por favor complete el nombre de la ayuda, la descripción, el lugar y la fecha/hora.";
             return View();
         }
 
-        ViewBag.SuccessMessage = "¡Tu solicitud de ayuda (" + Titulo + ") ha sido recibida! Pronto nos pondremos en contacto.";
+        // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
+        string tituloLimpio = Titulo.Length > 50 ? Titulo.Substring(0, 50) : Titulo;
+        string descripcionLimpia = Descripcion.Length > 50 ? Descripcion.Substring(0, 50) : Descripcion;
+        string lugarLimpio = Lugar.Length > 50 ? Lugar.Substring(0, 50) : Lugar;
+        string tipoLugarTexto = string.IsNullOrEmpty(TipoLugar) ? "Domicilio" : TipoLugar;
+        string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
+
+        DateTime fechaTarea = DateTime.Now;
+        TimeSpan horaTarea = new TimeSpan(10, 0, 0);
+
+        if (DateTime.TryParse(DiaHora, out DateTime fechaHoraCompleta))
+        {
+            fechaTarea = fechaHoraCompleta.Date;
+            horaTarea = fechaHoraCompleta.TimeOfDay;
+        }
+
+        string aclaracionFinal = Aclaracion ?? "";
+        string textoFechaHora = fechaTarea.ToString("dd/MM/yyyy") + " " + horaTarea.ToString(@"hh\:mm");
+        aclaracionFinal = string.IsNullOrEmpty(aclaracionFinal)
+            ? "Día y hora: " + textoFechaHora
+            : aclaracionFinal + " (Día y hora: " + textoFechaHora + ")";
+
+        // Slide 46: Tomar los datos del form y guardarlos en un objeto
+        Tareas nuevaTarea = new Tareas();
+        nuevaTarea.Titulo = tituloLimpio;
+        nuevaTarea.Descripcion = descripcionLimpia;
+        nuevaTarea.Estado = true; // true (1) = Tarea activa
+        nuevaTarea.FechaCreacion = DateTime.Now;
+        nuevaTarea.Lugar = lugarLimpio;
+        nuevaTarea.DiaTarea = fechaTarea;
+        nuevaTarea.HoraTarea = horaTarea;
+        nuevaTarea.Aclaracion = aclaracionFinal;
+        nuevaTarea.Monto = Monto;
+        nuevaTarea.TipoLugar = tipoLugarLimpio;
+        nuevaTarea.IdUsuarioSolicitante = idSolicitante;
+
+        bool resultado = false;
+        try
+        {
+            resultado = BD.GuardarTarea(nuevaTarea);
+        }
+        catch (Exception ex)
+        {
+            ViewBag.ErrorMessage = "No se pudo guardar la tarea: " + ex.Message;
+            return View();
+        }
+
+        if (!resultado)
+        {
+            ViewBag.ErrorMessage = "No se pudo guardar la tarea en la base de datos.";
+            return View();
+        }
+
+        ViewBag.SuccessMessage = "¡Tu solicitud de ayuda (" + tituloLimpio + ") ha sido publicada!";
         return View();
     }
 
@@ -176,12 +247,12 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarRegistroMayor(string? Nombre = "", string? Apellido = "", string? Email = "", string? Provincia = "", string? Calle = "", int Direccion = 0, string? CodigoPostal = "", string? Contrasena = "", IFormFile? FotoPerfil = null, bool AceptaTerminos = true)
+    public IActionResult GuardarRegistroMayor(string? Nombre = "", string? Apellido = "", string? Email = "", string? Provincia = "", string? Calle = "", int Direccion = 0, string? CodigoPostal = "", string? Telefono = "", string? Contrasena = "", IFormFile? FotoPerfil = null, bool AceptaTerminos = true)
     {
         // Validación con métodos string (Slide 12)
-        if (string.IsNullOrEmpty(Nombre) || string.IsNullOrEmpty(Apellido) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena))
+        if (string.IsNullOrEmpty(Nombre) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena))
         {
-            ViewBag.ErrorMessage = "Por favor complete los campos obligatorios.";
+            ViewBag.ErrorMessage = "Por favor complete los campos obligatorios (*).";
             return View("Registro");
         }
 
@@ -197,16 +268,22 @@ public class HomeController : Controller
             return View("Registro");
         }
 
+        string codigoPostalFinal = !string.IsNullOrEmpty(CodigoPostal) ? CodigoPostal : (Telefono ?? "");
+        if (codigoPostalFinal.Length > 8)
+        {
+            codigoPostalFinal = codigoPostalFinal.Substring(0, 8);
+        }
+
         // Slide 46: Tomar los datos del form y guardarlos en un objeto
         // tipoUsuario = false (0) es Adulto
         Usuarios user = new Usuarios();
         user.Nombre = Nombre;
-        user.Apellido = Apellido;
+        user.Apellido = Apellido ?? "";
         user.Email = Email.Replace(" ", "").ToLower();
         user.Provincia = Provincia ?? "";
         user.Calle = Calle ?? "";
         user.Direccion = Direccion;
-        user.CodigoPostal = CodigoPostal ?? "";
+        user.CodigoPostal = codigoPostalFinal;
         user.FechaRegistro = DateTime.Now;
         user.TipoUsuario = false; // false = Adulto
         user.Contrasena = Contrasena;
@@ -353,6 +430,7 @@ public class HomeController : Controller
 
         ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
         ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+        ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
 
         return View("PrincipalJoven");
     }
@@ -363,6 +441,7 @@ public class HomeController : Controller
 
         ViewBag.Adulto = BD.ObtenerUsuarioPorId(idAdultoLogueado);
         ViewBag.Jovenes = BD.ObtenerJovenesDisponibles();
+        ViewBag.MisTareas = BD.ObtenerTareasPorSolicitante(idAdultoLogueado);
 
         return View("PrincipalAdulto");
     }

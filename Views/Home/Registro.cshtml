@@ -3,7 +3,7 @@
 }
 
 <main class="auth-page">
-    <section class="auth-card auth-card--narrow">
+    <section class="auth-card">
         <h1 class="auth-title">Registrarse</h1>
         <div class="auth-divider"></div>
 
@@ -19,16 +19,20 @@
         <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
 
         <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" enctype="multipart/form-data" id="formRegistro">
-            <input type="hidden" name="TipoUsuario" value="Adulto mayor" />
-            <div class="auth-grid" style="grid-template-columns: 1fr; gap: 16px;">
+            <div class="auth-grid">
                 <div class="field">
-                    <label for="Email">Correo electrónico *</label>
-                    <input type="email" id="Email" name="Email" autocomplete="email" />
+                    <label for="Nombre">Nombre *</label>
+                    <input type="text" id="Nombre" name="Nombre" autocomplete="given-name" />
                 </div>
 
                 <div class="field">
-                    <label for="NombreUsuario">Nombre de usuario *</label>
-                    <input type="text" id="NombreUsuario" name="NombreUsuario" autocomplete="username" />
+                    <label for="Apellido">Apellido *</label>
+                    <input type="text" id="Apellido" name="Apellido" autocomplete="family-name" />
+                </div>
+
+                <div class="field">
+                    <label for="Email">Correo electrónico *</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
                 </div>
 
                 <div class="field">
@@ -37,8 +41,23 @@
                 </div>
 
                 <div class="field">
-                    <label for="Telefono">Número telefónico</label>
-                    <input type="tel" id="Telefono" name="Telefono" autocomplete="tel" />
+                    <label for="Provincia">Provincia *</label>
+                    <input type="text" id="Provincia" name="Provincia" placeholder="Ej: Buenos Aires, CABA..." />
+                </div>
+
+                <div class="field">
+                    <label for="Calle">Calle *</label>
+                    <input type="text" id="Calle" name="Calle" placeholder="Ej: Av. Corrientes" />
+                </div>
+
+                <div class="field">
+                    <label for="Direccion">Altura / Número *</label>
+                    <input type="number" id="Direccion" name="Direccion" value="0" />
+                </div>
+
+                <div class="field">
+                    <label for="CodigoPostal">Código postal *</label>
+                    <input type="text" id="CodigoPostal" name="CodigoPostal" maxlength="8" />
                 </div>
 
                 <div class="field field--full upload-field">

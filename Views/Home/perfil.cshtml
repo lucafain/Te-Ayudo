@@ -8,9 +8,9 @@
         <div class="auth-divider"></div>
 
         <div class="text-center" style="margin-bottom: 18px;">
-            @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfilRuta))
+            @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfil))
             {
-                string fotoRuta = (string)ViewBag.FotoPerfilRuta;
+                string fotoRuta = (string)ViewBag.FotoPerfil;
                 string fotoUrl = fotoRuta.StartsWith("/") || fotoRuta.StartsWith("~") ? Url.Content(fotoRuta) : Url.Content("~/" + fotoRuta);
                 <img class="profile-photo" src="@fotoUrl" alt="Foto de perfil" />
             }
@@ -21,14 +21,14 @@
         </div>
 
         <div class="auth-note">
-            <p><strong>Nombre de usuario:</strong> @ViewBag.NombreUsuario</p>
             <p><strong>Nombre:</strong> @ViewBag.Nombre</p>
             <p><strong>Apellido:</strong> @ViewBag.Apellido</p>
-            <p><strong>Email:</strong> @(ViewBag.Email ?? ViewBag.NombreUsuario)</p>
+            <p><strong>Email:</strong> @ViewBag.Email</p>
+            <p><strong>Provincia:</strong> @ViewBag.Provincia</p>
+            <p><strong>Calle:</strong> @ViewBag.Calle</p>
+            <p><strong>Dirección:</strong> @ViewBag.Direccion</p>
+            <p><strong>Código postal:</strong> @ViewBag.CodigoPostal</p>
             <p><strong>Tipo de usuario:</strong> @ViewBag.TipoUsuario</p>
-            <p><strong>Teléfono:</strong> @ViewBag.Telefono</p>
-            <p><strong>Ámbito laboral:</strong> @ViewBag.AmbitoLaboral</p>
-            <p><strong>LinkedIn:</strong> @ViewBag.LinkedIn</p>
         </div>
 
         <div class="auth-actions">

@@ -72,19 +72,20 @@ if (formLogin != null) {
 let formRegistro = document.getElementById('formRegistro');
 if (formRegistro != null) {
     formRegistro.addEventListener('submit', function (evento) {
+        let nombre = document.getElementById('Nombre').value;
+        let apellido = document.getElementById('Apellido').value;
         let email = document.getElementById('Email').value;
-        let nombreUsuario = document.getElementById('NombreUsuario').value;
         let contrasena = document.getElementById('Contrasena').value;
+
+        if (nombre === '' || apellido === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('El nombre y el apellido son obligatorios.');
+            return;
+        }
 
         if (email === '' || email.indexOf('@') === -1) {
             evento.preventDefault();
             mostrarErrorFormulario('El correo electrónico es obligatorio y debe ser válido.');
-            return;
-        }
-
-        if (nombreUsuario === '') {
-            evento.preventDefault();
-            mostrarErrorFormulario('El nombre de usuario es obligatorio.');
             return;
         }
 
@@ -99,20 +100,21 @@ if (formRegistro != null) {
 let formTrabajar = document.getElementById('formTrabajar');
 if (formTrabajar != null) {
     formTrabajar.addEventListener('submit', function (evento) {
+        let nombre = document.getElementById('Nombre').value;
+        let apellido = document.getElementById('Apellido').value;
         let email = document.getElementById('Email').value;
-        let ambito = document.getElementById('AmbitoLaboral').value;
         let contrasena = document.getElementById('Contrasena').value;
         let acepta = document.getElementById('AceptaTerminos').checked;
+
+        if (nombre === '' || apellido === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debe completar su nombre y apellido.');
+            return;
+        }
 
         if (email === '' || email.indexOf('@') === -1) {
             evento.preventDefault();
             mostrarErrorFormulario('Debe ingresar un correo electrónico válido.');
-            return;
-        }
-
-        if (ambito === '') {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe completar el ámbito laboral al que apunta.');
             return;
         }
 
@@ -167,20 +169,22 @@ function verInfoAyudado(idUsuario) {
                 let contenedor = document.getElementById('contenedorDetalleFetch');
                 let nombre = datos.nombre || datos.Nombre || '';
                 let apellido = datos.apellido || datos.Apellido || '';
-                let nombreUsuario = datos.nombreUsuario || datos.NombreUsuario || '';
                 let email = datos.email || datos.Email || 'No especificado';
-                let telefono = datos.telefono || datos.Telefono || 'No especificado';
-                let tipoUsuario = datos.tipoUsuario || datos.TipoUsuario || 'Adulto mayor';
+                let provincia = datos.provincia || datos.Provincia || '';
+                let calle = datos.calle || datos.Calle || '';
+                let direccion = datos.direccion || datos.Direccion || '';
+                let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
+                let tipoTexto = tipoBool ? 'Adulto mayor' : 'Joven';
 
                 let nombreCompleto = (nombre + ' ' + apellido).trim();
                 if (nombreCompleto === '') {
-                    nombreCompleto = nombreUsuario || 'Adulto mayor';
+                    nombreCompleto = email;
                 }
 
                 document.getElementById('detalleNombre').textContent = 'Información de ' + nombreCompleto;
                 document.getElementById('detalleEmail').textContent = 'Email: ' + email;
-                document.getElementById('detalleTelefono').textContent = 'Teléfono: ' + telefono;
-                document.getElementById('detalleTipo').textContent = 'Tipo de usuario: ' + tipoUsuario;
+                document.getElementById('detalleTelefono').textContent = 'Ubicación: ' + calle + ' ' + direccion + ' (' + provincia + ')';
+                document.getElementById('detalleTipo').textContent = 'Tipo de usuario: ' + tipoTexto;
 
                 contenedor.style.display = 'block';
             }

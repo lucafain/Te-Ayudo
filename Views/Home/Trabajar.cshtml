@@ -8,7 +8,7 @@
         <div class="auth-divider"></div>
 
         <p class="auth-note">
-            Este formulario es para jóvenes. Vas a poder dejar tus datos, subir tu foto de perfil y adjuntar tu CV.
+            Este formulario es para jóvenes. Completá tus datos y subí tu foto de perfil para sumarte a la comunidad.
         </p>
 
         @if (ViewBag.ErrorMessage != null)
@@ -19,26 +19,20 @@
         <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
 
         <form action='@Url.Action("GuardarRegistroJoven", "Home")' method="post" enctype="multipart/form-data" id="formTrabajar">
-            <input type="hidden" name="TipoUsuario" value="Adolescente" />
             <div class="auth-grid">
                 <div class="field">
-                    <label for="Email">Correo electrónico *</label>
-                    <input type="email" id="Email" name="Email" autocomplete="email" />
-                </div>
-
-                <div class="field">
-                    <label for="Nombre">Nombre (opcional)</label>
+                    <label for="Nombre">Nombre *</label>
                     <input type="text" id="Nombre" name="Nombre" autocomplete="given-name" />
                 </div>
 
                 <div class="field">
-                    <label for="Apellido">Apellido (opcional)</label>
+                    <label for="Apellido">Apellido *</label>
                     <input type="text" id="Apellido" name="Apellido" autocomplete="family-name" />
                 </div>
 
                 <div class="field">
-                    <label for="AmbitoLaboral">Ámbito laboral al que apunta *</label>
-                    <input type="text" id="AmbitoLaboral" name="AmbitoLaboral" />
+                    <label for="Email">Correo electrónico *</label>
+                    <input type="email" id="Email" name="Email" autocomplete="email" />
                 </div>
 
                 <div class="field">
@@ -47,26 +41,23 @@
                 </div>
 
                 <div class="field">
-                    <label for="LinkedIn">Perfil de LinkedIn (preferible)</label>
-                    <input type="url" id="LinkedIn" name="LinkedIn" placeholder="https://www.linkedin.com/in/..." />
+                    <label for="Provincia">Provincia *</label>
+                    <input type="text" id="Provincia" name="Provincia" placeholder="Ej: Buenos Aires, CABA..." />
                 </div>
 
                 <div class="field">
-                    <label for="Telefono">Número telefónico (opcional)</label>
-                    <input type="tel" id="Telefono" name="Telefono" autocomplete="tel" />
+                    <label for="Calle">Calle *</label>
+                    <input type="text" id="Calle" name="Calle" placeholder="Ej: Av. Corrientes" />
                 </div>
 
-                <div class="field upload-field">
-                    <label for="CvArchivo">Subir mi CV</label>
-                    <label class="upload-button" for="CvArchivo" data-file-label="CvArchivo">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                    </label>
-                    <input type="file" id="CvArchivo" name="CvArchivo" accept=".pdf,.doc,.docx" />
-                    <span class="upload-filename" data-file-name="CvArchivo">Ningún archivo seleccionado</span>
+                <div class="field">
+                    <label for="Direccion">Altura / Número *</label>
+                    <input type="number" id="Direccion" name="Direccion" value="0" />
+                </div>
+
+                <div class="field">
+                    <label for="CodigoPostal">Código postal *</label>
+                    <input type="text" id="CodigoPostal" name="CodigoPostal" maxlength="8" />
                 </div>
 
                 <div class="field field--full upload-field">
@@ -93,11 +84,6 @@
             <div class="auth-actions">
                 <a class="auth-button auth-button--secondary" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
                 <button class="auth-button" type="submit">Aplicar</button>
-            </div>
-
-            <div class="auth-links">
-                Todavía no tenés tu perfil de LinkedIn? <a href="https://www.linkedin.com/signup" target="_blank" rel="noreferrer">Crear mi perfil de LinkedIn</a><br />
-                Todavía no tenés un CV? <a href="https://www.canva.com/es_mx/crear/curriculum-vitae/" target="_blank" rel="noreferrer">Crear mi CV</a>
             </div>
         </form>
     </section>

@@ -56,14 +56,14 @@
         <h2>Historial</h2>
         <div class="tarjeta-resumen-usuario">
             @{
-                string rutaFotoJoven = (string?)ViewBag.Joven?.FotoPerfilRuta ?? "";
+                string rutaFotoJoven = (string?)ViewBag.Joven?.FotoPerfil ?? "";
                 string srcJoven = string.IsNullOrEmpty(rutaFotoJoven)
                     ? Url.Content("~/img/user.svg")
                     : Url.Content("~" + rutaFotoJoven);
                 string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
                 if (string.IsNullOrEmpty(nombreJoven))
                 {
-                    nombreJoven = ViewBag.Joven?.NombreUsuario ?? "Joven de la comunidad";
+                    nombreJoven = ViewBag.Joven?.Email ?? "Joven de la comunidad";
                 }
             }
             <img src="@srcJoven" alt="Foto Joven" class="avatar-resumen-joven" />
@@ -85,14 +85,14 @@
                 int posicion = 1;
                 foreach (Usuarios adulto in listaAyudados)
                 {
-                    string rutaFotoAdulto = adulto.FotoPerfilRuta ?? "";
+                    string rutaFotoAdulto = adulto.FotoPerfil ?? "";
                     string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
                         ? Url.Content("~/img/user.svg")
                         : Url.Content("~" + rutaFotoAdulto);
                     string nombreAdulto = ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim();
                     if (string.IsNullOrEmpty(nombreAdulto))
                     {
-                        nombreAdulto = adulto.NombreUsuario ?? "Adulto mayor";
+                        nombreAdulto = adulto.Email ?? "Adulto mayor";
                     }
 
                     <div class="item-tarjeta-ayudado">

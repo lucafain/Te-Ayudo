@@ -42,12 +42,12 @@
 
                 <div class="field">
                     <label for="Zona">Zona o barrio (opcional)</label>
-                    <input type="text" id="Zona" name="Zona" value='@(usuario?.Direccion ?? "")' placeholder="Ej: Villa Crespo, Palermo, etc." />
+                    <input type="text" id="Zona" name="Zona" value='@(usuario?.Calle ?? "")' placeholder="Ej: Villa Crespo, Palermo, etc." />
                 </div>
 
                 <div class="field">
-                    <label for="Contacto">Teléfono o correo de contacto</label>
-                    <input type="text" id="Contacto" name="Contacto" value='@(usuario?.Telefono ?? usuario?.Email ?? "")' placeholder="Tu teléfono o email" />
+                    <label for="Contacto">Correo de contacto</label>
+                    <input type="text" id="Contacto" name="Contacto" value='@(usuario?.Email ?? "")' placeholder="Tu email de contacto" />
                 </div>
             </div>
 

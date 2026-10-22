@@ -81,7 +81,7 @@ public class HomeController : Controller
         List<ContenidoItem> listaPreguntas = new List<ContenidoItem>();
         listaPreguntas.Add(new ContenidoItem("¿Qué es Te Ayudo?", "Un espacio que conecta a jóvenes con adultos que necesitan ayuda con tareas cotidianas."));
         listaPreguntas.Add(new ContenidoItem("¿Cómo solicito ayuda?", "Desde Solicitar ayuda podés acceder al formulario de solicitud o al registro para adultos mayores."));
-        listaPreguntas.Add(new ContenidoItem("¿Cómo puedo sumarme?", "Desde Trabajá con nosotros podés acceder al registro para jóvenes y subir tu CV."));
+        listaPreguntas.Add(new ContenidoItem("¿Cómo puedo sumarme?", "Desde Trabajá con nosotros podés acceder al registro para jóvenes."));
         ViewBag.Preguntas = listaPreguntas;
 
         return View();
@@ -130,7 +130,7 @@ public class HomeController : Controller
         }
 
         // Slide 104 y 105: Sessions (almacenamiento clave-valor en servidor)
-        HttpContext.Session.SetString("EmailLogueado", usuario.Email ?? "");
+        HttpContext.Session.SetString("EmailLogueado", usuario.Email);
         HttpContext.Session.SetInt32("IdUsuarioLogueado", usuario.IdUsuario);
         return RedirectToAction("Perfil", "Home");
     }
@@ -176,12 +176,12 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarRegistroMayor(string? Email = "", string? NombreUsuario = "", string? Contrasena = "", string? Telefono = "", IFormFile? FotoPerfil = null, string? TipoUsuario = "Adulto mayor")
+    public IActionResult GuardarRegistroMayor(string? Nombre = "", string? Apellido = "", string? Email = "", string? Provincia = "", string? Calle = "", int Direccion = 0, string? CodigoPostal = "", string? Contrasena = "", IFormFile? FotoPerfil = null, bool AceptaTerminos = true)
     {
         // Validación con métodos string (Slide 12)
-        if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(NombreUsuario) || string.IsNullOrEmpty(Contrasena))
+        if (string.IsNullOrEmpty(Nombre) || string.IsNullOrEmpty(Apellido) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena))
         {
-            ViewBag.ErrorMessage = "Por favor complete todos los campos obligatorios.";
+            ViewBag.ErrorMessage = "Por favor complete los campos obligatorios.";
             return View("Registro");
         }
 
@@ -199,13 +199,18 @@ public class HomeController : Controller
 
         // Slide 46: Tomar los datos del form y guardarlos en un objeto
         Usuarios user = new Usuarios();
+        user.Nombre = Nombre;
+        user.Apellido = Apellido;
         user.Email = Email.Replace(" ", "").ToLower();
-        user.NombreUsuario = NombreUsuario;
-        user.Contrasena = Contrasena;
-        user.Telefono = Telefono;
-        user.TipoUsuario = string.IsNullOrEmpty(TipoUsuario) ? "Adulto mayor" : TipoUsuario;
+        user.Provincia = Provincia ?? "";
+        user.Calle = Calle ?? "";
+        user.Direccion = Direccion;
+        user.CodigoPostal = CodigoPostal ?? "";
         user.FechaRegistro = DateTime.Now;
-        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        user.TipoUsuario = true; // true (1) = Adulto mayor
+        user.Contrasena = Contrasena;
+        user.AceptaTerminos = AceptaTerminos;
+        user.FotoPerfil = GuardarArchivo(FotoPerfil, "uploads/perfiles") ?? "/img/user.svg";
 
         bool resultado = BD.GuardarUsuario(user);
 
@@ -220,10 +225,10 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarRegistroJoven(string? Email = "", string? Nombre = "", string? Apellido = "", string? AmbitoLaboral = "", string? Contrasena = "", string? LinkedIn = "", string? Telefono = "", IFormFile? FotoPerfil = null, IFormFile? CvArchivo = null, bool AceptaTerminos = false, string? TipoUsuario = "Adolescente")
+    public IActionResult GuardarRegistroJoven(string? Nombre = "", string? Apellido = "", string? Email = "", string? Provincia = "", string? Calle = "", int Direccion = 0, string? CodigoPostal = "", string? Contrasena = "", IFormFile? FotoPerfil = null, bool AceptaTerminos = false)
     {
         // Validación en controller
-        if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena) || string.IsNullOrEmpty(AmbitoLaboral))
+        if (string.IsNullOrEmpty(Nombre) || string.IsNullOrEmpty(Apellido) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Contrasena))
         {
             ViewBag.ErrorMessage = "Debe completar los datos obligatorios del registro.";
             return View("Trabajar");
@@ -249,32 +254,18 @@ public class HomeController : Controller
 
         // Slide 46: Guardar en objeto
         Usuarios user = new Usuarios();
-        user.Email = Email.Replace(" ", "").ToLower();
         user.Nombre = Nombre;
         user.Apellido = Apellido;
-        user.AmbitoLaboral = AmbitoLaboral;
-        user.Contrasena = Contrasena;
-        user.LinkedIn = LinkedIn;
-        user.Telefono = Telefono;
-
-        // Slide 12: Métodos para tipos string (.IndexOf, .Substring, .ToUpper, char index)
-        int posArroba = user.Email.IndexOf("@");
-        if (posArroba > 0)
-        {
-            string baseNombre = user.Email.Substring(0, posArroba);
-            char primeraLetra = baseNombre.ToUpper()[0];
-            user.NombreUsuario = baseNombre.Length > 1 ? primeraLetra + baseNombre.Substring(1) : baseNombre;
-        }
-        else
-        {
-            user.NombreUsuario = user.Email;
-        }
-
-        user.TipoUsuario = string.IsNullOrEmpty(TipoUsuario) ? "Adolescente" : TipoUsuario;
-        user.AceptaTerminos = AceptaTerminos;
-        user.FotoPerfilRuta = GuardarArchivo(FotoPerfil, "uploads/perfiles");
-        user.CvRuta = GuardarArchivo(CvArchivo, "uploads/cv");
+        user.Email = Email.Replace(" ", "").ToLower();
+        user.Provincia = Provincia ?? "";
+        user.Calle = Calle ?? "";
+        user.Direccion = Direccion;
+        user.CodigoPostal = CodigoPostal ?? "";
         user.FechaRegistro = DateTime.Now;
+        user.TipoUsuario = false; // false (0) = Joven
+        user.Contrasena = Contrasena;
+        user.AceptaTerminos = AceptaTerminos;
+        user.FotoPerfil = GuardarArchivo(FotoPerfil, "uploads/perfiles") ?? "/img/user.svg";
 
         bool resultado = BD.GuardarUsuario(user);
 
@@ -330,15 +321,15 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Home");
         }
 
-        ViewBag.NombreUsuario = usuario.NombreUsuario ?? usuario.Email;
-        ViewBag.Email = usuario.Email;
         ViewBag.Nombre = usuario.Nombre;
         ViewBag.Apellido = usuario.Apellido;
-        ViewBag.TipoUsuario = usuario.TipoUsuario;
-        ViewBag.FotoPerfilRuta = usuario.FotoPerfilRuta;
-        ViewBag.Telefono = usuario.Telefono;
-        ViewBag.AmbitoLaboral = usuario.AmbitoLaboral;
-        ViewBag.LinkedIn = usuario.LinkedIn;
+        ViewBag.Email = usuario.Email;
+        ViewBag.Provincia = usuario.Provincia;
+        ViewBag.Calle = usuario.Calle;
+        ViewBag.Direccion = usuario.Direccion;
+        ViewBag.CodigoPostal = usuario.CodigoPostal;
+        ViewBag.TipoUsuario = usuario.TipoUsuario ? "Adulto mayor" : "Joven";
+        ViewBag.FotoPerfil = usuario.FotoPerfil;
 
         return View("perfil");
     }

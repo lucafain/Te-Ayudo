@@ -1,93 +1,57 @@
 @{
     ViewData["Title"] = "Inicio Joven";
-    string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
-    if (string.IsNullOrEmpty(nombreJoven))
-    {
-        nombreJoven = ViewBag.Joven?.Email ?? "Usuario";
-    }
 }
 
-<div class="joven-page">
-    <header class="header header--joven">
-        <a class="logo" href='@Url.Action("PrincipalJoven", "Home")'>
-            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
-        </a>
+<header class="header">
+    <a class="logo" href='@Url.Action("PrincipalJoven", "Home")'>
+        <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+    </a>
 
-        <button class="menu-toggle"
-                aria-expanded="false"
-                aria-controls="navigation"
-                aria-label="Abrir menú">
-            ☰
-        </button>
+    <button class="menu-toggle"
+            aria-expanded="false"
+            aria-controls="navigation"
+            aria-label="Abrir menú">
+        ☰
+    </button>
 
-<<<<<<< HEAD
-        <a class="nav-button" href='@Url.Action("Conversaciones", "Home")'>
-            Conversaciones
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+        <a class="nav-button" href='@Url.Action("Index", "Home")#preguntas'>
+            Preguntas frecuentes
         </a>
 
         <a class="nav-button" href='@Url.Action("RegistroJoven", "Home")'>
             Trabajá con nosotros
         </a>
-=======
-        <nav id="navigation" aria-label="Navegación principal">
-            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
-                Explorá
-            </a>
->>>>>>> afe03777e86167933c90fc72aa3c2324ef8cdfdf
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Index", "Home")#preguntas'>
-                Preguntas frecuentes
-            </a>
+        <a class="nav-button nav-help" href='@Url.Action("SolicitarTarea", "Home")'>
+            Solicita tus ayudas
+        </a>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("RegistroJoven", "Home")'>
-                Sumate como joven
-            </a>
+        <a class="nav-button login" href='@Url.Action("Perfil", "Home")'>
+            <img class="login-icon" src="~/img/user.svg" alt="" />
+            Mi cuenta
+        </a>
+    </nav>
+</header>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
-                Perfil
-            </a>
-        </nav>
-    </header>
-
-    <section class="joven-hero">
-        <div class="joven-hero-overlay">
-            <div class="joven-hero-content">
-                <h1>Hola, @nombreJoven</h1>
-                <p>Dónde encontrás lo que buscás</p>
-                <a class="joven-btn-ayuda" href='@Url.Action("AyudasParaRealizar", "Home")'>
-                    Realizá una Ayuda
-                </a>
-            </div>
+<main class="page" id="explorar">
+    <section class="panel seccion-explorar-mapa">
+        <h2>Mapa de nuestra comunidad</h2>
+        <div class="contenedor-mapa-zona">
+            <iframe
+                class="mapa-ubicacion-iframe"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13136.068307238214!2d-58.4418!3d-34.5912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca0d6c4a5bb7%3A0x247a3e5c92c7d9c6!2sVilla%20Crespo%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
     </section>
 
-<<<<<<< HEAD
-    <section class="panel seccion-ultimos-ayudados">
-        <h2>Tareas solicitadas por adultos</h2>
-        <div class="contenedor-lista-ayudados">
-            @{
-                List<Tareas>? tareasDisponibles = ViewBag.TareasDisponibles as List<Tareas>;
-            }
-            @if (tareasDisponibles != null && tareasDisponibles.Count > 0)
-            {
-                foreach (Tareas tarea in tareasDisponibles)
-                {
-                    DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
-                    <div class="item-tarjeta-ayudado">
-                        <div class="ayudado-info-usuario" style="text-align: left; display: block;">
-                            <span class="nombre-usuario-ayudado">@tarea.Titulo</span>
-                            <p style="font-size: 14px; margin-top: 4px;">@tarea.Descripcion</p>
-                            <p style="font-size: 13px; color: #555; margin-top: 4px;">
-                                Lugar: @tarea.Lugar · Fecha: @fechaMostrar.ToString("dd/MM/yyyy")
-                                @if (!string.IsNullOrEmpty(tarea.Aclaracion))
-                                {
-                                    <span> · @tarea.Aclaracion</span>
-                                }
-                            </p>
-                        </div>
-                        <div class="ayudado-acciones">
-                            <button type="button" class="button" onclick="verInfoAyudado(@tarea.IdUsuarioSolicitante)">Ver solicitante</button>
-=======
     <main class="joven-main">
         <section class="joven-seccion">
             <h2>¿Que necesitás hacer?</h2>
@@ -104,7 +68,6 @@
                                 <path d="M8 15l1.5 1.5L12 14"></path>
                                 <line x1="14" y1="15" x2="16" y2="15"></line>
                             </svg>
->>>>>>> 5c7d2224235e2224b4ba09293d5da4cb8b07f5fd
                         </div>
                     </div>
                     <p>Realiza una  <strong>Ayuda</strong></p>
@@ -132,156 +95,136 @@
                     <p>Ver <strong>notificaciones</strong></p>
                 </a>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="joven-seccion">
-            <h2>Consejos de trabajo</h2>
-
-            <div class="joven-consejos-grid">
-                <article class="joven-consejo-card">
-                    <div class="joven-consejo-icono">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="#115e2e">
-                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 11H8v-2h3V6h2v7z"/>
-                        </svg>
-                    </div>
-                    <p>
-                        La puntualidad es fundamental para los adultos. Procurá llegar 15 minutos antes de la hora de la tarea para recibir una mejor reseña y ser mejor valorado.
-                    </p>
-                </article>
-
-                <article class="joven-consejo-card">
-                    <div class="joven-consejo-icono">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#115e2e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <p>
-                        El respeto es primordial en nuestra comunidad. Recordá que esto busca que todos salgan beneficiados. Hagamos una comunidad mejor
-                    </p>
-                </article>
-
-                <article class="joven-consejo-card">
-                    <div class="joven-consejo-icono">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#115e2e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                        </svg>
-                    </div>
-                    <p>
-                        El aprendizaje es fundamental para ambas partes. Aprendé del adulto y que el adulto aprenda de vos. Todos aprendemos de los demás.
-                    </p>
-                </article>
-            </div>
-        </section>
-
-        <section class="joven-seccion" id="ultimas-actividades">
-            <h2>Ultimas actividades</h2>
-
-            <div class="joven-actividades-caja">
-                @{
-                    List<Tareas>? tareasDisponibles = ViewBag.TareasDisponibles as List<Tareas>;
-                    Dictionary<int, Usuarios>? solicitantes = ViewBag.Solicitantes as Dictionary<int, Usuarios>;
-                }
-                @if (tareasDisponibles != null && tareasDisponibles.Count > 0)
+    <section class="panel seccion-ultimos-ayudados">
+        <h2>Tareas solicitadas por adultos</h2>
+        <div class="contenedor-lista-ayudados">
+            @{
+                List<Tareas>? tareasDisponibles = ViewBag.TareasDisponibles as List<Tareas>;
+            }
+            @if (tareasDisponibles != null && tareasDisponibles.Count > 0)
+            {
+                foreach (Tareas tarea in tareasDisponibles)
                 {
-                    foreach (Tareas tarea in tareasDisponibles)
+                    DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
+                    <div class="item-tarjeta-ayudado">
+                        <div class="ayudado-info-usuario" style="text-align: left; display: block;">
+                            <span class="nombre-usuario-ayudado">@tarea.Titulo</span>
+                            <p style="font-size: 14px; margin-top: 4px;">@tarea.Descripcion</p>
+                            <p style="font-size: 13px; color: #555; margin-top: 4px;">
+                                Lugar: @tarea.Lugar · Fecha: @fechaMostrar.ToString("dd/MM/yyyy")
+                                @if (!string.IsNullOrEmpty(tarea.Aclaracion))
+                                {
+                                    <span> · @tarea.Aclaracion</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="ayudado-acciones">
+                            <button type="button" class="button" onclick="verInfoAyudado(@tarea.IdUsuarioSolicitante)">Ver solicitante</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="item-tarjeta-ayudado">
+                    <span class="nombre-usuario-ayudado">Aún no hay tareas solicitadas disponibles.</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="panel seccion-ultimos-ayudados">
+        <h2>Últimos ayudados</h2>
+        <div class="contenedor-lista-ayudados">
+            @{
+                List<Usuarios>? listaAyudados = ViewBag.UltimosAyudados as List<Usuarios>;
+            }
+            @if (listaAyudados != null && listaAyudados.Count > 0)
+            {
+                int posicion = 1;
+                foreach (Usuarios adulto in listaAyudados)
+                {
+                    string rutaFotoAdulto = adulto.FotoPerfil ?? "";
+                    string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
+                        ? Url.Content("~/img/user.svg")
+                        : Url.Content("~" + rutaFotoAdulto);
+                    string nombreAdulto = ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim();
+                    if (string.IsNullOrEmpty(nombreAdulto))
                     {
-                        DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
-                        Usuarios? adulto = (solicitantes != null && solicitantes.ContainsKey(tarea.IdUsuarioSolicitante))
-                            ? solicitantes[tarea.IdUsuarioSolicitante]
-                            : null;
-
-                        string rutaFotoAdulto = adulto?.FotoPerfil ?? "";
-                        string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
-                            ? Url.Content("~/img/user.svg")
-                            : Url.Content("~" + rutaFotoAdulto);
-
-                        string nombreAdulto = adulto != null
-                            ? ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim()
-                            : "";
-                        if (string.IsNullOrEmpty(nombreAdulto))
-                        {
-                            nombreAdulto = adulto?.Email ?? "Adulto mayor";
-                        }
-
-                        <div class="joven-actividad-fila" onclick="verInfoAyudado(@tarea.IdUsuarioSolicitante)">
-                            <div class="joven-actividad-usuario">
-                                <img src="@srcAdulto" alt="@nombreAdulto" class="joven-actividad-avatar" />
-                                <span class="joven-actividad-nombre">@nombreAdulto</span>
-                            </div>
-
-                            <div class="joven-actividad-centro">
-                                <p>Trabajo realizado: @tarea.Titulo</p>
-                                <p>Precio: @(tarea.Monto)$</p>
-                            </div>
-
-                            <div class="joven-actividad-fecha">
-                                <p>Fecha: @fechaMostrar.ToString("d/M/yy")</p>
-                            </div>
-                        </div>
+                        nombreAdulto = adulto.Email ?? "Adulto mayor";
                     }
-                }
-                else
-                {
-                    <div class="joven-actividad-fila">
-                        <div class="joven-actividad-centro" style="width: 100%; text-align: center;">
-                            <p>Aún no hay actividades registradas en la base de datos.</p>
+
+                    <div class="item-tarjeta-ayudado">
+                        <div class="ayudado-info-usuario">
+                            <img src="@srcAdulto" alt="@nombreAdulto" class="imagen-avatar-ayudado" />
+                            <span class="nombre-usuario-ayudado">@nombreAdulto</span>
+                        </div>
+                        <div class="ayudado-acciones">
+                            <button type="button" class="button" onclick="verInfoAyudado(@adulto.IdUsuario)">Ver más info</button>
+                            <span class="posicion-ranking-numero">#@posicion</span>
                         </div>
                     </div>
+                    posicion++;
                 }
-            </div>
-
-            <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
-                <h3 id="detalleNombre"></h3>
-                <p id="detalleEmail"></p>
-                <p id="detalleTelefono"></p>
-                <p id="detalleTipo"></p>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content page">
-            <a class="logo" href='@Url.Action("Index", "Home")'>
-                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
-            </a>
-
-            <div>
-                <h3>Te Ayudo</h3>
-                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
-                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
-            </div>
-
-            <div>
-                <h3>Explorá</h3>
-                <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
-                <a href='@Url.Action("Index", "Home")#como-funciona'>Cómo funciona</a>
-                <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
-            </div>
-
-            <div>
-                <h3>Trabajá con nosotros</h3>
-                <a href='@Url.Action("Index", "Home")#trabaja'>Conocé la propuesta</a>
-                <a href='@Url.Action("RegistroJoven", "Home")'>
-                    Sumate
-                </a>
-            </div>
-
-            <div>
-                <h3>Ayuda</h3>
-                <a href='@Url.Action("Index", "Home")#preguntas'>Preguntas frecuentes</a>
-                <a href='@Url.Action("Perfil", "Home")'>
-                    Mi cuenta
-                </a>
-            </div>
+            }
+            else
+            {
+                <div class="item-tarjeta-ayudado">
+                    <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+                </div>
+            }
         </div>
 
-        <p class="copyright">
-            © <span id="year">2026</span> Te Ayudo.
-            Todos los derechos reservados.
-        </p>
-    </footer>
-</div>
+        <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
+            <h3 id="detalleNombre"></h3>
+            <p id="detalleEmail"></p>
+            <p id="detalleTelefono"></p>
+            <p id="detalleTipo"></p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-content page">
+        <a class="logo" href='@Url.Action("Index", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <div>
+            <h3>Te Ayudo</h3>
+            <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+            <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+        </div>
+
+        <div>
+            <h3>Explorá</h3>
+            <a href='@Url.Action("PrincipalJoven", "Home")'>Mapa y comunidad</a>
+            <a href='@Url.Action("Index", "Home")#como-funciona'>Cómo funciona</a>
+            <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+        </div>
+
+        <div>
+            <h3>Trabajá con nosotros</h3>
+            <a href='@Url.Action("Index", "Home")#trabaja'>Conocé la propuesta</a>
+            <a href='@Url.Action("RegistroJoven", "Home")'>
+                Sumate
+            </a>
+        </div>
+
+        <div>
+            <h3>Ayuda</h3>
+            <a href='@Url.Action("Index", "Home")#preguntas'>Preguntas frecuentes</a>
+            <a href='@Url.Action("Perfil", "Home")'>
+                Mi cuenta
+            </a>
+        </div>
+    </div>
+
+    <p class="copyright">
+        © <span id="year">2026</span> Te Ayudo.
+        Todos los derechos reservados.
+    </p>
+</footer>

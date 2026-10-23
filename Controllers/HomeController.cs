@@ -435,6 +435,11 @@ public class HomeController : Controller
         return View("PrincipalJoven");
     }
 
+    public IActionResult Conversaciones()
+    {
+        return View();
+    }
+
     public IActionResult PrincipalAdulto()
     {
         int idAdultoLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;

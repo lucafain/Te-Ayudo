@@ -7,7 +7,33 @@
         lugarInicial = (usuario.Calle + " " + usuario.Direccion).Trim();
     }
 }
+<header class="header">
+    <a class="logo" href='@Url.Action("PrincipalAdulto", "Home")'>
+        <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+    </a>
 
+    <button class="menu-toggle"
+            aria-expanded="false"
+            aria-controls="navigation"
+            aria-label="Abrir menú">
+        ☰
+    </button>
+
+    <nav id="navigation" aria-label="Navegación principal">
+        <a class="nav-button" href='@Url.Action("PrincipalAdulto", "Home")'>
+            Inicio
+        </a>
+
+        <a class="nav-button" href='@Url.Action("Conversaciones", "Home")'>
+            Conversaciones
+        </a>
+
+        <a class="nav-button login" href='@Url.Action("Perfil", "Home")'>
+            <img class="login-icon" src="~/img/user.svg" alt="" />
+            Mi cuenta
+        </a>
+    </nav>
+</header>
 <main class="auth-page auth-page--solicitar">
     <div class="solicitar-wrapper">
         <h1 class="solicitar-main-title">Solicitar Ayuda</h1>

@@ -64,7 +64,7 @@
 
                 <div class="field">
                     <label for="Descripcion">Descripción</label>
-                    <input type="text" id="Descripcion" name="Descripcion" maxlength="50" />
+                    <textarea id="Descripcion" name="Descripcion" maxlength="500" rows="5" class="textarea-descripcion" placeholder="Contá con detalle qué necesitás..."></textarea>
                 </div>
 
                 <div class="field">
@@ -80,9 +80,9 @@
                     </div>
                 </div>
 
-                <div class="field">
-                    <label for="DiaHora">Dia (dd/mm/yy) y Hora (hh/mm)</label>
-                    <div class="input-with-left-icon">
+                <div class="field" style="position: relative;">
+                    <label for="DiaHoraVisible">Dia (dd/mm/yy) y Hora (hh/mm)</label>
+                    <div class="input-with-left-icon" onclick="abrirSelectorFechaHora()" style="cursor: pointer;">
                         <span class="input-left-icon" aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -91,8 +91,92 @@
                                 <line x1="3" y1="10" x2="21" y2="10"></line>
                             </svg>
                         </span>
-                        <input type="datetime-local" id="DiaHora" name="DiaHora" />
+                        <input type="text" id="DiaHoraVisible" placeholder="Seleccionar día y horario..." readonly style="cursor: pointer;" />
+                        <input type="hidden" id="DiaHora" name="DiaHora" />
                     </div>
+
+                    <!-- SELECTOR PERSONALIZADO DE FECHA Y HORA (ESTILO OSCURO) -->
+                    <div id="customDateTimePopup" class="dt-popup-wrapper" style="display: none;">
+                        <div class="dt-card">
+                            <div class="dt-header-selects">
+                                <select id="dtMonthSelect" onchange="renderizarCalendario()">
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+
+                                <select id="dtYearSelect" onchange="renderizarCalendario()">
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+
+                            <div class="dt-weekdays">
+                                <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                            </div>
+
+                            <div id="dtDaysGrid" class="dt-days-grid"></div>
+
+                            <div class="dt-actions">
+                                <button type="button" class="dt-btn-cancel" onclick="cerrarSelectorFechaHora()">Cancel</button>
+                                <button type="button" class="dt-btn-set" onclick="confirmarFechaHora()">Set Date</button>
+                            </div>
+                        </div>
+
+                        <div class="dt-card dt-card--time">
+                            <div class="dt-time-row">
+                                <select id="dtTimeStart">
+                                    <option value="08:00">08:00</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00" selected>10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="07:00">07:00</option>
+                                </select>
+                                <span class="dt-time-sep">—</span>
+                                <select id="dtTimeEnd">
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00" selected>11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="07:00">07:00</option>
+                                    <option value="08:00">08:00</option>
+                                </select>
+                                <button type="button" id="dtAmPmBtn" class="dt-ampm-btn" onclick="alternarAmPm()">AM</button>
+                            </div>
+
+                            <div class="dt-actions">
+                                <button type="button" class="dt-btn-cancel" onclick="cerrarSelectorFechaHora()">Cancel</button>
+                                <button type="button" class="dt-btn-set" onclick="confirmarFechaHora()">Set Time</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="Monto">Monto ($)</label>
+                    <input type="number" id="Monto" name="Monto" min="0" step="100" placeholder="Ej: 5000" />
                 </div>
 
                 <div class="field">

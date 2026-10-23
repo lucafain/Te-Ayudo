@@ -1,0 +1,131 @@
+@{
+    ViewData["Title"] = "Postulados";
+    Tareas? tarea = ViewBag.Tarea as Tareas;
+    List<Usuarios>? postulados = ViewBag.Postulados as List<Usuarios>;
+    string tituloTarea = !string.IsNullOrEmpty(tarea?.Titulo) ? tarea.Titulo : "esta ayuda";
+}
+
+<div class="joven-page">
+    <header class="header header--joven">
+        <a class="logo" href='@Url.Action("PrincipalJoven", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("Index", "Home")#preguntas'>
+                Preguntas frecuentes
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("RegistroJoven", "Home")'>
+                Sumate como joven
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
+                Perfil
+            </a>
+        </nav>
+    </header>
+
+    <main class="joven-main">
+        <section class="postulados-contenedor">
+            <h1 class="postulados-titulo">¡Ya estás postulado para @tituloTarea!</h1>
+
+            @if (postulados != null && postulados.Count > 0)
+            {
+                <div class="postulados-grid">
+                    @foreach (Usuarios joven in postulados)
+                    {
+                        string rutaFoto = joven.FotoPerfil ?? "";
+                        string srcFoto = string.IsNullOrEmpty(rutaFoto)
+                            ? Url.Content("~/img/user.svg")
+                            : Url.Content("~" + rutaFoto);
+                        string nombreJoven = ((joven.Nombre ?? "") + " " + (joven.Apellido ?? "")).Trim();
+                        if (string.IsNullOrEmpty(nombreJoven))
+                        {
+                            nombreJoven = joven.Email ?? "Joven voluntario";
+                        }
+
+                        <article class="postulado-card">
+                            <img src="@srcFoto" alt="@nombreJoven" class="postulado-avatar" />
+
+                            <div class="postulado-info">
+                                <h3>@nombreJoven</h3>
+                                <button type="button" class="btn-ayuda-verde" onclick="verInfoAyudado(@joven.IdUsuario)">
+                                    Ver más
+                                </button>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="joven-actividades-caja" style="max-width: 560px; margin: 0 auto;">
+                    <div class="joven-actividad-fila" style="justify-content: center;">
+                        <p>Ya quedó registrada tu postulación.</p>
+                    </div>
+                </div>
+            }
+
+            <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
+                <h3 id="detalleNombre"></h3>
+                <p id="detalleEmail"></p>
+                <p id="detalleTelefono"></p>
+                <p id="detalleTipo"></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" href='@Url.Action("Index", "Home")'>
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Explorá</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+                <a href='@Url.Action("Index", "Home")#como-funciona'>Cómo funciona</a>
+                <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+            </div>
+
+            <div>
+                <h3>Trabajá con nosotros</h3>
+                <a href='@Url.Action("Index", "Home")#trabaja'>Conocé la propuesta</a>
+                <a href='@Url.Action("RegistroJoven", "Home")'>
+                    Sumate
+                </a>
+            </div>
+
+            <div>
+                <h3>Ayuda</h3>
+                <a href='@Url.Action("Index", "Home")#preguntas'>Preguntas frecuentes</a>
+                <a href='@Url.Action("Perfil", "Home")'>
+                    Mi cuenta
+                </a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</div>

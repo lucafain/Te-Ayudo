@@ -10,6 +10,7 @@ public class Tareas
     public DateTime FechaCreacion { get; set; }
     public string Lugar { get; set; } = "";
     public DateTime DiaTarea { get; set; }
+    public DateTime DiaFecha { get; set; }
     public TimeSpan HoraTarea { get; set; }
     public string? Aclaracion { get; set; } = "";
     public double Monto { get; set; }

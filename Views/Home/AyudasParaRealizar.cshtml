@@ -1,0 +1,172 @@
+@{
+    ViewData["Title"] = "Ayudas para realizar";
+    List<Tareas>? tareasPendientes = ViewBag.TareasPendientes as List<Tareas>;
+}
+
+<div class="joven-page">
+    <header class="header header--joven">
+        <a class="logo" href='@Url.Action("PrincipalJoven", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("Index", "Home")#preguntas'>
+                Preguntas frecuentes
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("RegistroJoven", "Home")'>
+                Sumate como joven
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
+                Perfil
+            </a>
+        </nav>
+    </header>
+
+    <main class="joven-main">
+        <!-- VISTA 1: GRILLA DE AYUDAS PARA REALIZAR -->
+        <section class="joven-seccion" id="vistaGrillaAyudas">
+            <h1 class="ayudas-titulo-principal">Ayudas para realizar</h1>
+
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="auth-alert" style="max-width: 520px; margin: 0 auto 24px; background: #ffffff; color: #0d6e2b;">
+                    @ViewBag.SuccessMessage
+                </div>
+            }
+
+            @if (tareasPendientes != null && tareasPendientes.Count > 0)
+            {
+                <div class="ayudas-grid">
+                    @foreach (Tareas tarea in tareasPendientes)
+                    {
+                        <article class="ayuda-card" id="card-tarea-@tarea.IdTarea">
+                            <div class="ayuda-card-top"></div>
+
+                            <div class="ayuda-card-body">
+                                <h3>@tarea.Titulo</h3>
+
+                                <div class="ayuda-card-botones">
+                                    <button type="button" class="btn-ayuda-verde" onclick="abrirDetalleTareaFetch(@tarea.IdTarea)">
+                                        Ver más
+                                    </button>
+
+                                    <button type="button" class="btn-ayuda-rojo" onclick="rechazarTareaConUndo(@tarea.IdTarea)">
+                                        Rechazar
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="joven-actividades-caja" style="max-width: 560px; margin: 0 auto;">
+                    <div class="joven-actividad-fila" style="justify-content: center;">
+                        <p>No hay ayudas pendientes para realizar en este momento.</p>
+                    </div>
+                </div>
+            }
+        </section>
+
+        <!-- VISTA 2: DETALLE DE LA AYUDA (CARGADA CON FETCH) -->
+        <section class="detalle-ayuda-contenedor" id="vistaDetalleAyuda" style="display: none;">
+            <div class="detalle-ayuda-card">
+                <img id="detalleTareaFoto" src="~/img/user.svg" alt="Solicitante" class="detalle-ayuda-foto" />
+
+                <div class="detalle-ayuda-info">
+                    <h1 id="detalleTareaSolicitante" class="detalle-ayuda-nombre">Adulto mayor</h1>
+
+                    <p id="detalleTareaTitulo" class="detalle-ayuda-linea"></p>
+                    <p id="detalleTareaLugar" class="detalle-ayuda-linea"></p>
+                    <p id="detalleTareaFechaHora" class="detalle-ayuda-linea"></p>
+                    <p id="detalleTareaDescripcion" class="detalle-ayuda-descripcion"></p>
+
+                    <div class="detalle-ayuda-botones">
+                        <button type="button" class="btn-detalle-cancelar" onclick="volverAGrillaAyudas()">
+                            Cancelar
+                        </button>
+
+                        <button type="button" class="btn-detalle-postular" onclick="postularmeConFetch()">
+                            Postularme ahora
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 3: POSTULADOS A LA AYUDA (CARGADA CON FETCH AL POSTULARSE) -->
+        <section class="postulados-contenedor" id="vistaPostuladosAyuda" style="display: none;">
+            <h1 id="tituloPostuladosFetch" class="postulados-titulo">¡Ya estás postulado!</h1>
+
+            <div id="grillaPostuladosFetch" class="postulados-grid"></div>
+
+            <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
+                <h3 id="detalleNombre"></h3>
+                <p id="detalleEmail"></p>
+                <p id="detalleTelefono"></p>
+                <p id="detalleTipo"></p>
+            </div>
+        </section>
+    </main>
+
+    <div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;">
+        <span>Ayuda rechazada</span>
+        <button type="button" class="snackbar-btn-deshacer" onclick="deshacerRechazoTarea()">Deshacer</button>
+    </div>
+
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" href='@Url.Action("Index", "Home")'>
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Explorá</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+                <a href='@Url.Action("Index", "Home")#como-funciona'>Cómo funciona</a>
+                <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+            </div>
+
+            <div>
+                <h3>Trabajá con nosotros</h3>
+                <a href='@Url.Action("Index", "Home")#trabaja'>Conocé la propuesta</a>
+                <a href='@Url.Action("RegistroJoven", "Home")'>
+                    Sumate
+                </a>
+            </div>
+
+            <div>
+                <h3>Ayuda</h3>
+                <a href='@Url.Action("Index", "Home")#preguntas'>Preguntas frecuentes</a>
+                <a href='@Url.Action("Perfil", "Home")'>
+                    Mi cuenta
+                </a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</div>

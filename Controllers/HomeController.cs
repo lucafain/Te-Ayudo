@@ -12,6 +12,26 @@ public class HomeController : Controller
     public HomeController(IWebHostEnvironment environment)
     {
         _environment = environment;
+
+        try
+        {
+            string rutaDestinoJoven = Path.Combine(_environment.WebRootPath, "img", "hero-joven.png");
+            string rutaOrigenJoven = @"C:\Users\49926786\.gemini\antigravity\brain\924762c3-2dcd-4062-9c7e-c5e405100aaf\.user_uploaded\media_1792774596257_5573e764.png";
+            if (!System.IO.File.Exists(rutaDestinoJoven) && System.IO.File.Exists(rutaOrigenJoven))
+            {
+                System.IO.File.Copy(rutaOrigenJoven, rutaDestinoJoven, true);
+            }
+
+            string rutaDestinoAdulto = Path.Combine(_environment.WebRootPath, "img", "hero-adulto.png");
+            string rutaOrigenAdulto = @"C:\Users\49926786\.gemini\antigravity\brain\924762c3-2dcd-4062-9c7e-c5e405100aaf\.user_uploaded\media_1792775018614_8cbbfdff.png";
+            if (!System.IO.File.Exists(rutaDestinoAdulto) && System.IO.File.Exists(rutaOrigenAdulto))
+            {
+                System.IO.File.Copy(rutaOrigenAdulto, rutaDestinoAdulto, true);
+            }
+        }
+        catch
+        {
+        }
     }
 
     public IActionResult Index()
@@ -174,7 +194,7 @@ public class HomeController : Controller
 
         // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
         string tituloLimpio = Titulo.Length > 50 ? Titulo.Substring(0, 50) : Titulo;
-        string descripcionLimpia = Descripcion.Length > 50 ? Descripcion.Substring(0, 50) : Descripcion;
+        string descripcionLimpia = Descripcion.Length > 500 ? Descripcion.Substring(0, 500) : Descripcion;
         string lugarLimpio = Lugar.Length > 50 ? Lugar.Substring(0, 50) : Lugar;
         string tipoLugarTexto = string.IsNullOrEmpty(TipoLugar) ? "Domicilio" : TipoLugar;
         string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
@@ -426,20 +446,62 @@ public class HomeController : Controller
 
     public IActionResult PrincipalJoven()
     {
-        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? joven = null;
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+        }
 
-        ViewBag.Joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
+        if (joven == null)
+        {
+            joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        }
+
+        List<Tareas> tareasDisponibles = BD.ObtenerTareasDisponibles();
+        Dictionary<int, Usuarios> solicitantes = new Dictionary<int, Usuarios>();
+        foreach (Tareas tarea in tareasDisponibles)
+        {
+            if (!solicitantes.ContainsKey(tarea.IdUsuarioSolicitante))
+            {
+                Usuarios? solicitante = BD.ObtenerUsuarioPorId(tarea.IdUsuarioSolicitante);
+                if (solicitante != null)
+                {
+                    solicitantes.Add(tarea.IdUsuarioSolicitante, solicitante);
+                }
+            }
+        }
+
+        ViewBag.Joven = joven;
         ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
-        ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
+        ViewBag.TareasDisponibles = tareasDisponibles;
+        ViewBag.Solicitantes = solicitantes;
 
         return View("PrincipalJoven");
     }
 
+    public IActionResult Conversaciones()
+    {
+        return View();
+    }
+
     public IActionResult PrincipalAdulto()
     {
-        int idAdultoLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? 1;
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? adulto = null;
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            adulto = BD.ObtenerUsuarioPorEmail(emailSesion);
+        }
 
-        ViewBag.Adulto = BD.ObtenerUsuarioPorId(idAdultoLogueado);
+        int idAdultoLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (adulto != null ? adulto.IdUsuario : 1);
+        if (adulto == null)
+        {
+            adulto = BD.ObtenerUsuarioPorId(idAdultoLogueado);
+        }
+
+        ViewBag.Adulto = adulto;
         ViewBag.Jovenes = BD.ObtenerJovenesDisponibles();
         ViewBag.MisTareas = BD.ObtenerTareasPorSolicitante(idAdultoLogueado);
 
@@ -448,7 +510,277 @@ public class HomeController : Controller
 
     public IActionResult Explorar()
     {
-        return RedirectToAction("PrincipalJoven", "Home");
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? joven = null;
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+        }
+
+        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
+        if (joven == null)
+        {
+            joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+        }
+
+        ViewBag.Joven = joven;
+        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+        ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
+
+        return View("Explorar");
+    }
+
+    public IActionResult AyudasParaRealizar(string? mensaje = null)
+    {
+        ViewBag.SuccessMessage = mensaje;
+        ViewBag.TareasPendientes = BD.ObtenerTareasPendientes(ObtenerIdUsuarioLogueado());
+        return View("AyudasParaRealizar");
+    }
+
+    public IActionResult DetalleAyuda(int idTarea)
+    {
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null)
+        {
+            return RedirectToAction("AyudasParaRealizar", "Home");
+        }
+
+        Usuarios? solicitante = BD.ObtenerUsuarioPorId(tarea.IdUsuarioSolicitante);
+        ViewBag.Tarea = tarea;
+        ViewBag.Solicitante = solicitante;
+        return View("DetalleAyuda");
+    }
+
+    [HttpGet]
+    public IActionResult ObtenerDetalleTareaJson(int idTarea)
+    {
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null)
+        {
+            return Json(null);
+        }
+
+        Usuarios? solicitante = BD.ObtenerUsuarioPorId(tarea.IdUsuarioSolicitante);
+        DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
+        string nombreSolicitante = solicitante != null
+            ? ((solicitante.Nombre ?? "") + " " + (solicitante.Apellido ?? "")).Trim()
+            : "Adulto mayor";
+        if (string.IsNullOrEmpty(nombreSolicitante))
+        {
+            nombreSolicitante = solicitante?.Email ?? "Adulto mayor";
+        }
+
+        return Json(new
+        {
+            idTarea = tarea.IdTarea,
+            titulo = tarea.Titulo,
+            descripcion = tarea.Descripcion,
+            lugar = tarea.Lugar,
+            fecha = fechaMostrar.ToString("dd/MM/yyyy"),
+            hora = fechaMostrar.ToString("HH:mm"),
+            aclaracion = tarea.Aclaracion ?? "",
+            nombreSolicitante = nombreSolicitante,
+            fotoSolicitante = solicitante?.FotoPerfil ?? "/img/user.svg"
+        });
+    }
+
+    [HttpPost]
+    public IActionResult Postularse(int idTarea)
+    {
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? joven = null;
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+        }
+
+        int idJoven = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
+        if (BD.ObtenerUsuarioPorId(idJoven) == null)
+        {
+            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
+            if (primerUsuario != null)
+            {
+                idJoven = primerUsuario.IdUsuario;
+            }
+        }
+
+        // estado "Pendiente": la postulación espera a que el adulto la acepte o rechace
+        Postulaciones nuevaPostulacion = new Postulaciones(idJoven, idTarea, "Pendiente", 0, true);
+        BD.GuardarPostulacion(nuevaPostulacion);
+
+        return RedirectToAction("Postulados", "Home", new { idTarea = idTarea });
+    }
+
+    [HttpPost]
+    public IActionResult PostularseJson(int idTarea)
+    {
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        Usuarios? joven = null;
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+        }
+
+        int idJoven = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
+        if (BD.ObtenerUsuarioPorId(idJoven) == null)
+        {
+            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
+            if (primerUsuario != null)
+            {
+                idJoven = primerUsuario.IdUsuario;
+            }
+        }
+
+        // estado "Pendiente": la postulación espera a que el adulto la acepte o rechace
+        Postulaciones nuevaPostulacion = new Postulaciones(idJoven, idTarea, "Pendiente", 0, true);
+        BD.GuardarPostulacion(nuevaPostulacion);
+
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        List<Usuarios> postulados = BD.ObtenerPostuladosPorTarea(idTarea);
+
+        return Json(new
+        {
+            tituloTarea = tarea?.Titulo ?? "esta ayuda",
+            postulados = postulados
+        });
+    }
+
+    public IActionResult Postulados(int idTarea)
+    {
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        ViewBag.Tarea = tarea;
+        ViewBag.Postulados = BD.ObtenerPostuladosPorTarea(idTarea);
+        return View("Postulados");
+    }
+
+    [HttpPost]
+    public IActionResult AceptarTarea(int idTarea)
+    {
+        BD.AceptarTarea(idTarea);
+        return RedirectToAction("AyudasParaRealizar", "Home", new { mensaje = "¡Aceptaste la ayuda correctamente!" });
+    }
+
+    [HttpPost]
+    public IActionResult RechazarTarea(int idTarea)
+    {
+        // Se guarda en Postulaciones como "Descartada" (la tarea sigue existiendo para los demás jóvenes)
+        bool ok = BD.RechazarTarea(idTarea, ObtenerIdUsuarioLogueado());
+        return Json(new { ok = ok });
+    }
+
+    // ===== AYUDAS PEDIDAS POR EL ADULTO =====
+
+    public IActionResult MisAyudas(string? mensaje = null)
+    {
+        int idAdulto = ObtenerIdUsuarioLogueado();
+        List<Tareas> misTareas = BD.ObtenerTareasPorSolicitante(idAdulto);
+
+        // Slide 15: Dictionary para saber cuántos postulantes tiene cada tarea
+        Dictionary<int, int> cantidadPostulantes = new Dictionary<int, int>();
+        foreach (Tareas tarea in misTareas)
+        {
+            if (!cantidadPostulantes.ContainsKey(tarea.IdTarea))
+            {
+                cantidadPostulantes.Add(tarea.IdTarea, BD.ContarPostulantes(tarea.IdTarea));
+            }
+        }
+
+        ViewBag.SuccessMessage = mensaje;
+        ViewBag.MisTareas = misTareas;
+        ViewBag.CantidadPostulantes = cantidadPostulantes;
+        return View("MisAyudas");
+    }
+
+    [HttpPost]
+    public IActionResult CancelarTarea(int idTarea)
+    {
+        int idAdulto = ObtenerIdUsuarioLogueado();
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+
+        if (tarea == null || tarea.IdUsuarioSolicitante != idAdulto)
+        {
+            return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
+        }
+
+        bool cancelada = BD.CancelarTarea(idTarea);
+        string mensaje = cancelada
+            ? "La ayuda fue cancelada."
+            : "No se puede cancelar una ayuda que ya tiene postulantes.";
+        return RedirectToAction("MisAyudas", "Home", new { mensaje = mensaje });
+    }
+
+    public IActionResult PostulantesTarea(int idTarea)
+    {
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null)
+        {
+            return RedirectToAction("MisAyudas", "Home");
+        }
+
+        ViewBag.Tarea = tarea;
+        ViewBag.Postulantes = BD.ObtenerPostuladosPorTarea(idTarea);
+        return View("PostulantesTarea");
+    }
+
+    [HttpGet]
+    public IActionResult ObtenerDetallePostulanteJson(int idUsuario)
+    {
+        Usuarios? joven = BD.ObtenerUsuarioPorId(idUsuario);
+        if (joven == null)
+        {
+            return Json(null);
+        }
+
+        string nombre = ((joven.Nombre ?? "") + " " + (joven.Apellido ?? "")).Trim();
+        if (string.IsNullOrEmpty(nombre))
+        {
+            nombre = joven.Email;
+        }
+
+        return Json(new
+        {
+            idUsuario = joven.IdUsuario,
+            nombre = nombre,
+            foto = string.IsNullOrEmpty(joven.FotoPerfil) ? "/img/user.svg" : joven.FotoPerfil,
+            ayudasRealizadas = BD.ContarAyudasRealizadas(idUsuario),
+            valoracion = BD.ObtenerValoracionPromedio(idUsuario),
+            puntual = BD.EsPuntual(idUsuario)
+        });
+    }
+
+    [HttpPost]
+    public IActionResult AceptarPostulante(int idTarea, int idUsuario)
+    {
+        bool ok = BD.AceptarPostulante(idTarea, idUsuario);
+        return Json(new { ok = ok });
+    }
+
+    [HttpPost]
+    public IActionResult RechazarPostulante(int idTarea, int idUsuario)
+    {
+        bool ok = BD.RechazarPostulante(idTarea, idUsuario);
+        return Json(new { ok = ok });
+    }
+
+    private int ObtenerIdUsuarioLogueado()
+    {
+        int? idSesion = HttpContext.Session.GetInt32("IdUsuarioLogueado");
+        if (idSesion != null)
+        {
+            return idSesion.Value;
+        }
+
+        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
+        if (!string.IsNullOrEmpty(emailSesion))
+        {
+            Usuarios? usuario = BD.ObtenerUsuarioPorEmail(emailSesion);
+            if (usuario != null)
+            {
+                return usuario.IdUsuario;
+            }
+        }
+
+        return 1;
     }
 
     public IActionResult CerrarSesion()

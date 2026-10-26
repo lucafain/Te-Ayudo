@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Te_Ayudo]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  Database [Te_Ayudo]    Script Date: 26/10/2026 14:23:11 ******/
 CREATE DATABASE [Te_Ayudo]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -79,10 +79,10 @@ ALTER DATABASE [Te_Ayudo] SET QUERY_STORE = OFF
 GO
 USE [Te_Ayudo]
 GO
-/****** Object:  User [alumno]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  User [alumno]    Script Date: 26/10/2026 14:23:11 ******/
 CREATE USER [alumno] FOR LOGIN [alumno] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  Table [dbo].[Mensajes]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  Table [dbo].[Mensajes]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,7 +99,7 @@ CREATE TABLE [dbo].[Mensajes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Postulaciones]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  Table [dbo].[Postulaciones]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -117,7 +117,7 @@ CREATE TABLE [dbo].[Postulaciones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tareas]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  Table [dbo].[Tareas]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -141,7 +141,7 @@ CREATE TABLE [dbo].[Tareas](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Usuarios]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  Table [dbo].[Usuarios]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -165,6 +165,60 @@ CREATE TABLE [dbo].[Usuarios](
 	[IdUsuario] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET IDENTITY_INSERT [dbo].[Mensajes] ON 
+
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (1, N'Hola, queria consultar si sigue disponible la tarea.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 1, 3)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (2, N'Si, sigue disponible. Gracias por consultar.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 3, 1)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (3, N'Hola, me postule para pasear los perros.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 5, 7)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (4, N'Perfecto, despues reviso tu postulacion.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 7, 5)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (5, N'Hola, queria saber que programas hay que instalar.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 6, 4)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (6, N'Necesito instalar algunos programas para estudiar.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 4, 6)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (7, N'Hola, puedo ayudarte con el repaso de matematica.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 2, 4)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (8, N'Gracias, te confirmo el horario mas tarde.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 4, 2)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (9, N'Hola, queria consultar por el horario.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 8, 3)
+INSERT [dbo].[Mensajes] ([IdMensaje], [contenido], [fechaEnvio], [IdEmisor], [IdReceptor]) VALUES (10, N'Te confirmo el horario durante el dia.', CAST(N'2026-10-26T14:20:17.457' AS DateTime), 3, 8)
+SET IDENTITY_INSERT [dbo].[Mensajes] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Postulaciones] ON 
+
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (1, 1, 1, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (2, 2, 1, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (3, 5, 2, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (4, 6, 3, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (5, 8, 4, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (6, 1, 5, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (7, 2, 6, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (8, 5, 7, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (9, 6, 8, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (10, 8, 1, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (11, 5, 3, N'Pendiente', NULL, NULL)
+INSERT [dbo].[Postulaciones] ([IdPostulacion], [IdUsuario], [IdTarea], [estado], [calificacion], [puntual]) VALUES (12, 6, 4, N'Pendiente', NULL, NULL)
+SET IDENTITY_INSERT [dbo].[Postulaciones] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Tareas] ON 
+
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (1, N'Limpiar patio', N'Barrer y ordenar el patio', 1, CAST(N'2026-10-26' AS Date), N'Almagro', CAST(N'2026-11-04' AS Date), CAST(N'11:00:00' AS Time), N'Llevar guantes', 4500, N'Domicilio', 3)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (2, N'Comprar remedios', N'Retirar un pedido de farmacia', 1, CAST(N'2026-10-26' AS Date), N'Caballito', CAST(N'2026-11-05' AS Date), CAST(N'12:00:00' AS Time), N'El pedido ya esta pago', 2500, N'Exterior', 4)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (3, N'Regar plantas', N'Regar plantas del balcon', 1, CAST(N'2026-10-26' AS Date), N'Villa Crespo', CAST(N'2026-11-06' AS Date), CAST(N'09:30:00' AS Time), N'Hay varias macetas', 2000, N'Domicilio', 3)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (4, N'Pasear dos perros', N'Pasear dos perros por la plaza', 1, CAST(N'2026-10-26' AS Date), N'Palermo', CAST(N'2026-11-07' AS Date), CAST(N'15:00:00' AS Time), N'Los perros usan correa', 4000, N'Exterior', 7)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (5, N'Ayuda con computadora', N'Instalar programas basicos', 1, CAST(N'2026-10-26' AS Date), N'Almagro', CAST(N'2026-11-08' AS Date), CAST(N'14:00:00' AS Time), N'Es una computadora de escritorio', 6000, N'Domicilio', 4)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (6, N'Ordenar biblioteca', N'Ordenar libros por tema', 1, CAST(N'2026-10-26' AS Date), N'Caballito', CAST(N'2026-11-09' AS Date), CAST(N'10:00:00' AS Time), N'No hace falta experiencia', 3500, N'Domicilio', 3)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (7, N'Llevar paquetes', N'Llevar paquetes al correo', 1, CAST(N'2026-10-26' AS Date), N'Palermo', CAST(N'2026-11-10' AS Date), CAST(N'13:00:00' AS Time), N'Son tres paquetes chicos', 3000, N'Exterior', 7)
+INSERT [dbo].[Tareas] ([IdTarea], [titulo], [descripcion], [estado], [fechaCreacion], [lugar], [diaTarea], [horaTarea], [aclaracion], [monto], [tipoLugar], [IdUsuarioSolicitante]) VALUES (8, N'Ayudar con estudio', N'Repasar matematica de secundaria', 1, CAST(N'2026-10-26' AS Date), N'Villa Crespo', CAST(N'2026-11-11' AS Date), CAST(N'17:00:00' AS Time), N'Nivel secundario', 5000, N'Domicilio', 4)
+SET IDENTITY_INSERT [dbo].[Tareas] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Usuarios] ON 
+
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (1, N'Mateo', N'Perez Curci', N'mateo@gmail.com', N'Buenos Aires', 150, N'Av. Medrano', N'1179', CAST(N'2026-10-26' AS Date), 0, N'Mateo123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (2, N'Rocco', N'Diaz', N'rocco@gmail.com', N'Buenos Aires', 220, N'Av. Boedo', N'1218', CAST(N'2026-10-26' AS Date), 0, N'Rocco123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (3, N'Santiago', N'Montiel', N'santiago@gmail.com', N'Buenos Aires', 330, N'Av. Pueyrredon', N'1032', CAST(N'2026-10-26' AS Date), 1, N'Santiago123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (4, N'Camilo', N'Rey', N'camilo@gmail.com', N'Buenos Aires', 440, N'Av. Warnes', N'1414', CAST(N'2026-10-26' AS Date), 1, N'Camilo123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (5, N'Nicolas', N'Reniero', N'nicolas@gmail.com', N'Buenos Aires', 550, N'Av. San Juan', N'1147', CAST(N'2026-10-26' AS Date), 0, N'Nicolas123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (6, N'Lucia', N'Sosa', N'lucia@gmail.com', N'Buenos Aires', 660, N'Av. Directorio', N'1406', CAST(N'2026-10-26' AS Date), 0, N'Lucia123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (7, N'Nahuel', N'Molina', N'nahuel@gmail.com', N'Buenos Aires', 770, N'Av. Belgrano', N'1092', CAST(N'2026-10-26' AS Date), 1, N'Nahuel123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (8, N'Agustina', N'Romero', N'agustina@gmail.com', N'Buenos Aires', 880, N'Av. Diaz Velez', N'1405', CAST(N'2026-10-26' AS Date), 0, N'Agustina123', 1, N'')
+SET IDENTITY_INSERT [dbo].[Usuarios] OFF
 GO
 ALTER TABLE [dbo].[Mensajes]  WITH CHECK ADD  CONSTRAINT [FK_Mensajes_Usuarios] FOREIGN KEY([IdEmisor])
 REFERENCES [dbo].[Usuarios] ([IdUsuario])
@@ -191,7 +245,7 @@ REFERENCES [dbo].[Usuarios] ([IdUsuario])
 GO
 ALTER TABLE [dbo].[Tareas] CHECK CONSTRAINT [FK_Tareas_Usuarios]
 GO
-/****** Object:  StoredProcedure [dbo].[BuscarTareasPorLugar]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[BuscarTareasPorLugar]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -203,7 +257,7 @@ BEGIN
     SELECT * FROM Tareas WHERE lugar LIKE '%' + @lugar + '%' AND estado = 1
 END
 GO
-/****** Object:  StoredProcedure [dbo].[CalificarPostulacion]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[CalificarPostulacion]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -218,7 +272,7 @@ BEGIN
     UPDATE Postulaciones SET calificacion = @calificacion, puntual = @puntual WHERE IdPostulacion = @IdPostulacion
 END
 GO
-/****** Object:  StoredProcedure [dbo].[CambiarEstadoPostulacion]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[CambiarEstadoPostulacion]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -232,7 +286,7 @@ BEGIN
     UPDATE Postulaciones SET estado = @estado WHERE IdPostulacion = @IdPostulacion
 END
 GO
-/****** Object:  StoredProcedure [dbo].[CambiarEstadoTarea]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[CambiarEstadoTarea]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -245,7 +299,7 @@ BEGIN
     UPDATE Tareas SET estado = @estado WHERE IdTarea = @IdTarea
 END
 GO
-/****** Object:  StoredProcedure [dbo].[CrearPostulacion]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[CrearPostulacion]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -277,7 +331,7 @@ BEGIN
     END
 END
 GO
-/****** Object:  StoredProcedure [dbo].[EnviarMensaje]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[EnviarMensaje]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -293,7 +347,7 @@ BEGIN
     INSERT INTO Mensajes (contenido, fechaEnvio, IdEmisor, IdReceptor) VALUES (@contenido, GETDATE(), @IdEmisor, @IdReceptor)
 END
 GO
-/****** Object:  StoredProcedure [dbo].[IniciarSesion]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[IniciarSesion]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -306,7 +360,7 @@ BEGIN
     SELECT IdUsuario, nombre, apellido, email, tipoUsuario FROM Usuarios WHERE email = @email AND contrasena = @contrasena
 END
 GO
-/****** Object:  StoredProcedure [dbo].[ModificarUsuario]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[ModificarUsuario]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -327,7 +381,7 @@ BEGIN
     UPDATE Usuarios SET nombre = @nombre, apellido = @apellido, email = @email, provincia = @provincia, direccion = @direccion, calle = @calle, codigoPostal = @codigoPostal, contrasena = @contrasena, fotoPerfil = @fotoPerfil WHERE IdUsuario = @IdUsuario
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarConversacion]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarConversacion]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -342,7 +396,7 @@ BEGIN
     SELECT * FROM Mensajes WHERE (IdEmisor = @IdUsuario1 AND IdReceptor = @IdUsuario2) OR (IdEmisor = @IdUsuario2 AND IdReceptor = @IdUsuario1) ORDER BY fechaEnvio
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarMensajesRecibidos]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarMensajesRecibidos]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -354,7 +408,7 @@ BEGIN
     SELECT M.IdMensaje, M.contenido, M.fechaEnvio, M.IdEmisor, U.nombre, U.apellido FROM Mensajes M INNER JOIN Usuarios U ON M.IdEmisor = U.IdUsuario WHERE M.IdReceptor = @IdReceptor ORDER BY M.fechaEnvio DESC
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarPerfil]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarPerfil]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -366,7 +420,7 @@ BEGIN
     SELECT IdUsuario, nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, fotoPerfil FROM Usuarios WHERE IdUsuario = @IdUsuario
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesCompletas]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesCompletas]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -380,7 +434,7 @@ BEGIN
     SELECT P.IdPostulacion, P.estado, P.calificacion, P.puntual, U.IdUsuario, U.nombre, U.apellido, T.IdTarea, T.titulo, T.descripcion, T.lugar, T.diaTarea, T.horaTarea, T.monto FROM Postulaciones P INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario INNER JOIN Tareas T ON P.IdTarea = T.IdTarea WHERE T.IdTarea = @IdTarea
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesUsuario]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarPostulacionesUsuario]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -393,7 +447,7 @@ BEGIN
     SELECT * FROM Postulaciones WHERE IdUsuario = @IdUsuario
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarPostulantesTarea]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarPostulantesTarea]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -406,7 +460,7 @@ BEGIN
     SELECT U.IdUsuario, U.nombre, U.apellido, U.email, P.IdPostulacion, P.estado, P.calificacion, P.puntual FROM Postulaciones P INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario WHERE P.IdTarea = @IdTarea
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarTareasConUsuarios]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarTareasConUsuarios]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -418,7 +472,7 @@ BEGIN
     SELECT T.IdTarea, T.titulo, T.descripcion, T.estado, T.fechaCreacion, T.lugar, T.diaTarea, T.horaTarea, T.aclaracion, T.monto, T.tipoLugar, U.IdUsuario, U.nombre, U.apellido FROM Tareas T INNER JOIN Usuarios U ON T.IdUsuarioSolicitante = U.IdUsuario
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarTareasDisponibles]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarTareasDisponibles]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -429,7 +483,7 @@ BEGIN
     SELECT * FROM Tareas WHERE estado = 1
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MostrarTareasUsuario]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[MostrarTareasUsuario]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -441,7 +495,7 @@ BEGIN
     SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @IdUsuarioSolicitante
 END
 GO
-/****** Object:  StoredProcedure [dbo].[PublicarTarea]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[PublicarTarea]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -461,7 +515,7 @@ BEGIN
     INSERT INTO Tareas (titulo, descripcion, estado, fechaCreacion, lugar, diaTarea, horaTarea, aclaracion, monto, tipoLugar, IdUsuarioSolicitante) VALUES (@titulo, @descripcion, 1, GETDATE(), @lugar, @diaTarea, @horaTarea, @aclaracion, @monto, @tipoLugar, @IdUsuarioSolicitante)
 END
 GO
-/****** Object:  StoredProcedure [dbo].[RegistrarUsuario]    Script Date: 26/10/2026 13:51:11 ******/
+/****** Object:  StoredProcedure [dbo].[RegistrarUsuario]    Script Date: 26/10/2026 14:23:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

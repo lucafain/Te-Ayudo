@@ -291,6 +291,29 @@ if (formSolicitar != null) {
     });
 }
 
+let formModificarTarea = document.getElementById('formModificarTarea');
+if (formModificarTarea != null) {
+    formModificarTarea.addEventListener('submit', function (evento) {
+        let titulo = document.getElementById('Titulo').value.trim();
+        let descripcion = document.getElementById('Descripcion').value.trim();
+        let lugar = document.getElementById('Lugar').value.trim();
+        let diaHora = document.getElementById('DiaHora').value.trim();
+        let confirmacion = document.getElementById('ConfirmacionModificar').value.trim().toLowerCase();
+
+        if (titulo === '' || descripcion === '' || lugar === '' || diaHora === '') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Por favor completá el título, la descripción, el lugar y el día/hora.');
+            return;
+        }
+
+        if (confirmacion !== 'modificar') {
+            evento.preventDefault();
+            mostrarErrorFormulario('Debés escribir exactamente "modificar" abajo de todo para confirmar los cambios.');
+            return;
+        }
+    });
+}
+
 // Petición server-side FETCH (Slides 142-146 del PDF)
 function verInfoAyudado(idUsuario) {
     fetch('/Home/VerDetalleAyudado?idUsuario=' + idUsuario)
@@ -691,6 +714,12 @@ function abrirModalPostulante(idUsuario) {
 
 function cerrarModalPostulante() {
     document.getElementById('modalPostulante').style.display = 'none';
+}
+
+function aceptarPostulanteDirecto(idUsuario, nombre) {
+    idPostulanteModal = idUsuario;
+    nombrePostulanteModal = nombre || 'este joven';
+    aceptarPostulanteFetch();
 }
 
 function aceptarPostulanteFetch() {

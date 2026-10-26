@@ -224,6 +224,59 @@ nav .login:active {
     text-align: center;
 }
 
+.hero--inicio {
+    width: 100%;
+    aspect-ratio: 16 / 6.2;
+    min-height: 430px;
+    padding: 0;
+    margin-bottom: 42px;
+    background-color: #f6f6f2;
+    background-image: url('/img/hero-inicio.png');
+    background-size: 101% auto;
+    background-position: right 60%;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: stretch;
+    text-align: left;
+}
+
+.hero-inicio-overlay {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 48px 7%;
+    background: linear-gradient(90deg, #f6f6f2 0%, #f6f6f2 44%, rgba(246, 246, 242, 0.96) 49%, rgba(246, 246, 242, 0) 57%);
+}
+
+.hero-inicio-content {
+    max-width: 520px;
+}
+
+.hero-inicio-content h1 {
+    font-size: 40px;
+    color: #000000;
+    margin-bottom: 22px;
+}
+
+.hero-inicio-content p {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.38;
+    color: #161616;
+    margin: 0 0 20px 26px;
+    max-width: 440px;
+}
+
+.hero-inicio-cta {
+    margin-top: 26px;
+    margin-left: 72px;
+}
+
+.hero-inicio-btn {
+    padding: 15px 46px !important;
+    font-size: 18px !important;
+}
+
 .hero ul {
     max-width: 410px;
     margin: 24px auto 0;
@@ -1028,32 +1081,61 @@ footer {
     background: #b5dc97;
     min-height: 100vh;
     color: #000000;
+    display: flex;
+    flex-direction: column;
 }
 
 .header--joven {
     background: #b5dc97;
-    min-height: 84px;
-    padding: 10px 32px;
+    min-height: 96px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 16px 48px;
 }
 
 .nav-button--joven {
     background: #0d6e2b;
     color: #ffffff;
     border-radius: 999px;
-    padding: 10px 22px;
-    font-size: 13px;
+    padding: 12px 26px;
+    font-size: 14.5px;
+    font-weight: 500;
 }
 
 .nav-button--joven:hover {
     background: #095721;
 }
 
+.nav-perfil-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #0d6e2b;
+    border: 2.5px solid #1d3528;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    margin-left: 4px;
+}
+
+.nav-perfil-avatar img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
 .joven-hero {
     width: 100%;
-    min-height: 320px;
+    aspect-ratio: 16 / 6.8;
+    min-height: 440px;
     background-image: url('/img/hero-joven.png');
     background-size: cover;
-    background-position: center;
+    background-position: center center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: stretch;
 }
@@ -1062,17 +1144,17 @@ footer {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 40px 48px;
+    padding: 48px 7%;
 }
 
 .joven-hero-content {
-    max-width: 460px;
+    max-width: 440px;
 }
 
 .joven-hero-content h1 {
-    font-size: 36px;
+    font-size: 40px;
     color: #000000;
-    margin-bottom: 10px;
+    margin-bottom: 18px;
 }
 
 .joven-hero-content p {
@@ -1086,9 +1168,9 @@ footer {
     display: inline-block;
     background: #0d6e2b;
     color: #ffffff;
-    padding: 10px 28px;
+    padding: 13px 40px;
     border-radius: 999px;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 600;
 }
 
@@ -1097,9 +1179,48 @@ footer {
 }
 
 .joven-main {
-    width: min(860px, calc(100% - 40px));
+    flex: 1;
+    width: min(900px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 36px 0 50px;
+    padding: 36px 0 60px;
+}
+
+.joven-page footer {
+    margin-top: auto;
+    background: #0d6e2b;
+    color: #ffffff;
+    padding: 36px 0 24px;
+}
+
+.joven-page footer .logo {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: #b5dc97;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}
+
+.joven-page footer .logo img {
+    width: 86px;
+    height: 72px;
+}
+
+.joven-page footer h3 {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.joven-page footer a:not(.logo) {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+}
+
+.joven-page footer .copyright {
+    border-top-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .joven-seccion {
@@ -1275,20 +1396,28 @@ footer {
 
 .adulto-hero {
     width: 100%;
-    min-height: 320px;
+    aspect-ratio: 16 / 6.8;
+    min-height: 440px;
     background-image: url('/img/hero-adulto.png');
     background-size: cover;
-    background-position: center;
+    background-position: center center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: stretch;
 }
 
 .joven-hero-content .adulto-hero-subtexto {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
-    color: #1f1f1f;
-    margin-bottom: 12px;
-    line-height: 1.35;
+    color: #161616;
+    margin: 0 0 16px 24px;
+    line-height: 1.38;
+    max-width: 310px;
+}
+
+.adulto-hero .joven-btn-ayuda {
+    margin-top: 10px;
+    margin-left: 44px;
 }
 
 .adulto-acciones-grid {
@@ -2097,4 +2226,57 @@ footer {
         grid-template-columns: 1fr;
         justify-items: center;
     }
+}
+
+/* MODIFICAR AYUDA */
+
+.input-modificar-borde {
+    border: 1.5px solid #2b2b2b !important;
+}
+
+.textarea-descripcion {
+    width: 100%;
+    border: 0;
+    border-radius: 22px;
+    padding: 12px 18px;
+    background: #ffffff;
+    color: #111;
+    resize: vertical;
+}
+
+.modificar-labels-doble {
+    display: grid;
+    grid-template-columns: 64% 36%;
+    margin-bottom: 6px;
+}
+
+.modificar-labels-doble label {
+    margin-bottom: 0;
+}
+
+.modificar-pill-doble {
+    display: grid;
+    grid-template-columns: 64% 1.5px 1fr;
+    align-items: center;
+    background: #ffffff;
+    border: 1.5px solid #2b2b2b;
+    border-radius: 999px;
+    min-height: 54px;
+    overflow: hidden;
+}
+
+.modificar-input-izquierda,
+.modificar-input-derecha {
+    border: 0 !important;
+    background: transparent !important;
+    min-height: 50px !important;
+    border-radius: 0 !important;
+    padding: 10px 16px !important;
+    outline: none;
+}
+
+.modificar-divisor-vertical {
+    width: 1.5px;
+    height: 36px;
+    background: #555555;
 }

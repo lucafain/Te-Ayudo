@@ -164,12 +164,76 @@ public static class BD
         }
     }
 
+    public static bool ModificarTarea(Tareas tarea)
+    {
+        if (tarea == null || tarea.IdTarea <= 0 || string.IsNullOrEmpty(tarea.Titulo) || string.IsNullOrEmpty(tarea.Descripcion))
+        {
+            return false;
+        }
+
+        // Solo se puede modificar si no tiene postulantes ni aceptados
+        Tareas? actual = ObtenerTareaPorId(tarea.IdTarea);
+        if (actual == null || !actual.Estado || ContarPostulantes(tarea.IdTarea) > 0)
+        {
+            return false;
+        }
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            List<string> columnasTabla = connection.Query<string>(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tareas'").ToList();
+
+            Dictionary<string, object?> posiblesValores = new Dictionary<string, object?>();
+            posiblesValores.Add("titulo", tarea.Titulo);
+            posiblesValores.Add("descripcion", tarea.Descripcion);
+            posiblesValores.Add("lugar", tarea.Lugar);
+            posiblesValores.Add("diaTarea", tarea.DiaTarea);
+            posiblesValores.Add("horaTarea", tarea.HoraTarea);
+            posiblesValores.Add("diaFecha", tarea.DiaTarea.Date.Add(tarea.HoraTarea));
+            posiblesValores.Add("horaFecha", tarea.HoraTarea);
+            posiblesValores.Add("hora", tarea.HoraTarea);
+            posiblesValores.Add("aclaracion", tarea.Aclaracion);
+            posiblesValores.Add("monto", tarea.Monto);
+            posiblesValores.Add("tipoLugar", tarea.TipoLugar);
+
+            List<string> asignacionesUpdate = new List<string>();
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("IdTarea", tarea.IdTarea);
+
+            foreach (string columnaTabla in columnasTabla)
+            {
+                foreach (KeyValuePair<string, object?> par in posiblesValores)
+                {
+                    if (par.Key.ToLower() == columnaTabla.ToLower())
+                    {
+                        asignacionesUpdate.Add(columnaTabla + " = @" + columnaTabla);
+                        parametros.Add(columnaTabla, par.Value);
+                    }
+                }
+            }
+
+            if (asignacionesUpdate.Count == 0)
+            {
+                return false;
+            }
+
+            string sql = "UPDATE Tareas SET " + string.Join(", ", asignacionesUpdate) + " WHERE IdTarea = @IdTarea";
+            int filas = connection.Execute(sql, parametros);
+            return filas > 0;
+        }
+    }
+
     public static List<Tareas> ObtenerTareasPorSolicitante(int idUsuarioSolicitante)
     {
         string sql = "SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @pId ORDER BY IdTarea DESC";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            return connection.Query<Tareas>(sql, new { pId = idUsuarioSolicitante }).ToList();
+            List<Tareas> misTareas = connection.Query<Tareas>(sql, new { pId = idUsuarioSolicitante }).ToList();
+            if (misTareas.Count == 0)
+            {
+                misTareas = connection.Query<Tareas>("SELECT * FROM Tareas ORDER BY IdTarea DESC").ToList();
+            }
+            return misTareas;
         }
     }
 
@@ -182,14 +246,13 @@ public static class BD
         }
     }
 
-    // Tareas activas que el joven todavía no vio: ni postuladas ni descartadas por él, y que no son suyas
+    // Tareas activas que el joven todavía no vio: ni postuladas ni descartadas por él
     public static List<Tareas> ObtenerTareasPendientes(int idJoven)
     {
         string sql = @"
             SELECT T.* 
             FROM Tareas T
             WHERE T.estado = 1
-              AND T.IdUsuarioSolicitante <> @pIdJoven
               AND NOT EXISTS (SELECT 1 FROM Postulaciones P WHERE P.IdTarea = T.IdTarea AND P.IdUsuario = @pIdJoven)
             ORDER BY T.IdTarea DESC";
         using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -225,35 +288,63 @@ public static class BD
         }
     }
 
+    private static bool EsEstadoPostulacionesBit(SqlConnection connection)
+    {
+        string? tipo = connection.QueryFirstOrDefault<string>(
+            "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Postulaciones' AND COLUMN_NAME = 'estado'");
+        return tipo != null && tipo.ToLower() == "bit";
+    }
+
     public static bool GuardarPostulacion(Postulaciones postulacion)
     {
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            string sqlExiste = "SELECT * FROM Postulaciones WHERE IdUsuario = @IdUsuario AND IdTarea = @IdTarea";
-            Postulaciones? existente = connection.QueryFirstOrDefault<Postulaciones>(sqlExiste, new
-            {
-                IdUsuario = postulacion.IdUsuario,
-                IdTarea = postulacion.IdTarea
-            });
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            object valorEstado = esBit
+                ? (object)(postulacion.Estado == "Pendiente" || postulacion.Estado == "Aceptada")
+                : postulacion.Estado;
 
-            if (existente != null)
+            int cantidadExistente = connection.ExecuteScalar<int>(
+                "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @IdUsuario AND IdTarea = @IdTarea",
+                new { IdUsuario = postulacion.IdUsuario, IdTarea = postulacion.IdTarea });
+
+            if (cantidadExistente > 0)
             {
+                connection.Execute(
+                    "UPDATE Postulaciones SET estado = @Estado WHERE IdUsuario = @IdUsuario AND IdTarea = @IdTarea",
+                    new { Estado = valorEstado, IdUsuario = postulacion.IdUsuario, IdTarea = postulacion.IdTarea });
                 return true;
             }
 
-            string sqlInsert = @"
-                INSERT INTO Postulaciones (IdUsuario, IdTarea, estado, calificacion, puntual)
-                VALUES (@IdUsuario, @IdTarea, @Estado, @Calificacion, @Puntual)";
+            List<string> columnasTabla = connection.Query<string>(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Postulaciones' AND COLUMN_NAME <> 'IdPostulacion'").ToList();
 
-            int filas = connection.Execute(sqlInsert, new
+            Dictionary<string, object?> posiblesValores = new Dictionary<string, object?>();
+            posiblesValores.Add("IdUsuario", postulacion.IdUsuario);
+            posiblesValores.Add("IdTarea", postulacion.IdTarea);
+            posiblesValores.Add("estado", valorEstado);
+            posiblesValores.Add("calificacion", postulacion.Calificacion);
+            posiblesValores.Add("puntual", postulacion.Puntual);
+
+            List<string> columnasInsert = new List<string>();
+            List<string> parametrosInsert = new List<string>();
+            DynamicParameters parametros = new DynamicParameters();
+
+            foreach (string columnaTabla in columnasTabla)
             {
-                IdUsuario = postulacion.IdUsuario,
-                IdTarea = postulacion.IdTarea,
-                Estado = postulacion.Estado,
-                Calificacion = postulacion.Calificacion,
-                Puntual = postulacion.Puntual
-            });
+                foreach (KeyValuePair<string, object?> par in posiblesValores)
+                {
+                    if (par.Key.ToLower() == columnaTabla.ToLower())
+                    {
+                        columnasInsert.Add(columnaTabla);
+                        parametrosInsert.Add("@" + columnaTabla);
+                        parametros.Add(columnaTabla, par.Value);
+                    }
+                }
+            }
 
+            string sqlInsert = "INSERT INTO Postulaciones (" + string.Join(", ", columnasInsert) + ") VALUES (" + string.Join(", ", parametrosInsert) + ")";
+            int filas = connection.Execute(sqlInsert, parametros);
             return filas > 0;
         }
     }
@@ -261,24 +352,56 @@ public static class BD
     // Solo los jóvenes que siguen postulados (Pendiente o Aceptada)
     public static List<Usuarios> ObtenerPostuladosPorTarea(int idTarea)
     {
-        string sql = @"
-            SELECT U.* 
-            FROM Usuarios U
-            INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
-            WHERE P.IdTarea = @pIdTarea
-              AND P.estado IN ('Pendiente', 'Aceptada')
-            ORDER BY P.IdPostulacion DESC";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? @"SELECT U.* 
+                    FROM Usuarios U
+                    INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
+                    WHERE P.IdTarea = @pIdTarea AND P.estado = 1"
+                : @"SELECT U.* 
+                    FROM Usuarios U
+                    INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
+                    WHERE P.IdTarea = @pIdTarea AND P.estado IN ('Pendiente', 'Aceptada')";
+
             return connection.Query<Usuarios>(sql, new { pIdTarea = idTarea }).ToList();
+        }
+    }
+
+    public static Usuarios? ObtenerJovenAceptadoPorTarea(int idTarea)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            Tareas? tarea = ObtenerTareaPorId(idTarea);
+            if (tarea == null || tarea.Estado)
+            {
+                return null;
+            }
+
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? @"SELECT TOP 1 U.* 
+                    FROM Usuarios U
+                    INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
+                    WHERE P.IdTarea = @pIdTarea AND P.estado = 1"
+                : @"SELECT TOP 1 U.* 
+                    FROM Usuarios U
+                    INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
+                    WHERE P.IdTarea = @pIdTarea AND P.estado = 'Aceptada'";
+
+            return connection.QueryFirstOrDefault<Usuarios>(sql, new { pIdTarea = idTarea });
         }
     }
 
     public static int ContarPostulantes(int idTarea)
     {
-        string sql = "SELECT COUNT(*) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado IN ('Pendiente', 'Aceptada')";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "SELECT COUNT(*) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado = 1"
+                : "SELECT COUNT(*) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado IN ('Pendiente', 'Aceptada')";
             return connection.ExecuteScalar<int>(sql, new { pIdTarea = idTarea });
         }
     }
@@ -305,11 +428,17 @@ public static class BD
     // El adulto acepta a un joven: su postulación pasa a "Aceptada" y la tarea deja de estar activa
     public static bool AceptarPostulante(int idTarea, int idUsuario)
     {
-        string sqlPostulacion = "UPDATE Postulaciones SET estado = 'Aceptada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario";
-        string sqlOtros = "UPDATE Postulaciones SET estado = 'Rechazada' WHERE IdTarea = @pIdTarea AND IdUsuario <> @pIdUsuario AND estado = 'Pendiente'";
-        string sqlTarea = "UPDATE Tareas SET estado = 0 WHERE IdTarea = @pIdTarea";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sqlPostulacion = esBit
+                ? "UPDATE Postulaciones SET estado = 1 WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario"
+                : "UPDATE Postulaciones SET estado = 'Aceptada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario";
+            string sqlOtros = esBit
+                ? "UPDATE Postulaciones SET estado = 0 WHERE IdTarea = @pIdTarea AND IdUsuario <> @pIdUsuario"
+                : "UPDATE Postulaciones SET estado = 'Rechazada' WHERE IdTarea = @pIdTarea AND IdUsuario <> @pIdUsuario AND estado = 'Pendiente'";
+            string sqlTarea = "UPDATE Tareas SET estado = 0 WHERE IdTarea = @pIdTarea";
+
             int filas = connection.Execute(sqlPostulacion, new { pIdTarea = idTarea, pIdUsuario = idUsuario });
             connection.Execute(sqlOtros, new { pIdTarea = idTarea, pIdUsuario = idUsuario });
             connection.Execute(sqlTarea, new { pIdTarea = idTarea });
@@ -319,9 +448,12 @@ public static class BD
 
     public static bool RechazarPostulante(int idTarea, int idUsuario)
     {
-        string sql = "UPDATE Postulaciones SET estado = 'Rechazada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "UPDATE Postulaciones SET estado = 0 WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario"
+                : "UPDATE Postulaciones SET estado = 'Rechazada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdUsuario";
             int filas = connection.Execute(sql, new { pIdTarea = idTarea, pIdUsuario = idUsuario });
             return filas > 0;
         }
@@ -329,27 +461,36 @@ public static class BD
 
     public static int ContarAyudasRealizadas(int idUsuario)
     {
-        string sql = "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada'";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1"
+                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada'";
             return connection.ExecuteScalar<int>(sql, new { pIdUsuario = idUsuario });
         }
     }
 
     public static double ObtenerValoracionPromedio(int idUsuario)
     {
-        string sql = "SELECT ISNULL(AVG(calificacion), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND calificacion > 0";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "SELECT ISNULL(AVG(CAST(calificacion AS FLOAT)), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1 AND calificacion > 0"
+                : "SELECT ISNULL(AVG(CAST(calificacion AS FLOAT)), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND calificacion > 0";
             return connection.ExecuteScalar<double>(sql, new { pIdUsuario = idUsuario });
         }
     }
 
     public static bool EsPuntual(int idUsuario)
     {
-        string sql = "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND puntual = 0";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1 AND puntual = 0"
+                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND puntual = 0";
             int impuntualidades = connection.ExecuteScalar<int>(sql, new { pIdUsuario = idUsuario });
             return impuntualidades == 0;
         }

@@ -1,0 +1,190 @@
+@{
+    ViewData["Title"] = "Modificar ayuda";
+    Tareas? tarea = ViewBag.Tarea as Tareas;
+    int idTarea = tarea?.IdTarea ?? 0;
+    string tituloActual = tarea?.Titulo ?? "";
+    string descripcionActual = tarea?.Descripcion ?? "";
+    string lugarActual = tarea?.Lugar ?? "";
+    string tipoLugarActual = !string.IsNullOrWhiteSpace(tarea?.TipoLugar) ? tarea.TipoLugar : "Casa";
+
+    // Extraer aclaración limpia y fecha/hora guardada
+    string aclaracionBruta = tarea?.Aclaracion ?? "";
+    string aclaracionLimpia = aclaracionBruta;
+    string fechaExtraidaDeAclaracion = "";
+
+    int idxParentesis = aclaracionBruta.IndexOf(" (Día y hora: ");
+    if (idxParentesis >= 0)
+    {
+        aclaracionLimpia = aclaracionBruta.Substring(0, idxParentesis);
+        int inicioFecha = idxParentesis + " (Día y hora: ".Length;
+        int finFecha = aclaracionBruta.IndexOf(")", inicioFecha);
+        if (finFecha > inicioFecha)
+        {
+            fechaExtraidaDeAclaracion = aclaracionBruta.Substring(inicioFecha, finFecha - inicioFecha);
+        }
+    }
+    else if (aclaracionBruta.StartsWith("Día y hora: "))
+    {
+        aclaracionLimpia = "";
+        fechaExtraidaDeAclaracion = aclaracionBruta.Substring("Día y hora: ".Length).Trim();
+    }
+
+    string diaHoraMostrar = ViewBag.DiaHoraTexto as string ?? "";
+    if (string.IsNullOrEmpty(diaHoraMostrar))
+    {
+        if (tarea != null && tarea.DiaFecha.Year > 1)
+        {
+            diaHoraMostrar = tarea.DiaFecha.ToString("dd/MM/yyyy HH:mm");
+        }
+        else if (tarea != null && tarea.DiaTarea.Year > 1)
+        {
+            TimeSpan hora = tarea.HoraTarea.TotalMinutes > 0 ? tarea.HoraTarea : new TimeSpan(17, 30, 0);
+            diaHoraMostrar = tarea.DiaTarea.ToString("dd/MM/yyyy") + " " + hora.ToString(@"hh\:mm");
+        }
+        else if (!string.IsNullOrEmpty(fechaExtraidaDeAclaracion))
+        {
+            diaHoraMostrar = fechaExtraidaDeAclaracion;
+        }
+        else if (tarea != null && tarea.FechaCreacion.Year > 1)
+        {
+            diaHoraMostrar = tarea.FechaCreacion.ToString("dd/MM/yyyy HH:mm");
+        }
+        else
+        {
+            diaHoraMostrar = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+        }
+    }
+}
+
+<div class="joven-page">
+    <header class="header header--joven">
+        <a class="logo" href='@Url.Action("PrincipalAdulto", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("MisAyudas", "Home")'>
+                Mis ayudas
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("SolicitarTarea", "Home")'>
+                Solicitá ayudas
+            </a>
+
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                <img src="~/img/user.svg" alt="Perfil" />
+            </a>
+        </nav>
+    </header>
+
+    <main class="auth-page auth-page--solicitar" style="min-height: auto; padding: 36px 24px 60px;">
+        <div class="solicitar-wrapper">
+            <h1 class="solicitar-main-title">Modificar ayuda</h1>
+
+            <section class="auth-card auth-card--solicitar">
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="auth-alert">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+
+                <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
+
+                <form action='@Url.Action("ModificarTarea", "Home")' method="post" id="formModificarTarea" class="form-solicitar" novalidate>
+                    <input type="hidden" name="IdTarea" value="@idTarea" />
+
+                    <div class="field">
+                        <input type="text" id="Titulo" name="Titulo" maxlength="50" value="@tituloActual" placeholder="Título de la ayuda..." class="input-titulo-ayuda input-modificar-borde" />
+                    </div>
+
+                    <div class="auth-divider solicitar-divider"></div>
+
+                    <div class="field">
+                        <label for="Descripcion">Descripción</label>
+                        <textarea id="Descripcion" name="Descripcion" maxlength="500" rows="4" class="textarea-descripcion input-modificar-borde">@descripcionActual</textarea>
+                    </div>
+
+                    <div class="field">
+                        <div class="modificar-labels-doble">
+                            <label for="Lugar">Lugar y</label>
+                            <label for="TipoLugar">Tipo de lugar</label>
+                        </div>
+                        <div class="modificar-pill-doble">
+                            <input type="text" id="Lugar" name="Lugar" maxlength="50" value="@lugarActual" class="modificar-input-izquierda" />
+                            <span class="modificar-divisor-vertical" aria-hidden="true"></span>
+                            <input type="text" id="TipoLugar" name="TipoLugar" maxlength="50" value="@tipoLugarActual" class="modificar-input-derecha" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="DiaHora">Dia (dd/mm/yyyy) y Hora (hh/mm)</label>
+                        <input type="text" id="DiaHora" name="DiaHora" value="@diaHoraMostrar" placeholder="dd/mm/yyyy hh:mm" class="input-modificar-borde" />
+                    </div>
+
+                    <div class="field">
+                        <label for="Aclaracion">Aclaraciones (opcional)</label>
+                        <input type="text" id="Aclaracion" name="Aclaracion" maxlength="500" value="@aclaracionLimpia" class="input-modificar-borde" />
+                    </div>
+
+                    <div class="field">
+                        <label for="ConfirmacionModificar">Escribí <strong>"modificar"</strong> para confirmar</label>
+                        <input type="text" id="ConfirmacionModificar" name="ConfirmacionModificar" placeholder="modificar" autocomplete="off" class="input-modificar-borde" />
+                    </div>
+
+                    <div class="auth-actions" style="margin-top: 18px;">
+                        <button class="auth-button" type="submit">Modificar</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" href='@Url.Action("Index", "Home")'>
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Categorías</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Explorá</a>
+                <a href='@Url.Action("RegistroJoven", "Home")'>Sumate como joven</a>
+            </div>
+
+            <div>
+                <h3>Unite a Te ayudo</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Explorá</a>
+                <a href='@Url.Action("PrincipalAdulto", "Home")#preguntas-adulto'>Preguntas frecuentes</a>
+            </div>
+
+            <div>
+                <h3>Ayuda</h3>
+                <a href='@Url.Action("Perfil", "Home")'>Ver mi perfil</a>
+                <a href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</div>

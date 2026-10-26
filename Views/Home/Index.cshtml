@@ -38,17 +38,26 @@
     </nav>
 </header>
 
-<main class="page" id="inicio">
-    <section class="hero">
-        <h1>@ViewBag.Titulo</h1>
+<section class="hero hero--inicio">
+    <div class="hero-inicio-overlay">
+        <div class="hero-inicio-content">
+            <h1>@ViewBag.Titulo</h1>
 
-        <ul>
             @foreach (string texto in ViewBag.Presentacion)
             {
-                <li>@texto</li>
+                <p>@texto</p>
             }
-        </ul>
-    </section>
+
+            <div class="hero-inicio-cta">
+                <a class="joven-btn-ayuda hero-inicio-btn" href='@Url.Action("RegistroMayor", "Home")'>
+                    Unite a Te Ayudo
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="page" id="inicio">
 
     <section class="about panel" id="nosotros">
         <div class="about-logo">

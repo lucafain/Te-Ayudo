@@ -2,6 +2,7 @@
     ViewData["Title"] = "Ayudas pedidas";
     List<Tareas>? misTareas = ViewBag.MisTareas as List<Tareas>;
     Dictionary<int, int>? cantidadPostulantes = ViewBag.CantidadPostulantes as Dictionary<int, int>;
+    Dictionary<int, Usuarios?>? jovenesAsignados = ViewBag.JovenesAsignados as Dictionary<int, Usuarios?>;
 }
 
 <div class="joven-page">
@@ -30,8 +31,8 @@
                 Solicitá ayudas
             </a>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
-                Perfil
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                <img src="~/img/user.svg" alt="Perfil" />
             </a>
         </nav>
     </header>
@@ -58,22 +59,46 @@
                             postulantes = cantidadPostulantes[tarea.IdTarea];
                         }
 
+                        Usuarios? jovenAsignado = null;
+                        if (jovenesAsignados != null && jovenesAsignados.ContainsKey(tarea.IdTarea))
+                        {
+                            jovenAsignado = jovenesAsignados[tarea.IdTarea];
+                        }
+
                         <article class="ayuda-card">
                             <div class="ayuda-card-top"></div>
 
                             <div class="ayuda-card-body">
                                 <h3>@tarea.Titulo</h3>
-                                <p class="ayuda-card-postulantes">
-                                    @postulantes @(postulantes == 1 ? "postulante" : "postulantes")
-                                </p>
+                                @if (jovenAsignado != null)
+                                {
+                                    string nombreAsignado = ((jovenAsignado.Nombre ?? "") + " " + (jovenAsignado.Apellido ?? "")).Trim();
+                                    if (string.IsNullOrEmpty(nombreAsignado))
+                                    {
+                                        nombreAsignado = jovenAsignado.Email;
+                                    }
+                                    <p class="ayuda-card-postulantes" style="color: #0d6e2b; font-weight: 600;">
+                                        Realiza: @nombreAsignado
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="ayuda-card-postulantes">
+                                        @postulantes @(postulantes == 1 ? "postulante" : "postulantes")
+                                    </p>
+                                }
 
                                 <div class="ayuda-card-botones">
                                     <a class="btn-ayuda-verde" href='@Url.Action("PostulantesTarea", "Home", new { idTarea = tarea.IdTarea })'>
                                         Ver más
                                     </a>
 
-                                    @if (postulantes == 0)
+                                    @if (postulantes == 0 && jovenAsignado == null && tarea.Estado)
                                     {
+                                        <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                            Modificar
+                                        </a>
+
                                         <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
                                             <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
                                             <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
@@ -81,6 +106,10 @@
                                     }
                                     else
                                     {
+                                        <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
+                                            Modificar
+                                        </button>
+
                                         <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede cancelar porque ya tiene postulantes">
                                             Cancelar
                                         </button>

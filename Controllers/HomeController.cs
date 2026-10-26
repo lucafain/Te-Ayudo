@@ -28,6 +28,13 @@ public class HomeController : Controller
             {
                 System.IO.File.Copy(rutaOrigenAdulto, rutaDestinoAdulto, true);
             }
+
+            string rutaDestinoInicio = Path.Combine(_environment.WebRootPath, "img", "hero-inicio.png");
+            string rutaOrigenInicio = @"C:\Users\49926786\.gemini\antigravity\brain\39798df5-50db-43e8-9e83-3d3146f4106f\.user_uploaded\media_1793035693116_6de7b967.png";
+            if (System.IO.File.Exists(rutaOrigenInicio))
+            {
+                System.IO.File.Copy(rutaOrigenInicio, rutaDestinoInicio, true);
+            }
         }
         catch
         {
@@ -38,7 +45,7 @@ public class HomeController : Controller
     {
         // Slide 13, 14 y 15: Colecciones (Dictionary con ContainsKey, Arrays y Listas)
         Dictionary<string, string> textosHome = new Dictionary<string, string>();
-        textosHome.Add("Titulo", "Donde encontrás lo que buscás");
+        textosHome.Add("Titulo", "Dónde encontrás lo que buscás");
         textosHome.Add("AyudaTitulo", "Recibí la ayuda que buscás");
         textosHome.Add("AyudaTexto", "Seleccionamos a quienes pueden acompañarte.");
         textosHome.Add("TrabajoTitulo", "¿Sos joven y querés ganar experiencia laboral?");
@@ -68,8 +75,8 @@ public class HomeController : Controller
 
         // Slide 14: Array (en la definición indicamos cuántos elementos va a tener)
         string[] arrayPresentacion = new string[2];
-        arrayPresentacion[0] = "Jóvenes brindan ayuda que los adultos requieren.";
-        arrayPresentacion[1] = "Adultos reciben asistencia a cambio de un monto accesible.";
+        arrayPresentacion[0] = "Jóvenes brindan ayuda a adultos que lo requieran a cambio de inclusión laboral";
+        arrayPresentacion[1] = "Adultos reciben asistencia a cambio de montos accesibles";
 
         List<string> listaPresentacion = new List<string>();
         foreach (string item in arrayPresentacion)
@@ -245,8 +252,7 @@ public class HomeController : Controller
             return View();
         }
 
-        ViewBag.SuccessMessage = "¡Tu solicitud de ayuda (" + tituloLimpio + ") ha sido publicada!";
-        return View();
+        return RedirectToAction("MisAyudas", "Home", new { mensaje = "¡Tu solicitud de ayuda (" + tituloLimpio + ") ha sido publicada!" });
     }
 
     public IActionResult Trabajar()
@@ -670,29 +676,34 @@ public class HomeController : Controller
         int idAdulto = ObtenerIdUsuarioLogueado();
         List<Tareas> misTareas = BD.ObtenerTareasPorSolicitante(idAdulto);
 
-        // Slide 15: Dictionary para saber cuántos postulantes tiene cada tarea
+        // Slide 15: Dictionary para saber cuántos postulantes tiene cada tarea y si ya tiene joven asignado
         Dictionary<int, int> cantidadPostulantes = new Dictionary<int, int>();
+        Dictionary<int, Usuarios?> jovenesAsignados = new Dictionary<int, Usuarios?>();
         foreach (Tareas tarea in misTareas)
         {
             if (!cantidadPostulantes.ContainsKey(tarea.IdTarea))
             {
                 cantidadPostulantes.Add(tarea.IdTarea, BD.ContarPostulantes(tarea.IdTarea));
             }
+            if (!jovenesAsignados.ContainsKey(tarea.IdTarea))
+            {
+                jovenesAsignados.Add(tarea.IdTarea, BD.ObtenerJovenAceptadoPorTarea(tarea.IdTarea));
+            }
         }
 
         ViewBag.SuccessMessage = mensaje;
         ViewBag.MisTareas = misTareas;
         ViewBag.CantidadPostulantes = cantidadPostulantes;
+        ViewBag.JovenesAsignados = jovenesAsignados;
         return View("MisAyudas");
     }
 
     [HttpPost]
     public IActionResult CancelarTarea(int idTarea)
     {
-        int idAdulto = ObtenerIdUsuarioLogueado();
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
 
-        if (tarea == null || tarea.IdUsuarioSolicitante != idAdulto)
+        if (tarea == null)
         {
             return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
         }
@@ -702,6 +713,114 @@ public class HomeController : Controller
             ? "La ayuda fue cancelada."
             : "No se puede cancelar una ayuda que ya tiene postulantes.";
         return RedirectToAction("MisAyudas", "Home", new { mensaje = mensaje });
+    }
+
+    [HttpGet]
+    public IActionResult ModificarTarea(int idTarea)
+    {
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null)
+        {
+            return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
+        }
+
+        if (!tarea.Estado || BD.ContarPostulantes(idTarea) > 0 || BD.ObtenerJovenAceptadoPorTarea(idTarea) != null)
+        {
+            return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se puede modificar una ayuda que ya tiene postulantes o aceptados." });
+        }
+
+        ViewBag.Tarea = tarea;
+        return View("ModificarTarea");
+    }
+
+    [HttpPost]
+    public IActionResult ModificarTarea(int IdTarea, string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? TipoLugar = "Casa", string? DiaHora = "", string? Aclaracion = "", string? ConfirmacionModificar = "")
+    {
+        Tareas? actual = BD.ObtenerTareaPorId(IdTarea);
+        if (actual == null)
+        {
+            return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
+        }
+
+        if (!actual.Estado || BD.ContarPostulantes(IdTarea) > 0 || BD.ObtenerJovenAceptadoPorTarea(IdTarea) != null)
+        {
+            return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se puede modificar una ayuda que ya tiene postulantes o aceptados." });
+        }
+
+        string tituloLimpio = (Titulo ?? "").Trim();
+        string descripcionLimpia = (Descripcion ?? "").Trim();
+        string lugarLimpio = (Lugar ?? "").Trim();
+        string tipoLugarLimpio = string.IsNullOrWhiteSpace(TipoLugar) ? "Casa" : TipoLugar.Trim();
+        string diaHoraLimpio = (DiaHora ?? "").Trim();
+        string aclaracionLimpia = (Aclaracion ?? "").Trim();
+        string confirmacionLimpia = (ConfirmacionModificar ?? "").Trim().ToLower();
+
+        // Actualizar objeto en memoria por si hay error de validación y se vuelve a mostrar el formulario
+        actual.Titulo = tituloLimpio;
+        actual.Descripcion = descripcionLimpia;
+        actual.Lugar = lugarLimpio;
+        actual.TipoLugar = tipoLugarLimpio;
+        actual.Aclaracion = aclaracionLimpia;
+        ViewBag.DiaHoraTexto = diaHoraLimpio;
+        ViewBag.Tarea = actual;
+
+        if (string.IsNullOrEmpty(tituloLimpio) || string.IsNullOrEmpty(descripcionLimpia) || string.IsNullOrEmpty(lugarLimpio) || string.IsNullOrEmpty(diaHoraLimpio))
+        {
+            ViewBag.ErrorMessage = "Por favor completá el título, la descripción, el lugar y el día/hora.";
+            return View("ModificarTarea");
+        }
+
+        if (confirmacionLimpia != "modificar")
+        {
+            ViewBag.ErrorMessage = "Debés escribir la palabra \"modificar\" abajo de todo para confirmar los cambios.";
+            return View("ModificarTarea");
+        }
+
+        if (tituloLimpio.Length > 50) tituloLimpio = tituloLimpio.Substring(0, 50);
+        if (descripcionLimpia.Length > 500) descripcionLimpia = descripcionLimpia.Substring(0, 500);
+        if (lugarLimpio.Length > 50) lugarLimpio = lugarLimpio.Substring(0, 50);
+        if (tipoLugarLimpio.Length > 50) tipoLugarLimpio = tipoLugarLimpio.Substring(0, 50);
+
+        DateTime fechaTarea = actual.DiaFecha.Year > 1 ? actual.DiaFecha.Date : (actual.DiaTarea.Year > 1 ? actual.DiaTarea.Date : DateTime.Now.Date);
+        TimeSpan horaTarea = actual.HoraTarea.TotalMinutes > 0 ? actual.HoraTarea : (actual.DiaFecha.Year > 1 ? actual.DiaFecha.TimeOfDay : new TimeSpan(17, 30, 0));
+
+        string[] formatos = new string[] { "dd/MM/yyyy HH:mm", "d/M/yyyy HH:mm", "dd/MM/yyyy H:mm", "d/M/yyyy H:mm", "dd/MM/yy HH:mm", "d/M/yy HH:mm", "yyyy-MM-ddTHH:mm" };
+        if (DateTime.TryParseExact(diaHoraLimpio, formatos, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime fechaExacta))
+        {
+            fechaTarea = fechaExacta.Date;
+            horaTarea = fechaExacta.TimeOfDay;
+        }
+        else if (DateTime.TryParse(diaHoraLimpio, new System.Globalization.CultureInfo("es-AR"), System.Globalization.DateTimeStyles.None, out DateTime fechaParseada))
+        {
+            fechaTarea = fechaParseada.Date;
+            horaTarea = fechaParseada.TimeOfDay;
+        }
+
+        string textoFechaHora = fechaTarea.ToString("dd/MM/yyyy") + " " + horaTarea.ToString(@"hh\:mm");
+        string aclaracionFinal = string.IsNullOrEmpty(aclaracionLimpia)
+            ? "Día y hora: " + textoFechaHora
+            : aclaracionLimpia + " (Día y hora: " + textoFechaHora + ")";
+        if (aclaracionFinal.Length > 500)
+        {
+            aclaracionFinal = aclaracionFinal.Substring(0, 500);
+        }
+
+        actual.Titulo = tituloLimpio;
+        actual.Descripcion = descripcionLimpia;
+        actual.Lugar = lugarLimpio;
+        actual.TipoLugar = tipoLugarLimpio;
+        actual.DiaTarea = fechaTarea;
+        actual.HoraTarea = horaTarea;
+        actual.Aclaracion = aclaracionFinal;
+
+        bool modificado = BD.ModificarTarea(actual);
+        if (!modificado)
+        {
+            ViewBag.ErrorMessage = "No se pudo modificar la ayuda en la base de datos.";
+            return View("ModificarTarea");
+        }
+
+        return RedirectToAction("MisAyudas", "Home", new { mensaje = "¡La ayuda (" + tituloLimpio + ") fue modificada correctamente!" });
     }
 
     public IActionResult PostulantesTarea(int idTarea)

@@ -1,0 +1,211 @@
+@{
+    ViewData["Title"] = "Inicio Adulto";
+    string nombreAdulto = ((ViewBag.Adulto?.Nombre ?? "") + " " + (ViewBag.Adulto?.Apellido ?? "")).Trim();
+    if (string.IsNullOrEmpty(nombreAdulto))
+    {
+        nombreAdulto = ViewBag.Adulto?.Email ?? "Adulto";
+    }
+}
+
+<div class="joven-page">
+    <header class="header header--joven">
+        <a class="logo" href='@Url.Action("PrincipalAdulto", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+            <a class="nav-button nav-button--joven" href="#preguntas-adulto">
+                Preguntas frecuentes
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("SolicitarTarea", "Home")'>
+                Solicitá ayudas
+            </a>
+
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                <img src="~/img/user.svg" alt="Perfil" />
+            </a>
+        </nav>
+    </header>
+
+    <section class="adulto-hero">
+        <div class="joven-hero-overlay">
+            <div class="joven-hero-content">
+                <h1>Bienvenido, @nombreAdulto</h1>
+                <p class="adulto-hero-subtexto">Recibí asistencia a un monto accesible.</p>
+                <p class="adulto-hero-subtexto">Ayudá a un joven a adquirir experiencia laboral.</p>
+                <a class="joven-btn-ayuda" href='@Url.Action("SolicitarTarea", "Home")'>
+                    Solicitá una ayuda
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main class="joven-main">
+        <section class="joven-seccion">
+            <h2>¿Qué necesitás hacer?</h2>
+
+            <div class="adulto-acciones-grid">
+                <a class="adulto-accion-card" href='@Url.Action("MisAyudas", "Home")'>
+                    <div class="adulto-accion-blanco">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#115e2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="3" width="14" height="18" rx="2" ry="2"></rect>
+                            <path d="M9 3h6v3H9z"></path>
+                            <path d="M8 10l1.5 1.5L12 9"></path>
+                            <line x1="14" y1="10" x2="16" y2="10"></line>
+                            <path d="M8 15l1.5 1.5L12 14"></path>
+                            <line x1="14" y1="15" x2="16" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p>Ver <strong>ayudas</strong></p>
+                </a>
+
+                <a class="adulto-accion-card" href='@Url.Action("MisAyudas", "Home")'>
+                    <div class="adulto-accion-blanco">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="#115e2e">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                    </div>
+                    <p>Ver <strong>notificaciones</strong></p>
+                </a>
+
+                <a class="adulto-accion-card" href='@Url.Action("MisAyudas", "Home")'>
+                    <div class="adulto-accion-blanco">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="#115e2e">
+                            <path d="M12 3C6.5 3 2 6.6 2 11c0 2.1 1 4.1 2.7 5.5L3.5 20l3.8-1.5c1.4.5 3 .8 4.7.8 5.5 0 10-3.6 10-8.3S17.5 3 12 3zm-4 9a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4z"/>
+                        </svg>
+                    </div>
+                    <p>Ver <strong>conversaciones</strong></p>
+                </a>
+            </div>
+        </section>
+
+        <section class="joven-seccion">
+            <div class="adulto-soporte-caja">
+                <h3>¿Tenés dudas?</h3>
+                <a class="joven-btn-ayuda" href="#preguntas-adulto">Soporte</a>
+            </div>
+        </section>
+
+        <section class="joven-seccion">
+            <h2>Sabías que:</h2>
+
+            <div class="adulto-sabias-lista">
+                <article class="adulto-sabias-card">
+                    <div class="adulto-sabias-texto">
+                        <h3>Hidratación diaria</h3>
+                        <p>
+                            Tomá <span class="texto-verde-destacado">agua varias veces al día</span>, aunque no tengas sed.
+                            Tené siempre una botella o un vaso cerca para acordarte de hidratarte.
+                        </p>
+                    </div>
+                    <div class="adulto-sabias-ilustracion">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#115e2e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                    </div>
+                </article>
+
+                <article class="adulto-sabias-card">
+                    <div class="adulto-sabias-texto">
+                        <h3>Buen descanso</h3>
+                        <p>
+                            <span class="texto-verde-destacado">Dormir bien</span> ayuda a mejorar tu energía y tu bienestar diario.
+                            Intentá mantener una rutina de descanso.
+                        </p>
+                    </div>
+                    <div class="adulto-sabias-ilustracion">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#115e2e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="joven-seccion" id="preguntas-adulto">
+            <h2>Preguntas frecuentes</h2>
+
+            <div class="adulto-faq-caja">
+                <details class="adulto-faq-item">
+                    <summary>
+                        <span>¿Cómo pido una ayuda?</span>
+                        <span class="adulto-faq-flecha">▼</span>
+                    </summary>
+                    <p>Desde el botón “Solicitá una ayuda” podés completar los datos de tu solicitud.</p>
+                </details>
+
+                <details class="adulto-faq-item">
+                    <summary>
+                        <span>¿Qué puedo hacer con Te Ayudo?</span>
+                        <span class="adulto-faq-flecha">▼</span>
+                    </summary>
+                    <p>Podés solicitar apoyo para tareas cotidianas y ver qué jóvenes se postulan para ayudarte.</p>
+                </details>
+
+                <details class="adulto-faq-item">
+                    <summary>
+                        <span>¿Es seguro pedir ayuda a jóvenes?</span>
+                        <span class="adulto-faq-flecha">▼</span>
+                    </summary>
+                    <p>La plataforma promueve una comunidad de apoyo con perfiles registrados y valoraciones.</p>
+                </details>
+
+                <details class="adulto-faq-item">
+                    <summary>
+                        <span>¿Cuánta plata cuesta pedir una ayuda?</span>
+                        <span class="adulto-faq-flecha">▼</span>
+                    </summary>
+                    <p>El monto lo definís vos al publicar la ayuda según el tipo de tarea.</p>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" href='@Url.Action("Index", "Home")'>
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Ayudas</h3>
+                <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+                <a href='@Url.Action("MisAyudas", "Home")'>Ayudas pedidas</a>
+            </div>
+
+            <div>
+                <h3>Comunidad</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+            </div>
+
+            <div>
+                <h3>Mi cuenta</h3>
+                <a href='@Url.Action("Perfil", "Home")'>Ver mi perfil</a>
+                <a href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</div>

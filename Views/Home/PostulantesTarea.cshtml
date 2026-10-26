@@ -32,8 +32,8 @@
                 Solicitá ayudas
             </a>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
-                Perfil
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                <img src="~/img/user.svg" alt="Perfil" />
             </a>
         </nav>
     </header>
@@ -62,6 +62,9 @@
                             <div class="postulado-info">
                                 <h3>@nombreJoven</h3>
                                 <div class="postulado-botones">
+                                    <button type="button" class="btn-ayuda-verde" onclick="aceptarPostulanteDirecto(@joven.IdUsuario, '@nombreJoven')">
+                                        Aceptar
+                                    </button>
                                     <button type="button" class="btn-ayuda-verde" onclick="abrirModalPostulante(@joven.IdUsuario)">
                                         Ver más
                                     </button>

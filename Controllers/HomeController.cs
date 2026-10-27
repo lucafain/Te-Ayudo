@@ -16,21 +16,21 @@ public class HomeController : Controller
         try
         {
             string rutaDestinoJoven = Path.Combine(_environment.WebRootPath, "img", "hero-joven.png");
-            string rutaOrigenJoven = @"C:\Users\49926786\.gemini\antigravity\brain\924762c3-2dcd-4062-9c7e-c5e405100aaf\.user_uploaded\media_1792774596257_5573e764.png";
+            string rutaOrigenJoven = @"wwwroot/img/hero-joven.png";
             if (!System.IO.File.Exists(rutaDestinoJoven) && System.IO.File.Exists(rutaOrigenJoven))
             {
                 System.IO.File.Copy(rutaOrigenJoven, rutaDestinoJoven, true);
             }
 
             string rutaDestinoAdulto = Path.Combine(_environment.WebRootPath, "img", "hero-adulto.png");
-            string rutaOrigenAdulto = @"C:\Users\49926786\.gemini\antigravity\brain\924762c3-2dcd-4062-9c7e-c5e405100aaf\.user_uploaded\media_1792775018614_8cbbfdff.png";
+            string rutaOrigenAdulto = @"wwwroot/img/hero-adulto.png";
             if (!System.IO.File.Exists(rutaDestinoAdulto) && System.IO.File.Exists(rutaOrigenAdulto))
             {
                 System.IO.File.Copy(rutaOrigenAdulto, rutaDestinoAdulto, true);
             }
 
             string rutaDestinoInicio = Path.Combine(_environment.WebRootPath, "img", "hero-inicio.png");
-            string rutaOrigenInicio = @"C:\Users\49926786\.gemini\antigravity\brain\39798df5-50db-43e8-9e83-3d3146f4106f\.user_uploaded\media_1793035693116_6de7b967.png";
+            string rutaOrigenInicio = @"wwwroot/img/hero-inicio.png";
             if (System.IO.File.Exists(rutaOrigenInicio))
             {
                 System.IO.File.Copy(rutaOrigenInicio, rutaDestinoInicio, true);

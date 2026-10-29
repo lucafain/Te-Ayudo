@@ -518,7 +518,135 @@ function abrirDetalleTareaFetch(idTarea) {
         });
 }
 
+function abrirDetalleTareaAceptadaFetch(idTarea) {
+    idTareaSeleccionadaFetch = idTarea;
+    fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                let elMonto = document.getElementById('detalleAceptadaMonto');
+                if (elMonto != null) {
+                    elMonto.textContent = '$' + (datos.monto || '5000');
+                }
+                let elSol = document.getElementById('detalleAceptadaSolicitante');
+                if (elSol != null) {
+                    elSol.textContent = datos.nombreSolicitante || 'Adulto mayor';
+                }
+                let elTit = document.getElementById('detalleAceptadaTitulo');
+                if (elTit != null) {
+                    elTit.textContent = datos.titulo || '';
+                }
+                let elLug = document.getElementById('detalleAceptadaLugar');
+                if (elLug != null) {
+                    elLug.textContent = datos.lugar || '';
+                }
+                let elFec = document.getElementById('detalleAceptadaFechaHora');
+                if (elFec != null) {
+                    elFec.textContent = (datos.fechaDia || datos.fecha || '') + '  ' + (datos.hora || '') + ' hs';
+                }
+                let elDesc = document.getElementById('detalleAceptadaDescripcion');
+                if (elDesc != null) {
+                    let desc = datos.descripcion || '';
+                    if (datos.aclaracion && datos.aclaracion !== '') {
+                        desc = desc !== '' ? (desc + ' · ' + datos.aclaracion) : datos.aclaracion;
+                    }
+                    elDesc.textContent = desc;
+                }
+                let elFoto = document.getElementById('detalleAceptadaFoto');
+                if (elFoto != null && datos.fotoSolicitante) {
+                    elFoto.src = datos.fotoSolicitante;
+                }
+
+                document.getElementById('vistaGrillaAyudas').style.display = 'none';
+                document.getElementById('vistaDetalleAyuda').style.display = 'none';
+                document.getElementById('vistaPostuladosAyuda').style.display = 'none';
+                let vAceptada = document.getElementById('vistaDetalleAceptada');
+                if (vAceptada != null) {
+                    vAceptada.style.display = 'block';
+                }
+            }
+        })
+        .catch(function (error) {
+            console.error('Error en abrirDetalleTareaAceptadaFetch:', error);
+        });
+}
+
+function eliminarTareaRechazadaFetch(idTarea) {
+    let card = document.getElementById('card-tarea-' + idTarea);
+    if (card != null) {
+        card.style.display = 'none';
+    }
+    fetch('/Home/EliminarTareaRechazada?idTarea=' + idTarea, { method: 'POST' })
+        .catch(function (error) {
+            console.error('Error al eliminar tarea rechazada:', error);
+        });
+}
+
+function abrirValoracionJoven() {
+    let vTicket = document.getElementById('vistaTicketDetalle');
+    let vVal = document.getElementById('vistaValoracionJoven');
+    if (vTicket != null) {
+        vTicket.style.display = 'none';
+    }
+    if (vVal != null) {
+        vVal.style.display = 'block';
+    }
+}
+
+function seleccionarEstrellaValoracion(valor) {
+    let inputCal = document.getElementById('inputCalificacionJoven');
+    if (inputCal != null) {
+        inputCal.value = String(valor);
+    }
+    let botones = document.querySelectorAll('#contenedorEstrellasValoracion .estrella-btn');
+    for (let i = 0; i < botones.length; i++) {
+        let v = Number(botones[i].getAttribute('data-valor'));
+        if (v <= valor) {
+            botones[i].classList.add('estrella-activa');
+        } else {
+            botones[i].classList.remove('estrella-activa');
+        }
+    }
+}
+
+function seleccionarPuntualidadJoven(esPuntual) {
+    let inputP = document.getElementById('inputPuntualJoven');
+    if (inputP != null) {
+        inputP.value = esPuntual ? 'true' : 'false';
+    }
+    let btnSi = document.getElementById('btnPuntualSi');
+    let btnNo = document.getElementById('btnPuntualNo');
+    if (btnSi != null && btnNo != null) {
+        if (esPuntual) {
+            btnSi.classList.add('btn-puntual-activo');
+            btnNo.classList.remove('btn-puntual-activo');
+        } else {
+            btnNo.classList.add('btn-puntual-activo');
+            btnSi.classList.remove('btn-puntual-activo');
+        }
+    }
+}
+
+function finalizarTareaAceptadaFetch() {
+    if (idTareaSeleccionadaFetch <= 0) {
+        return;
+    }
+    fetch('/Home/FinalizarTareaAceptada?idTarea=' + idTareaSeleccionadaFetch, { method: 'POST' })
+        .then(function () {
+            window.location.href = '/Home/AyudasParaRealizar?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
+        })
+        .catch(function (error) {
+            console.error('Error al finalizar tarea:', error);
+        });
+}
+
 function volverAGrillaAyudas() {
+    let vAceptada = document.getElementById('vistaDetalleAceptada');
+    if (vAceptada != null) {
+        vAceptada.style.display = 'none';
+    }
     document.getElementById('vistaDetalleAyuda').style.display = 'none';
     document.getElementById('vistaPostuladosAyuda').style.display = 'none';
     document.getElementById('vistaGrillaAyudas').style.display = 'block';
@@ -536,7 +664,10 @@ function postularmeConFetch() {
         .then(function (datos) {
             if (datos != null) {
                 let titulo = datos.tituloTarea || 'esta ayuda';
-                document.getElementById('tituloPostuladosFetch').textContent = '¡Ya estás postulado para ' + titulo + '!';
+                let elTitPost = document.getElementById('tituloPostuladosFetch') || document.getElementById('postuladosTituloTexto');
+                if (elTitPost != null) {
+                    elTitPost.textContent = '¡Ya estás postulado para ' + titulo + '!';
+                }
 
                 let grilla = document.getElementById('grillaPostuladosFetch');
                 grilla.innerHTML = '';

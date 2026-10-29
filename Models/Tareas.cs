@@ -9,6 +9,17 @@ public class Tareas
     public bool Estado { get; set; }
     public DateTime FechaCreacion { get; set; }
     public string Lugar { get; set; } = "";
+    public string Direccion
+    {
+        get => Lugar;
+        set
+        {
+            if (!string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(Lugar))
+            {
+                Lugar = value;
+            }
+        }
+    }
     public DateTime DiaTarea { get; set; }
     public DateTime DiaFecha { get; set; }
     public TimeSpan HoraTarea { get; set; }

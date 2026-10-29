@@ -1,5 +1,12 @@
 @{
     ViewData["Title"] = "Perfil";
+    string fotoRuta = ((string?)ViewBag.FotoPerfil ?? "").Trim();
+    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(fotoRuta) && !fotoRuta.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
+    string fotoUrl = !string.IsNullOrWhiteSpace(fotoRuta)
+        ? (fotoRuta.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? fotoRuta
+            : Url.Content("~/" + fotoRuta.TrimStart('~', '/')))
+        : Url.Content("~/img/user.svg");
 }
 
 <main class="auth-page">
@@ -7,17 +14,43 @@
         <h1 class="auth-title">Perfil de usuario</h1>
         <div class="auth-divider"></div>
 
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="auth-alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="auth-alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
         <div class="text-center" style="margin-bottom: 18px;">
-            @if (!string.IsNullOrWhiteSpace((string?)ViewBag.FotoPerfil))
+            @if (!string.IsNullOrWhiteSpace(fotoRuta))
             {
-                string fotoRuta = (string)ViewBag.FotoPerfil;
-                string fotoUrl = fotoRuta.StartsWith("/") || fotoRuta.StartsWith("~") ? Url.Content(fotoRuta) : Url.Content("~/" + fotoRuta);
                 <img class="profile-photo" src="@fotoUrl" alt="Foto de perfil" />
             }
             else
             {
                 <div class="profile-photo profile-photo--empty">Sin foto</div>
             }
+
+            <form action='@Url.Action("ActualizarFotoPerfil", "Home")' method="post" enctype="multipart/form-data" style="margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <div class="field upload-field" style="margin: 0; align-items: center;">
+                    <label class="upload-button" for="FotoPerfilActualizar" data-file-label="FotoPerfilActualizar" title="Seleccionar nueva foto de perfil" style="cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </label>
+                    <input type="file" id="FotoPerfilActualizar" name="FotoPerfil" accept="image/*" onchange="this.form.submit()" />
+                    <span class="upload-filename" data-file-name="FotoPerfilActualizar">Cambiar foto de perfil</span>
+                </div>
+            </form>
         </div>
 
         <div class="auth-note">

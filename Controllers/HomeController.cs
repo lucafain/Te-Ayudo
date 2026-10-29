@@ -425,7 +425,7 @@ public class HomeController : Controller
         return View("MostrarContraseña");
     }
 
-    public IActionResult Perfil()
+    public IActionResult Perfil(string? mensaje = null)
     {
         Usuarios? usuario = ObtenerUsuarioSesion();
         if (usuario == null)
@@ -434,6 +434,7 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Home");
         }
 
+        ViewBag.SuccessMessage = mensaje;
         ViewBag.Nombre = usuario.Nombre;
         ViewBag.Apellido = usuario.Apellido;
         ViewBag.Email = usuario.Email;
@@ -446,6 +447,25 @@ public class HomeController : Controller
         ViewBag.FotoPerfil = usuario.FotoPerfil;
 
         return View("perfil");
+    }
+
+    [HttpPost]
+    public IActionResult ActualizarFotoPerfil(IFormFile? FotoPerfil = null)
+    {
+        Usuarios? usuario = ObtenerUsuarioSesion();
+        if (usuario == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+
+        string? rutaNueva = GuardarArchivo(FotoPerfil, "uploads/perfiles");
+        if (!string.IsNullOrEmpty(rutaNueva))
+        {
+            BD.ActualizarFotoPerfil(usuario.IdUsuario, rutaNueva);
+            return RedirectToAction("Perfil", "Home", new { mensaje = "¡Foto de perfil actualizada y guardada en la base de datos!" });
+        }
+
+        return RedirectToAction("Perfil", "Home");
     }
 
     public IActionResult PrincipalJoven()
@@ -534,10 +554,126 @@ public class HomeController : Controller
             return RedirectToAction("PrincipalAdulto", "Home");
         }
 
+        List<Tareas> listaOriginal = BD.ObtenerTareasPendientes(joven.IdUsuario);
+        Dictionary<int, int> distanciasTareas = new Dictionary<int, int>();
+
+        foreach (Tareas t in listaOriginal)
+        {
+            int km = CalcularDistanciaTareaKm(joven, t);
+            distanciasTareas[t.IdTarea] = km;
+        }
+
+        // Ordenar de menor a mayor distancia (más cerca primero) sin lambdas para evitar errores de Hot Reload
+        for (int i = 0; i < listaOriginal.Count - 1; i++)
+        {
+            for (int j = i + 1; j < listaOriginal.Count; j++)
+            {
+                int distI = distanciasTareas[listaOriginal[i].IdTarea];
+                int distJ = distanciasTareas[listaOriginal[j].IdTarea];
+                if (distJ < distI || (distJ == distI && listaOriginal[j].IdTarea > listaOriginal[i].IdTarea))
+                {
+                    Tareas temp = listaOriginal[i];
+                    listaOriginal[i] = listaOriginal[j];
+                    listaOriginal[j] = temp;
+                }
+            }
+        }
+
         ViewBag.Joven = joven;
         ViewBag.SuccessMessage = mensaje;
-        ViewBag.TareasPendientes = BD.ObtenerTareasPendientes(joven.IdUsuario);
+        ViewBag.TareasPendientes = listaOriginal;
+        ViewBag.DistanciasTareas = distanciasTareas;
+        ViewBag.EstadosPostulacion = BD.ObtenerEstadosPostulacionesJoven(joven.IdUsuario);
         return View("AyudasParaRealizar");
+    }
+
+    private int CalcularDistanciaTareaKm(Usuarios? joven, Tareas t)
+    {
+        Dictionary<string, double[]> coordsBarrios = new Dictionary<string, double[]>
+        {
+            { "almagro", new double[] { -34.6090, -58.4210 } },
+            { "yatay", new double[] { -34.6095, -58.4265 } },
+            { "yatai", new double[] { -34.6095, -58.4265 } },
+            { "villa crespo", new double[] { -34.5980, -58.4420 } },
+            { "araoz", new double[] { -34.5940, -58.4280 } },
+            { "caballito", new double[] { -34.6180, -58.4420 } },
+            { "avellaneda", new double[] { -34.6240, -58.4580 } },
+            { "boyaca", new double[] { -34.6230, -58.4620 } },
+            { "flores", new double[] { -34.6280, -58.4630 } },
+            { "floresta", new double[] { -34.6310, -58.4830 } },
+            { "palermo", new double[] { -34.5830, -58.4250 } },
+            { "cordoba", new double[] { -34.5990, -58.3960 } },
+            { "corrientes", new double[] { -34.6040, -58.4110 } },
+            { "balvanera", new double[] { -34.6090, -58.4010 } },
+            { "once", new double[] { -34.6080, -58.4060 } },
+            { "abasto", new double[] { -34.6030, -58.4110 } },
+            { "recoleta", new double[] { -34.5890, -58.3930 } },
+            { "belgrano", new double[] { -34.5620, -58.4560 } },
+            { "nuñez", new double[] { -34.5450, -58.4650 } },
+            { "nunez", new double[] { -34.5450, -58.4650 } },
+            { "colegiales", new double[] { -34.5750, -58.4480 } },
+            { "chacarita", new double[] { -34.5880, -58.4540 } },
+            { "paternal", new double[] { -34.5990, -58.4680 } },
+            { "boedo", new double[] { -34.6260, -58.4170 } },
+            { "san cristobal", new double[] { -34.6230, -58.4020 } },
+            { "san telmo", new double[] { -34.6210, -58.3730 } },
+            { "monserrat", new double[] { -34.6120, -58.3820 } },
+            { "microcentro", new double[] { -34.6037, -58.3816 } },
+            { "villa urquiza", new double[] { -34.5730, -58.4870 } },
+            { "villa devoto", new double[] { -34.6010, -58.5120 } },
+            { "villa del parque", new double[] { -34.6040, -58.4910 } },
+            { "saavedra", new double[] { -34.5540, -58.4880 } },
+            { "coghlan", new double[] { -34.5600, -58.4750 } },
+            { "barracas", new double[] { -34.6420, -58.3780 } },
+            { "la boca", new double[] { -34.6350, -58.3640 } },
+            { "constitucion", new double[] { -34.6280, -58.3840 } },
+            { "retiro", new double[] { -34.5910, -58.3780 } },
+            { "puerto madero", new double[] { -34.6110, -58.3620 } },
+            { "mataderos", new double[] { -34.6580, -58.5010 } },
+            { "liniers", new double[] { -34.6430, -58.5210 } },
+            { "parque patricios", new double[] { -34.6370, -58.4010 } },
+            { "parque chacabuco", new double[] { -34.6350, -58.4380 } }
+        };
+
+        string textoJoven = ((joven?.Calle ?? "") + " " + (joven?.Provincia ?? "")).ToLower();
+        double latJoven = -34.6095;
+        double lonJoven = -58.4265;
+        foreach (KeyValuePair<string, double[]> par in coordsBarrios)
+        {
+            if (textoJoven.Contains(par.Key))
+            {
+                latJoven = par.Value[0];
+                lonJoven = par.Value[1];
+                break;
+            }
+        }
+
+        string textoTarea = ((t.Barrio ?? "") + " " + (t.Lugar ?? "")).ToLower();
+        double latTarea = 0;
+        double lonTarea = 0;
+        foreach (KeyValuePair<string, double[]> par in coordsBarrios)
+        {
+            if (textoTarea.Contains(par.Key))
+            {
+                latTarea = par.Value[0];
+                lonTarea = par.Value[1];
+                break;
+            }
+        }
+
+        if (latTarea != 0)
+        {
+            double dLat = (latTarea - latJoven) * 111.0;
+            double dLon = (lonTarea - lonJoven) * 91.0;
+            double dist = System.Math.Sqrt(dLat * dLat + dLon * dLon) * 1.35;
+            int km = (int)System.Math.Round(dist);
+            if (km < 1) km = 2;
+            if (km > 15) km = 12;
+            return km;
+        }
+
+        int[] distanciasBase = new int[] { 2, 3, 5, 10, 2, 5, 3, 4, 6 };
+        return distanciasBase[System.Math.Abs(t.IdTarea) % distanciasBase.Length];
     }
 
     public IActionResult DetalleAyuda(int idTarea)
@@ -588,6 +724,24 @@ public class HomeController : Controller
             nombreSolicitante = solicitante?.Email ?? "Adulto mayor";
         }
 
+        string[] diasSemana = new string[] { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" };
+        string nombreDia = diasSemana[(int)fechaMostrar.DayOfWeek];
+        string fechaDiaTexto = nombreDia + " " + fechaMostrar.ToString("dd/MM");
+
+        string aclaracionBruta = tarea.Aclaracion ?? "";
+        string aclaracionLimpia = aclaracionBruta;
+        int idxParentesis = aclaracionBruta.IndexOf(" (Día y hora: ");
+        if (idxParentesis >= 0)
+        {
+            aclaracionLimpia = aclaracionBruta.Substring(0, idxParentesis).Trim();
+        }
+        else if (aclaracionBruta.StartsWith("Día y hora: "))
+        {
+            aclaracionLimpia = "";
+        }
+
+        string montoTexto = tarea.Monto > 0 ? tarea.Monto.ToString("0") : "5000";
+
         return Json(new
         {
             idTarea = tarea.IdTarea,
@@ -595,12 +749,40 @@ public class HomeController : Controller
             descripcion = tarea.Descripcion,
             lugar = tarea.Lugar,
             barrio = tarea.Barrio ?? "",
+            monto = montoTexto,
             fecha = fechaMostrar.ToString("dd/MM/yyyy"),
+            fechaDia = fechaDiaTexto,
             hora = tarea.HoraTarea.TotalMinutes > 0 ? tarea.HoraTarea.ToString(@"hh\:mm") : fechaMostrar.ToString("HH:mm"),
-            aclaracion = tarea.Aclaracion ?? "",
+            aclaracion = aclaracionLimpia,
             nombreSolicitante = nombreSolicitante,
             fotoSolicitante = solicitante?.FotoPerfil ?? "/img/user.svg"
         });
+    }
+
+    [HttpPost]
+    public IActionResult EliminarTareaRechazada(int idTarea)
+    {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null || !joven.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
+        bool ok = BD.RechazarTarea(idTarea, joven.IdUsuario);
+        return Json(new { ok = ok });
+    }
+
+    [HttpPost]
+    public IActionResult FinalizarTareaAceptada(int idTarea)
+    {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null || !joven.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
+        bool ok = BD.FinalizarTareaAceptada(idTarea, joven.IdUsuario);
+        return Json(new { ok = ok });
     }
 
     [HttpPost]
@@ -719,6 +901,7 @@ public class HomeController : Controller
         // Slide 15: Dictionary para saber cuántos postulantes tiene cada tarea y si ya tiene joven asignado
         Dictionary<int, int> cantidadPostulantes = new Dictionary<int, int>();
         Dictionary<int, Usuarios?> jovenesAsignados = new Dictionary<int, Usuarios?>();
+        Dictionary<int, bool> tareasFinalizadas = new Dictionary<int, bool>();
         foreach (Tareas tarea in misTareas)
         {
             if (!cantidadPostulantes.ContainsKey(tarea.IdTarea))
@@ -729,13 +912,93 @@ public class HomeController : Controller
             {
                 jovenesAsignados.Add(tarea.IdTarea, BD.ObtenerJovenAceptadoPorTarea(tarea.IdTarea));
             }
+            if (!tareasFinalizadas.ContainsKey(tarea.IdTarea))
+            {
+                tareasFinalizadas.Add(tarea.IdTarea, BD.EsTareaFinalizada(tarea.IdTarea));
+            }
         }
 
+        ViewBag.Adulto = adulto;
         ViewBag.SuccessMessage = mensaje;
         ViewBag.MisTareas = misTareas;
         ViewBag.CantidadPostulantes = cantidadPostulantes;
         ViewBag.JovenesAsignados = jovenesAsignados;
+        ViewBag.TareasFinalizadas = tareasFinalizadas;
         return View("MisAyudas");
+    }
+
+    [HttpPost]
+    public IActionResult EliminarTareaFinalizada(int idTarea)
+    {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        BD.EliminarTareaFinalizadaAdulto(idTarea);
+        return RedirectToAction("MisAyudas", "Home", new { mensaje = "La tarea finalizada fue eliminada de tu lista." });
+    }
+
+    [HttpGet]
+    public IActionResult TicketAyuda(int idTarea)
+    {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null)
+        {
+            return RedirectToAction("MisAyudas", "Home");
+        }
+
+        Usuarios? jovenAsignado = BD.ObtenerJovenAceptadoPorTarea(idTarea);
+        Usuarios? solicitante = BD.ObtenerUsuarioPorId(tarea.IdUsuarioSolicitante) ?? adulto;
+
+        ViewBag.Adulto = adulto;
+        ViewBag.Solicitante = solicitante;
+        ViewBag.Tarea = tarea;
+        ViewBag.JovenAsignado = jovenAsignado;
+        return View("TicketAyuda");
+    }
+
+    [HttpPost]
+    public IActionResult GuardarValoracion(int idTarea, double Calificacion = 5, bool Puntual = true, string? Comentario = "")
+    {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        if (Calificacion < 1) Calificacion = 1;
+        if (Calificacion > 5) Calificacion = 5;
+
+        BD.GuardarValoracionJoven(idTarea, Calificacion, Puntual);
+
+        Usuarios? joven = BD.ObtenerJovenAceptadoPorTarea(idTarea);
+        string nombreJoven = joven != null ? ((joven.Nombre ?? "") + " " + (joven.Apellido ?? "")).Trim() : "el joven";
+        if (string.IsNullOrEmpty(nombreJoven))
+        {
+            nombreJoven = joven?.Email ?? "el joven";
+        }
+
+        return RedirectToAction("MisAyudas", "Home", new { mensaje = "¡Gracias por tu devolución! Se guardó la calificación para " + nombreJoven + "." });
     }
 
     [HttpPost]
@@ -1051,7 +1314,17 @@ public class HomeController : Controller
         string folderPath = Path.Combine(_environment.WebRootPath, subcarpeta);
         Directory.CreateDirectory(folderPath);
 
-        string nombreArchivo = archivo.FileName.Replace(" ", "_");
+        string ext = Path.GetExtension(archivo.FileName);
+        if (string.IsNullOrEmpty(ext))
+        {
+            ext = ".jpg";
+        }
+        string baseName = Path.GetFileNameWithoutExtension(archivo.FileName).Replace(" ", "_");
+        if (baseName.Length > 12)
+        {
+            baseName = baseName.Substring(0, 12);
+        }
+        string nombreArchivo = baseName + "_" + (DateTime.Now.Ticks % 1000000).ToString() + ext;
         string fullPath = Path.Combine(folderPath, nombreArchivo);
 
         using (FileStream stream = System.IO.File.Create(fullPath))

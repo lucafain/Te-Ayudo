@@ -3,6 +3,15 @@
     List<Tareas>? misTareas = ViewBag.MisTareas as List<Tareas>;
     Dictionary<int, int>? cantidadPostulantes = ViewBag.CantidadPostulantes as Dictionary<int, int>;
     Dictionary<int, Usuarios?>? jovenesAsignados = ViewBag.JovenesAsignados as Dictionary<int, Usuarios?>;
+    Dictionary<int, bool>? tareasFinalizadas = ViewBag.TareasFinalizadas as Dictionary<int, bool>;
+
+    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (ViewBag.Adulto?.FotoPerfil as string) ?? "").Trim();
+    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
+    string srcFotoNav = tieneFotoPropia
+        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? rutaFotoNav
+            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
+        : Url.Content("~/img/user.svg");
 }
 
 <div class="joven-page">
@@ -32,7 +41,14 @@
             </a>
 
             <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
-                <img src="~/img/user.svg" alt="Perfil" />
+                @if (tieneFotoPropia)
+                {
+                    <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                }
+                <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                </svg>
             </a>
         </nav>
     </header>
@@ -65,58 +81,88 @@
                             jovenAsignado = jovenesAsignados[tarea.IdTarea];
                         }
 
-                        <article class="ayuda-card">
-                            <div class="ayuda-card-top"></div>
+                        bool esFinalizada = tareasFinalizadas != null && tareasFinalizadas.ContainsKey(tarea.IdTarea) && tareasFinalizadas[tarea.IdTarea];
 
-                            <div class="ayuda-card-body">
-                                <h3>@tarea.Titulo</h3>
-                                @if (jovenAsignado != null)
-                                {
-                                    string nombreAsignado = ((jovenAsignado.Nombre ?? "") + " " + (jovenAsignado.Apellido ?? "")).Trim();
-                                    if (string.IsNullOrEmpty(nombreAsignado))
-                                    {
-                                        nombreAsignado = jovenAsignado.Email;
-                                    }
-                                    <p class="ayuda-card-postulantes" style="color: #0d6e2b; font-weight: 600;">
-                                        Realiza: @nombreAsignado
-                                    </p>
-                                }
-                                else
-                                {
-                                    <p class="ayuda-card-postulantes">
-                                        @postulantes @(postulantes == 1 ? "postulante" : "postulantes")
-                                    </p>
-                                }
+                        if (esFinalizada)
+                        {
+                            <article class="ayuda-card ayuda-card--aceptada">
+                                <div class="ayuda-card-top ayuda-card-top--aceptada"></div>
 
-                                <div class="ayuda-card-botones">
-                                    <a class="btn-ayuda-verde" href='@Url.Action("PostulantesTarea", "Home", new { idTarea = tarea.IdTarea })'>
-                                        Ver más
-                                    </a>
+                                <div class="ayuda-card-body">
+                                    <h3>@tarea.Titulo</h3>
 
-                                    @if (postulantes == 0 && jovenAsignado == null && tarea.Estado)
-                                    {
-                                        <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
-                                            Modificar
+                                    <p class="ayuda-card-subtitulo-aceptada">Tarea finalizada</p>
+
+                                    <div class="ayuda-card-botones">
+                                        <a class="btn-ayuda-verde btn-ayuda-accion-unica" href='@Url.Action("TicketAyuda", "Home", new { idTarea = tarea.IdTarea })'>
+                                            Ver detalle
                                         </a>
 
-                                        <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
+                                        <form action='@Url.Action("EliminarTareaFinalizada", "Home")' method="post" style="display: inline;">
                                             <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
-                                            <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
+                                            <button type="submit" class="btn-ayuda-verde btn-ayuda-accion-unica">
+                                                Eliminar
+                                            </button>
                                         </form>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="ayuda-card">
+                                <div class="ayuda-card-top"></div>
+
+                                <div class="ayuda-card-body">
+                                    <h3>@tarea.Titulo</h3>
+                                    @if (jovenAsignado != null)
+                                    {
+                                        string nombreAsignado = ((jovenAsignado.Nombre ?? "") + " " + (jovenAsignado.Apellido ?? "")).Trim();
+                                        if (string.IsNullOrEmpty(nombreAsignado))
+                                        {
+                                            nombreAsignado = jovenAsignado.Email;
+                                        }
+                                        <p class="ayuda-card-postulantes" style="color: #0d6e2b; font-weight: 600;">
+                                            Realiza: @nombreAsignado
+                                        </p>
                                     }
                                     else
                                     {
-                                        <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
-                                            Modificar
-                                        </button>
-
-                                        <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede cancelar porque ya tiene postulantes">
-                                            Cancelar
-                                        </button>
+                                        <p class="ayuda-card-postulantes">
+                                            @postulantes @(postulantes == 1 ? "postulante" : "postulantes")
+                                        </p>
                                     }
+
+                                    <div class="ayuda-card-botones">
+                                        <a class="btn-ayuda-verde" href='@Url.Action("PostulantesTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                            Ver más
+                                        </a>
+
+                                        @if (postulantes == 0 && jovenAsignado == null && tarea.Estado)
+                                        {
+                                            <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                                Modificar
+                                            </a>
+
+                                            <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
+                                                <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
+                                                <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
+                                                Modificar
+                                            </button>
+
+                                            <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede cancelar porque ya tiene postulantes">
+                                                Cancelar
+                                            </button>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                        }
                     }
                 </div>
             }

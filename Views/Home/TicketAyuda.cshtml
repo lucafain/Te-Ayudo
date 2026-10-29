@@ -1,0 +1,240 @@
+@{
+    ViewData["Title"] = "Ticket de Ayuda realizada";
+    Tareas? tarea = ViewBag.Tarea as Tareas;
+    Usuarios? solicitante = ViewBag.Solicitante as Usuarios;
+    Usuarios? jovenAsignado = ViewBag.JovenAsignado as Usuarios;
+
+    int idTarea = tarea?.IdTarea ?? 1;
+    int idTicket = 84900 + idTarea;
+    string tituloTarea = !string.IsNullOrWhiteSpace(tarea?.Titulo) ? tarea.Titulo : "Hacer las compras";
+    string direccionMostrar = !string.IsNullOrWhiteSpace(tarea?.Lugar)
+        ? tarea.Lugar
+        : (!string.IsNullOrWhiteSpace(tarea?.Barrio) ? tarea.Barrio : "CABA");
+    string montoMostrar = (tarea != null && tarea.Monto > 0) ? tarea.Monto.ToString("0") : "5000";
+
+    DateTime fechaBase = tarea != null
+        ? (tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion))
+        : DateTime.Now;
+    TimeSpan horaInicio = (tarea != null && tarea.HoraTarea.TotalMinutes > 0)
+        ? tarea.HoraTarea
+        : new TimeSpan(15, 0, 0);
+    TimeSpan horaFin = horaInicio.Add(new TimeSpan(1, 20, 0));
+
+    string fechaCorta = fechaBase.ToString("dd/MM/yy");
+    string horaInicioTexto = horaInicio.ToString(@"hh\:mm") + "hs";
+    string horaFinTexto = horaFin.ToString(@"hh\:mm") + "hs";
+
+    string nombreCliente = solicitante != null
+        ? ((solicitante.Nombre ?? "") + " " + (solicitante.Apellido ?? "")).Trim()
+        : "Adulto mayor";
+    if (string.IsNullOrEmpty(nombreCliente))
+    {
+        nombreCliente = solicitante?.Email ?? "Adulto mayor";
+    }
+
+    string nombreJoven = jovenAsignado != null
+        ? ((jovenAsignado.Nombre ?? "") + " " + (jovenAsignado.Apellido ?? "")).Trim()
+        : "Tobías";
+    if (string.IsNullOrEmpty(nombreJoven))
+    {
+        nombreJoven = jovenAsignado?.Email ?? "Tobías";
+    }
+
+    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (ViewBag.Adulto?.FotoPerfil as string) ?? "").Trim();
+    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
+    string srcFotoNav = tieneFotoPropia
+        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? rutaFotoNav
+            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
+        : Url.Content("~/img/user.svg");
+}
+
+<div class="joven-page">
+    <header class="header header--joven">
+        <a class="logo" href='@Url.Action("PrincipalAdulto", "Home")'>
+            <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+        </a>
+
+        <button class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="navigation"
+                aria-label="Abrir menú">
+            ☰
+        </button>
+
+        <nav id="navigation" aria-label="Navegación principal">
+            <a class="nav-button nav-button--joven" href='@Url.Action("Explorar", "Home")'>
+                Explorá
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("PrincipalAdulto", "Home")#preguntas-adulto'>
+                Preguntas frecuentes
+            </a>
+
+            <a class="nav-button nav-button--joven" href='@Url.Action("SolicitarTarea", "Home")'>
+                Solicitá ayudas
+            </a>
+
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                @if (tieneFotoPropia)
+                {
+                    <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                }
+                <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                </svg>
+            </a>
+        </nav>
+    </header>
+
+    <main class="joven-main">
+        <!-- SECCIÓN 1: TICKET DE AYUDA REALIZADA -->
+        <section class="ticket-ayuda-seccion" id="vistaTicketDetalle">
+            <div class="ticket-ayuda-card">
+                <div class="ticket-ayuda-top"></div>
+
+                <div class="ticket-ayuda-body">
+                    <h1 class="ticket-titulo-principal">Ticket de Ayuda realizada</h1>
+                    <h2 class="ticket-subtitulo-verde">Ayuda completada</h2>
+
+                    <div class="ticket-info-bloque">
+                        <div class="ticket-grupo">
+                            <h3 class="ticket-seccion-titulo">Estado de la Ayuda</h3>
+                            <p><span class="ticket-label">ID:</span> #@("T-" + idTicket)</p>
+                            <p><span class="ticket-label">Fecha:</span> @fechaCorta (@horaInicioTexto-@horaFinTexto)</p>
+                        </div>
+
+                        <div class="ticket-grupo">
+                            <h3 class="ticket-seccion-titulo">Datos del cliente</h3>
+                            <p><span class="ticket-label">Nombre y Apellido:</span> @nombreCliente</p>
+                            <p><span class="ticket-label">Dirección:</span> @direccionMostrar</p>
+                        </div>
+
+                        <div class="ticket-grupo">
+                            <h3 class="ticket-seccion-titulo">Detalle Financiero</h3>
+                            <p><span class="ticket-label">Monto Total Cobrado:</span> $@montoMostrar</p>
+                            <p><span class="ticket-label">Método de Pago Utilizado:</span> Efectivo</p>
+                        </div>
+
+                        <div class="ticket-grupo">
+                            <h3 class="ticket-seccion-titulo">Resumen del Servicio Prestado</h3>
+                            <p><span class="ticket-label">Tarea:</span> @tituloTarea</p>
+                            <p><span class="ticket-label">Duración:</span> @horaInicioTexto-@horaFinTexto (1h y 20min)</p>
+                        </div>
+                    </div>
+
+                    <div class="ticket-botones-fila">
+                        <button type="button" class="btn-ticket-descargar" onclick="window.print()">
+                            Descargar
+                        </button>
+
+                        <button type="button" class="btn-ticket-volver" onclick="abrirValoracionJoven()">
+                            Volver a menu
+                        </button>
+
+                        <button type="button" class="btn-ticket-reportar" onclick="alert('Se registró tu reporte. Nuestro equipo de soporte se pondrá en contacto con vos.')">
+                            Reportar problema
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: VALORAR AL JOVEN -->
+        <section class="ticket-ayuda-seccion" id="vistaValoracionJoven" style="display: none;">
+            <div class="ticket-ayuda-card">
+                <div class="ticket-ayuda-top"></div>
+
+                <div class="ticket-ayuda-body valoracion-body">
+                    <h1 class="valoracion-titulo">Ayuda completada</h1>
+
+                    <p class="valoracion-subtexto">
+                        ¡Ayuda a pedir un buen ayudante y a hacerlo<br />
+                        llegar a más gente dejando una devolución!
+                    </p>
+
+                    <p class="valoracion-califica">
+                        Califica a <strong>@nombreJoven</strong>
+                    </p>
+
+                    <form action='@Url.Action("GuardarValoracion", "Home")' method="post" class="valoracion-form">
+                        <input type="hidden" name="idTarea" value="@idTarea" />
+                        <input type="hidden" name="Calificacion" id="inputCalificacionJoven" value="5" />
+                        <input type="hidden" name="Puntual" id="inputPuntualJoven" value="true" />
+
+                        <div class="valoracion-estrellas" id="contenedorEstrellasValoracion">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                int valorEstrella = i;
+                                <button type="button" class="estrella-btn" data-valor="@valorEstrella" onclick="seleccionarEstrellaValoracion(@valorEstrella)" aria-label="@valorEstrella estrellas">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" stroke="#4b5563" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="estrella-svg">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                    </svg>
+                                </button>
+                            }
+                        </div>
+
+                        <p class="valoracion-pregunta">Fue puntual?</p>
+
+                        <div class="valoracion-puntual-botones">
+                            <button type="button" id="btnPuntualSi" class="btn-puntual-si btn-puntual-activo" onclick="seleccionarPuntualidadJoven(true)">
+                                Si
+                            </button>
+
+                            <button type="button" id="btnPuntualNo" class="btn-puntual-no" onclick="seleccionarPuntualidadJoven(false)">
+                                No
+                            </button>
+                        </div>
+
+                        <div class="valoracion-comentario-wrapper">
+                            <input type="text" name="Comentario" class="valoracion-input-comentario" placeholder="Compartinos algo sobre cómo se realizó esta ayuda" />
+                        </div>
+
+                        <div class="valoracion-submit-wrapper">
+                            <button type="submit" class="btn-enviar-resena">
+                                Enviar reseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content page">
+            <a class="logo" href='@Url.Action("Index", "Home")'>
+                <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
+            </a>
+
+            <div>
+                <h3>Te Ayudo</h3>
+                <a href='@Url.Action("Index", "Home")#nosotros'>Nuestra historia</a>
+                <a href='@Url.Action("Index", "Home")#valores'>Nuestros valores</a>
+            </div>
+
+            <div>
+                <h3>Ayudas</h3>
+                <a href='@Url.Action("SolicitarTarea", "Home")'>Solicita tus ayudas</a>
+                <a href='@Url.Action("MisAyudas", "Home")'>Ayudas pedidas</a>
+            </div>
+
+            <div>
+                <h3>Comunidad</h3>
+                <a href='@Url.Action("Explorar", "Home")'>Mapa y comunidad</a>
+            </div>
+
+            <div>
+                <h3>Mi cuenta</h3>
+                <a href='@Url.Action("Perfil", "Home")'>Ver mi perfil</a>
+                <a href='@Url.Action("CerrarSesion", "Home")'>Cerrar sesión</a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="year">2026</span> Te Ayudo.
+            Todos los derechos reservados.
+        </p>
+    </footer>
+</div>

@@ -1135,7 +1135,63 @@ footer {
     margin-left: 4px;
 }
 
-.nav-perfil-avatar img {
+.header--joven .nav-perfil-avatar,
+.nav-perfil-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #14b89a;
+    border: 3.5px solid #233645;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+.nav-button--joven-claro {
+    background: #63bd2b;
+    color: #ffffff;
+}
+
+.nav-button--joven-claro:hover {
+    background: #52a320;
+}
+
+.nav-notif-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0d6e2b;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.nav-notif-btn:hover {
+    background: #095721;
+}
+
+.nav-perfil-avatar img.nav-perfil-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: none !important;
+    display: block;
+}
+
+.nav-perfil-avatar svg.nav-perfil-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.nav-perfil-avatar img:not(.nav-perfil-foto) {
     width: 34px;
     height: 34px;
     object-fit: contain;
@@ -1640,6 +1696,442 @@ footer {
     font-size: 20px;
     color: #000000;
     text-align: center;
+}
+
+.ayuda-card--aceptada {
+    border: 1px solid #0d6e2b;
+}
+
+.ayuda-card--rechazada {
+    border: 1px solid #b30000;
+}
+
+.ayuda-card-top--aceptada {
+    background: #0d6e2b;
+    justify-content: space-between;
+}
+
+.ayuda-card-top--rechazada {
+    background: #b30000;
+}
+
+.ayuda-card-monto.ayuda-card-monto--blanco {
+    color: #ffffff;
+}
+
+.ayuda-card-dot-blanco {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.ayuda-card-subtitulo-aceptada {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #0d6e2b;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin: -10px 0 -4px 0;
+    text-align: center;
+}
+
+.ayuda-card-subtitulo-rechazada {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #233645;
+    font-size: 13.5px;
+    font-weight: 500;
+    margin: -10px 0 -4px 0;
+    text-align: center;
+}
+
+.btn-ayuda-accion-unica {
+    min-width: 112px;
+    padding: 9px 24px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    border: 1px solid #1b281e;
+}
+
+.ticket-ayuda-seccion {
+    padding: 20px 0 40px;
+}
+
+.ticket-ayuda-card {
+    background: #ffffff;
+    border: 1.5px solid #0d6e2b;
+    border-radius: 26px;
+    overflow: hidden;
+    max-width: 720px;
+    margin: 0 auto;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.ticket-ayuda-top {
+    background: #0d6e2b;
+    height: 30px;
+    width: 100%;
+}
+
+.ticket-ayuda-body {
+    padding: 26px 42px 34px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #000000;
+}
+
+.ticket-titulo-principal {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 36px;
+    color: #000000;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+.ticket-subtitulo-verde {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: #0d6e2b;
+    text-align: center;
+    margin: 0 0 22px 0;
+}
+
+.ticket-info-bloque {
+    max-width: 470px;
+    margin: 0 auto 28px;
+    text-align: left;
+}
+
+.ticket-grupo {
+    margin-bottom: 18px;
+}
+
+.ticket-seccion-titulo {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #000000;
+    margin: 0 0 4px 0;
+}
+
+.ticket-grupo p {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 15.5px;
+    font-weight: 500;
+    color: #000000;
+    margin: 4px 0;
+}
+
+.ticket-label {
+    color: #0d6e2b;
+    font-weight: 600;
+}
+
+.ticket-botones-fila {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-ticket-descargar {
+    background: #d4d4d4;
+    color: #ffffff;
+    border: 1px solid #6b7280;
+    border-radius: 999px;
+    padding: 10px 28px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-ticket-volver {
+    background: #0d6e2b;
+    color: #ffffff;
+    border: 1px solid #084c1d;
+    border-radius: 999px;
+    padding: 10px 28px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-ticket-volver:hover {
+    background: #095721;
+}
+
+.btn-ticket-reportar {
+    background: #ff0000;
+    color: #ffffff;
+    border: 1px solid #990000;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.valoracion-body {
+    text-align: center;
+    padding: 30px 42px 36px;
+}
+
+.valoracion-titulo {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 36px;
+    color: #0d6e2b;
+    margin: 0 0 12px 0;
+}
+
+.valoracion-subtexto {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #000000;
+    line-height: 1.35;
+    margin: 0 0 14px 0;
+}
+
+.valoracion-califica {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #000000;
+    margin: 0 0 10px 0;
+}
+
+.valoracion-estrellas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.estrella-btn {
+    background: transparent;
+    border: 0;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.estrella-svg {
+    fill: #d1d5db;
+    transition: fill 0.15s ease, transform 0.15s ease;
+}
+
+.estrella-btn.estrella-activa .estrella-svg {
+    fill: #facc15;
+    stroke: #ca8a04;
+}
+
+.estrella-btn:hover .estrella-svg {
+    transform: scale(1.1);
+}
+
+.valoracion-pregunta {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: #000000;
+    margin: 6px 0 12px 0;
+}
+
+.valoracion-puntual-botones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.btn-puntual-si {
+    background: #0d6e2b;
+    color: #ffffff;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    min-width: 108px;
+    padding: 10px 26px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-puntual-no {
+    background: #b30000;
+    color: #ffffff;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    min-width: 108px;
+    padding: 10px 26px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-puntual-activo {
+    border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.valoracion-comentario-wrapper {
+    max-width: 340px;
+    margin: 0 auto 18px;
+}
+
+.valoracion-input-comentario {
+    width: 100%;
+    border: 1.5px solid #0d6e2b;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000000;
+    text-align: center;
+    background: #ffffff;
+    outline: none;
+}
+
+.btn-enviar-resena {
+    background: #0d6e2b;
+    color: #ffffff;
+    border: 1px solid #084c1d;
+    border-radius: 999px;
+    padding: 10px 28px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-enviar-resena:hover {
+    background: #095721;
+}
+
+.detalle-aceptada-contenedor {
+    padding: 18px 0;
+}
+
+.detalle-aceptada-wrapper {
+    border: 1px solid #99c47a;
+    border-radius: 36px;
+    padding: 44px 36px;
+}
+
+.detalle-aceptada-card {
+    background: #ffffff;
+    border: 1.5px solid #0d6e2b;
+    border-radius: 28px;
+    overflow: hidden;
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.detalle-aceptada-top {
+    background: #0d6e2b;
+    height: 48px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+}
+
+.detalle-aceptada-monto {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.detalle-aceptada-body {
+    padding: 28px 36px 32px;
+    display: grid;
+    grid-template-columns: 175px 1fr;
+    gap: 32px;
+    align-items: center;
+}
+
+.detalle-aceptada-foto {
+    width: 165px;
+    height: 165px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #edf0e5;
+}
+
+.detalle-aceptada-info {
+    text-align: left;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #1c2419;
+}
+
+.detalle-aceptada-nombre {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.detalle-aceptada-linea {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #1c2419;
+    margin: 3px 0;
+}
+
+.detalle-aceptada-descripcion {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #1c2419;
+    margin-top: 4px;
+    line-height: 1.35;
+}
+
+.detalle-aceptada-botones {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.btn-finalizar-tarea {
+    background: #fa2a36;
+    color: #ffffff;
+    border: 1px solid #8a151b;
+    border-radius: 999px;
+    padding: 10px 28px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-finalizar-tarea:hover {
+    background: #d81e29;
+}
+
+@media (max-width: 760px) {
+    .detalle-aceptada-body {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .detalle-aceptada-foto {
+        margin: 0 auto;
+    }
+
+    .detalle-aceptada-info {
+        text-align: center;
+    }
 }
 
 .ayuda-card-monto {

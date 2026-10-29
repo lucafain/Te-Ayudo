@@ -22,7 +22,7 @@
 
         <div id="mensajeErrorJs" class="auth-alert" style="display: none;"></div>
 
-        <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" id="formRegistro" class="form-centered-column">
+        <form action='@Url.Action("GuardarRegistroMayor", "Home")' method="post" enctype="multipart/form-data" id="formRegistro" class="form-centered-column">
             <div class="field">
                 <label for="Email">Correo electrónico <span class="required-star">*</span></label>
                 <input type="email" id="Email" name="Email" autocomplete="email" />
@@ -31,7 +31,6 @@
             <div class="field">
                 <label for="Nombre">Nombre de usuario <span class="required-star">*</span></label>
                 <input type="text" id="Nombre" name="Nombre" autocomplete="username" />
-               
             </div>
 
             <div class="field">
@@ -54,6 +53,19 @@
             <div class="field">
                 <label for="Telefono">Número telefónico</label>
                 <input type="text" id="Telefono" name="Telefono" autocomplete="tel" />
+            </div>
+
+            <div class="field upload-field">
+                <label for="FotoPerfil">Cargar foto de perfil</label>
+                <label class="upload-button" for="FotoPerfil" data-file-label="FotoPerfil">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="upload-icon">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </label>
+                <input type="file" id="FotoPerfil" name="FotoPerfil" accept="image/*" />
+                <span class="upload-filename" data-file-name="FotoPerfil">Ningún archivo seleccionado</span>
             </div>
 
             <div class="auth-actions">

@@ -1,96 +1,17 @@
 @{
     ViewData["Title"] = "Ayudas para realizar";
     List<Tareas>? tareasPendientes = ViewBag.TareasPendientes as List<Tareas>;
+    Dictionary<int, int>? distanciasTareas = ViewBag.DistanciasTareas as Dictionary<int, int>;
+    Dictionary<int, string>? estadosPostulacion = ViewBag.EstadosPostulacion as Dictionary<int, string>;
     Usuarios? jovenActual = ViewBag.Joven as Usuarios;
 
-    // Coordenadas aproximadas (lat, lon) de barrios de CABA para estimar los km de distancia
-    Dictionary<string, (double lat, double lon)> coordsBarrios = new Dictionary<string, (double lat, double lon)>
-    {
-        { "almagro", (-34.6090, -58.4210) },
-        { "yatay", (-34.6095, -58.4265) },
-        { "yatai", (-34.6095, -58.4265) },
-        { "villa crespo", (-34.5980, -58.4420) },
-        { "araoz", (-34.5940, -58.4280) },
-        { "caballito", (-34.6180, -58.4420) },
-        { "avellaneda", (-34.6240, -58.4580) },
-        { "boyaca", (-34.6230, -58.4620) },
-        { "flores", (-34.6280, -58.4630) },
-        { "floresta", (-34.6310, -58.4830) },
-        { "palermo", (-34.5830, -58.4250) },
-        { "cordoba", (-34.5990, -58.3960) },
-        { "corrientes", (-34.6040, -58.4110) },
-        { "balvanera", (-34.6090, -58.4010) },
-        { "once", (-34.6080, -58.4060) },
-        { "abasto", (-34.6030, -58.4110) },
-        { "recoleta", (-34.5890, -58.3930) },
-        { "belgrano", (-34.5620, -58.4560) },
-        { "nuñez", (-34.5450, -58.4650) },
-        { "nunez", (-34.5450, -58.4650) },
-        { "colegiales", (-34.5750, -58.4480) },
-        { "chacarita", (-34.5880, -58.4540) },
-        { "paternal", (-34.5990, -58.4680) },
-        { "boedo", (-34.6260, -58.4170) },
-        { "san cristobal", (-34.6230, -58.4020) },
-        { "san telmo", (-34.6210, -58.3730) },
-        { "monserrat", (-34.6120, -58.3820) },
-        { "microcentro", (-34.6037, -58.3816) },
-        { "villa urquiza", (-34.5730, -58.4870) },
-        { "villa devoto", (-34.6010, -58.5120) },
-        { "villa del parque", (-34.6040, -58.4910) },
-        { "saavedra", (-34.5540, -58.4880) },
-        { "coghlan", (-34.5600, -58.4740) },
-        { "parque patricios", (-34.6370, -58.4000) },
-        { "barracas", (-34.6440, -58.3770) },
-        { "la boca", (-34.6350, -58.3640) },
-        { "puerto madero", (-34.6110, -58.3620) },
-        { "retiro", (-34.5920, -58.3770) },
-        { "constitucion", (-34.6270, -58.3840) },
-        { "liniers", (-34.6420, -58.5230) },
-        { "mataderos", (-34.6560, -58.5080) }
-    };
-
-    (double lat, double lon) ObtenerCoordsTexto(string texto, (double lat, double lon) porDefecto)
-    {
-        if (string.IsNullOrWhiteSpace(texto))
-        {
-            return porDefecto;
-        }
-        string limpio = texto.ToLower()
-            .Replace("á", "a").Replace("é", "e").Replace("í", "i").Replace("ó", "o").Replace("ú", "u");
-        foreach (KeyValuePair<string, (double lat, double lon)> par in coordsBarrios)
-        {
-            if (limpio.Contains(par.Key))
-            {
-                return par.Value;
-            }
-        }
-        return porDefecto;
-    }
-
-    // Ubicación base del joven (por defecto Almagro / ORT Yatay si su calle/provincia no coincide con un barrio específico)
-    string textoUbicacionJoven = ((jovenActual?.Calle ?? "") + " " + (jovenActual?.Provincia ?? "")).Trim();
-    (double lat, double lon) coordsJoven = ObtenerCoordsTexto(textoUbicacionJoven, (-34.6095, -58.4265));
-
-    int CalcularKmAprox(Tareas t)
-    {
-        string textoTarea = ((t.Barrio ?? "") + " " + (t.Lugar ?? "")).Trim();
-        (double lat, double lon) coordsTarea = ObtenerCoordsTexto(textoTarea, (0, 0));
-
-        if (coordsTarea.lat != 0)
-        {
-            double dLat = (coordsTarea.lat - coordsJoven.lat) * 111.0;
-            double dLon = (coordsTarea.lon - coordsJoven.lon) * 91.0;
-            double dist = System.Math.Sqrt(dLat * dLat + dLon * dLon) * 1.35; // factor de recorrido urbano
-            int km = (int)System.Math.Round(dist);
-            if (km < 1) km = 2;
-            if (km > 15) km = 12;
-            return km;
-        }
-
-        // Estimación alternativa basada en altura de dirección o ID de tarea
-        int[] distanciasBase = new int[] { 2, 3, 5, 10, 2, 5, 3, 4, 6 };
-        return distanciasBase[System.Math.Abs(t.IdTarea) % distanciasBase.Length];
-    }
+    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (jovenActual?.FotoPerfil as string) ?? "").Trim();
+    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
+    string srcFotoNav = tieneFotoPropia
+        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? rutaFotoNav
+            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
+        : Url.Content("~/img/user.svg");
 }
 
 <div class="joven-page">
@@ -111,12 +32,30 @@
                 Explorá
             </a>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Index", "Home")#preguntas'>
-                Preguntas frecuentes
+            <a class="nav-button nav-button--joven" href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades'>
+                Conversaciones
             </a>
-            
-            <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
-                Perfil
+
+            <a class="nav-button nav-button--joven nav-button--joven-claro" href='@Url.Action("AyudasParaRealizar", "Home")'>
+                Realizá Ayudas
+            </a>
+
+            <a class="nav-notif-btn" href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades' title="Notificaciones" aria-label="Notificaciones">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </a>
+
+            <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
+                @if (tieneFotoPropia)
+                {
+                    <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                }
+                <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                </svg>
             </a>
         </nav>
     </header>
@@ -142,38 +81,109 @@
                         string direccionMostrar = !string.IsNullOrWhiteSpace(tarea.Lugar)
                             ? tarea.Lugar
                             : (!string.IsNullOrWhiteSpace(tarea.Barrio) ? tarea.Barrio : "CABA");
-                        int kmAprox = CalcularKmAprox(tarea);
+                        int kmAprox = (distanciasTareas != null && distanciasTareas.ContainsKey(tarea.IdTarea))
+                            ? distanciasTareas[tarea.IdTarea]
+                            : 2;
+                        string estadoPost = (estadosPostulacion != null && estadosPostulacion.ContainsKey(tarea.IdTarea))
+                            ? estadosPostulacion[tarea.IdTarea]
+                            : "";
 
-                        <article class="ayuda-card" id="card-tarea-@tarea.IdTarea">
-                            <div class="ayuda-card-top">
-                                <span class="ayuda-card-monto">$@montoMostrar</span>
-                            </div>
-
-                            <div class="ayuda-card-body">
-                                <h3>@tarea.Titulo</h3>
-
-                                <div class="ayuda-card-botones">
-                                    <button type="button" class="btn-ayuda-verde" onclick="abrirDetalleTareaFetch(@tarea.IdTarea)">
-                                        Ver más
-                                    </button>
-
-                                    <button type="button" class="btn-ayuda-rojo" onclick="rechazarTareaConUndo(@tarea.IdTarea)">
-                                        Rechazar
-                                    </button>
+                        if (estadoPost == "Aceptada")
+                        {
+                            <article class="ayuda-card ayuda-card--aceptada" id="card-tarea-@tarea.IdTarea">
+                                <div class="ayuda-card-top ayuda-card-top--aceptada">
+                                    <span class="ayuda-card-monto ayuda-card-monto--blanco">$@montoMostrar</span>
+                                    <span class="ayuda-card-dot-blanco" aria-hidden="true"></span>
                                 </div>
 
-                                <div class="ayuda-card-ubicacion">
-                                    <span class="ayuda-card-direccion">@direccionMostrar</span>
-                                    <span class="ayuda-card-distancia">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                            <circle cx="12" cy="10" r="3"></circle>
-                                        </svg>
-                                        A @(kmAprox)km de ti
-                                    </span>
+                                <div class="ayuda-card-body">
+                                    <h3>@tarea.Titulo</h3>
+
+                                    <p class="ayuda-card-subtitulo-aceptada">La tarea fue Aceptada</p>
+
+                                    <div class="ayuda-card-botones">
+                                        <button type="button" class="btn-ayuda-verde btn-ayuda-accion-unica" onclick="abrirDetalleTareaAceptadaFetch(@tarea.IdTarea)">
+                                            Ver más
+                                        </button>
+                                    </div>
+
+                                    <div class="ayuda-card-ubicacion">
+                                        <span class="ayuda-card-direccion">@direccionMostrar</span>
+                                        <span class="ayuda-card-distancia">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            A @(kmAprox)km de ti
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                        }
+                        else if (estadoPost == "Rechazada")
+                        {
+                            <article class="ayuda-card ayuda-card--rechazada" id="card-tarea-@tarea.IdTarea">
+                                <div class="ayuda-card-top ayuda-card-top--rechazada">
+                                    <span class="ayuda-card-monto ayuda-card-monto--blanco">$@montoMostrar</span>
+                                </div>
+
+                                <div class="ayuda-card-body">
+                                    <h3>@tarea.Titulo</h3>
+
+                                    <p class="ayuda-card-subtitulo-rechazada">No fuiste seleccionado para la tarea</p>
+
+                                    <div class="ayuda-card-botones">
+                                        <button type="button" class="btn-ayuda-rojo btn-ayuda-accion-unica" onclick="eliminarTareaRechazadaFetch(@tarea.IdTarea)">
+                                            Eliminar
+                                        </button>
+                                    </div>
+
+                                    <div class="ayuda-card-ubicacion">
+                                        <span class="ayuda-card-direccion">@direccionMostrar</span>
+                                        <span class="ayuda-card-distancia">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            A @(kmAprox)km de ti
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="ayuda-card" id="card-tarea-@tarea.IdTarea">
+                                <div class="ayuda-card-top">
+                                    <span class="ayuda-card-monto">$@montoMostrar</span>
+                                </div>
+
+                                <div class="ayuda-card-body">
+                                    <h3>@tarea.Titulo</h3>
+
+                                    <div class="ayuda-card-botones">
+                                        <button type="button" class="btn-ayuda-verde" onclick="abrirDetalleTareaFetch(@tarea.IdTarea)">
+                                            Ver más
+                                        </button>
+
+                                        <button type="button" class="btn-ayuda-rojo" onclick="rechazarTareaConUndo(@tarea.IdTarea)">
+                                            Rechazar
+                                        </button>
+                                    </div>
+
+                                    <div class="ayuda-card-ubicacion">
+                                        <span class="ayuda-card-direccion">@direccionMostrar</span>
+                                        <span class="ayuda-card-distancia">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            A @(kmAprox)km de ti
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        }
                     }
                 </div>
             }
@@ -187,7 +197,7 @@
             }
         </section>
 
-        <!-- VISTA 2: DETALLE DE LA AYUDA (CARGADA CON FETCH) -->
+        <!-- VISTA 2: DETALLE DE LA AYUDA DISPONIBLE (CARGADA CON FETCH) -->
         <section class="detalle-ayuda-contenedor" id="vistaDetalleAyuda" style="display: none;">
             <div class="detalle-ayuda-card">
                 <img id="detalleTareaFoto" src="~/img/user.svg" alt="Solicitante" class="detalle-ayuda-foto" />
@@ -205,7 +215,7 @@
                             Cancelar
                         </button>
 
-                        <button type="button" class="btn-detalle-postular" onclick="postularmeConFetch()">
+                        <button type="button" id="btnPostularmeDetalle" class="btn-detalle-postular" onclick="postularmeConFetch()">
                             Postularme ahora
                         </button>
                     </div>
@@ -213,11 +223,41 @@
             </div>
         </section>
 
-        <!-- VISTA 3: POSTULADOS A LA AYUDA (CARGADA CON FETCH AL POSTULARSE) -->
-        <section class="postulados-contenedor" id="vistaPostuladosAyuda" style="display: none;">
-            <h1 id="tituloPostuladosFetch" class="postulados-titulo">¡Ya estás postulado!</h1>
+        <!-- VISTA 2B: DETALLE DE LA AYUDA ACEPTADA (CARGADA CON FETCH) -->
+        <section class="detalle-aceptada-contenedor" id="vistaDetalleAceptada" style="display: none;">
+            <div class="detalle-aceptada-wrapper">
+                <div class="detalle-aceptada-card">
+                    <div class="detalle-aceptada-top">
+                        <span id="detalleAceptadaMonto" class="detalle-aceptada-monto">$5000</span>
+                    </div>
 
-            <div id="grillaPostuladosFetch" class="postulados-grid"></div>
+                    <div class="detalle-aceptada-body">
+                        <img id="detalleAceptadaFoto" src="~/img/user.svg" alt="Solicitante" class="detalle-aceptada-foto" />
+
+                        <div class="detalle-aceptada-info">
+                            <h2 id="detalleAceptadaSolicitante" class="detalle-aceptada-nombre">Adulto mayor</h2>
+
+                            <p id="detalleAceptadaTitulo" class="detalle-aceptada-linea"></p>
+                            <p id="detalleAceptadaLugar" class="detalle-aceptada-linea"></p>
+                            <p id="detalleAceptadaFechaHora" class="detalle-aceptada-linea"></p>
+                            <p id="detalleAceptadaDescripcion" class="detalle-aceptada-descripcion"></p>
+
+                            <div class="detalle-aceptada-botones">
+                                <button type="button" class="btn-finalizar-tarea" onclick="finalizarTareaAceptadaFetch()">
+                                    Finalizar Tarea
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 3: POSTULADOS A LA AYUDA (CARGADA CON FETCH) -->
+        <section class="postulados-contenedor" id="vistaPostuladosAyuda" style="display: none;">
+            <h1 class="postulados-titulo" id="postuladosTituloTexto">¡Ya estás postulado!</h1>
+
+            <div class="postulados-grid" id="grillaPostuladosFetch"></div>
 
             <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
                 <h3 id="detalleNombre"></h3>
@@ -225,13 +265,22 @@
                 <p id="detalleTelefono"></p>
                 <p id="detalleTipo"></p>
             </div>
-        </section>
-    </main>
 
-    <div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;">
-        <span>Ayuda rechazada</span>
-        <button type="button" class="snackbar-btn-deshacer" onclick="deshacerRechazoTarea()">Deshacer</button>
-    </div>
+            <div style="text-align: center; margin-top: 28px;">
+                <button type="button" class="btn-ayuda-verde" onclick="volverAGrillaAyudas()">
+                    Volver a ayudas para realizar
+                </button>
+            </div>
+        </section>
+
+        <!-- SNACKBAR PARA DESHACER RECHAZO -->
+        <div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;" role="status" aria-live="polite">
+            <span id="snackbarTexto">Rechazaste esta ayuda.</span>
+            <button type="button" class="snackbar-btn-deshacer" onclick="deshacerRechazoTarea()">
+                Deshacer
+            </button>
+        </div>
+    </main>
 
     <footer>
         <div class="footer-content page">

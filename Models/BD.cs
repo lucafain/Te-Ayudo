@@ -52,6 +52,7 @@ public static class BD
             return false;
         }
 
+        AsegurarColumnaFotoPerfil();
         if (ObtenerUsuarioPorEmail(usuario.Email) != null)
         {
             return false;
@@ -82,6 +83,49 @@ public static class BD
             });
 
             return registrosAfectados > 0;
+        }
+    }
+
+    public static void AsegurarColumnaFotoPerfil()
+    {
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                List<string> columnas = connection.Query<string>(
+                    "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Usuarios'").ToList();
+                bool tieneFoto = false;
+                foreach (string col in columnas)
+                {
+                    if (col.ToLower() == "fotoperfil")
+                    {
+                        tieneFoto = true;
+                    }
+                }
+                if (!tieneFoto)
+                {
+                    connection.Execute("ALTER TABLE Usuarios ADD fotoPerfil VARCHAR(255) NULL");
+                }
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    public static bool ActualizarFotoPerfil(int idUsuario, string fotoPerfil)
+    {
+        if (idUsuario <= 0 || string.IsNullOrEmpty(fotoPerfil))
+        {
+            return false;
+        }
+
+        AsegurarColumnaFotoPerfil();
+        string sql = "UPDATE Usuarios SET fotoPerfil = @pFoto WHERE IdUsuario = @pId";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            int afectados = connection.Execute(sql, new { pFoto = fotoPerfil, pId = idUsuario });
+            return afectados > 0;
         }
     }
 
@@ -138,8 +182,51 @@ public static class BD
             posiblesValores.Add("hora", tarea.HoraTarea);
             posiblesValores.Add("aclaracion", tarea.Aclaracion);
             posiblesValores.Add("monto", tarea.Monto);
-            posiblesValores.Add("tipoLugar", tarea.TipoLugar);
-            posiblesValores.Add("barrio", tarea.Barrio);
+            bool existeBarrio = false;
+            foreach (string col in columnasTabla)
+            {
+                if (col.ToLower() == "barrio")
+                {
+                    existeBarrio = true;
+                }
+            }
+            if (!existeBarrio)
+            {
+                try
+                {
+                    connection.Execute("ALTER TABLE Tareas ADD barrio VARCHAR(50) NULL");
+                    columnasTabla.Add("barrio");
+                }
+                catch
+                {
+                }
+            }
+            string? tipoColDireccion = connection.QueryFirstOrDefault<string>(
+                "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tareas' AND LOWER(COLUMN_NAME) = 'direccion'");
+            object valorDireccion = tarea.Lugar ?? "";
+            if (!string.IsNullOrEmpty(tipoColDireccion) && (tipoColDireccion.ToLower().Contains("int") || tipoColDireccion.ToLower() == "numeric" || tipoColDireccion.ToLower() == "decimal" || tipoColDireccion.ToLower() == "float"))
+            {
+                int numExtraido = 0;
+                string soloDigitos = "";
+                foreach (char c in (tarea.Lugar ?? ""))
+                {
+                    if (char.IsDigit(c))
+                    {
+                        soloDigitos += c;
+                    }
+                    else if (soloDigitos.Length > 0)
+                    {
+                        break;
+                    }
+                }
+                int.TryParse(soloDigitos, out numExtraido);
+                valorDireccion = numExtraido;
+            }
+            posiblesValores.Add("direccion", valorDireccion);
+            posiblesValores.Add("calle", tarea.Lugar ?? "");
+            posiblesValores.Add("ubicacion", tarea.Lugar ?? "");
+            posiblesValores.Add("tipoLugar", string.IsNullOrEmpty(tarea.TipoLugar) ? "Domicilio" : tarea.TipoLugar);
+            posiblesValores.Add("barrio", tarea.Barrio ?? "");
             posiblesValores.Add("IdUsuarioSolicitante", tarea.IdUsuarioSolicitante);
 
             List<string> columnasInsert = new List<string>();
@@ -195,8 +282,51 @@ public static class BD
             posiblesValores.Add("hora", tarea.HoraTarea);
             posiblesValores.Add("aclaracion", tarea.Aclaracion);
             posiblesValores.Add("monto", tarea.Monto);
-            posiblesValores.Add("tipoLugar", tarea.TipoLugar);
-            posiblesValores.Add("barrio", tarea.Barrio);
+            bool existeBarrio = false;
+            foreach (string col in columnasTabla)
+            {
+                if (col.ToLower() == "barrio")
+                {
+                    existeBarrio = true;
+                }
+            }
+            if (!existeBarrio)
+            {
+                try
+                {
+                    connection.Execute("ALTER TABLE Tareas ADD barrio VARCHAR(50) NULL");
+                    columnasTabla.Add("barrio");
+                }
+                catch
+                {
+                }
+            }
+            string? tipoColDireccion = connection.QueryFirstOrDefault<string>(
+                "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tareas' AND LOWER(COLUMN_NAME) = 'direccion'");
+            object valorDireccion = tarea.Lugar ?? "";
+            if (!string.IsNullOrEmpty(tipoColDireccion) && (tipoColDireccion.ToLower().Contains("int") || tipoColDireccion.ToLower() == "numeric" || tipoColDireccion.ToLower() == "decimal" || tipoColDireccion.ToLower() == "float"))
+            {
+                int numExtraido = 0;
+                string soloDigitos = "";
+                foreach (char c in (tarea.Lugar ?? ""))
+                {
+                    if (char.IsDigit(c))
+                    {
+                        soloDigitos += c;
+                    }
+                    else if (soloDigitos.Length > 0)
+                    {
+                        break;
+                    }
+                }
+                int.TryParse(soloDigitos, out numExtraido);
+                valorDireccion = numExtraido;
+            }
+            posiblesValores.Add("direccion", valorDireccion);
+            posiblesValores.Add("calle", tarea.Lugar ?? "");
+            posiblesValores.Add("ubicacion", tarea.Lugar ?? "");
+            posiblesValores.Add("tipoLugar", string.IsNullOrEmpty(tarea.TipoLugar) ? "Domicilio" : tarea.TipoLugar);
+            posiblesValores.Add("barrio", tarea.Barrio ?? "");
 
             List<string> asignacionesUpdate = new List<string>();
             DynamicParameters parametros = new DynamicParameters();
@@ -227,13 +357,13 @@ public static class BD
 
     public static List<Tareas> ObtenerTareasPorSolicitante(int idUsuarioSolicitante)
     {
-        string sql = "SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @pId ORDER BY IdTarea DESC";
+        string sql = "SELECT * FROM Tareas WHERE IdUsuarioSolicitante = @pId AND ISNULL(tipoLugar, '') <> 'EliminadaAdulto' ORDER BY IdTarea DESC";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             List<Tareas> misTareas = connection.Query<Tareas>(sql, new { pId = idUsuarioSolicitante }).ToList();
             if (misTareas.Count == 0)
             {
-                misTareas = connection.Query<Tareas>("SELECT * FROM Tareas ORDER BY IdTarea DESC").ToList();
+                misTareas = connection.Query<Tareas>("SELECT * FROM Tareas WHERE ISNULL(tipoLugar, '') <> 'EliminadaAdulto' ORDER BY IdTarea DESC").ToList();
             }
             return misTareas;
         }
@@ -254,12 +384,75 @@ public static class BD
         string sql = @"
             SELECT T.* 
             FROM Tareas T
-            WHERE T.estado = 1
-              AND NOT EXISTS (SELECT 1 FROM Postulaciones P WHERE P.IdTarea = T.IdTarea AND P.IdUsuario = @pIdJoven)
+            WHERE (T.estado = 1 AND NOT EXISTS (SELECT 1 FROM Postulaciones P WHERE P.IdTarea = T.IdTarea AND P.IdUsuario = @pIdJoven))
+               OR EXISTS (SELECT 1 FROM Postulaciones P2 WHERE P2.IdTarea = T.IdTarea AND P2.IdUsuario = @pIdJoven AND P2.estado IN ('Aceptada', 'Rechazada'))
             ORDER BY T.IdTarea DESC";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             return connection.Query<Tareas>(sql, new { pIdJoven = idJoven }).ToList();
+        }
+    }
+
+    public static Dictionary<int, string> ObtenerEstadosPostulacionesJoven(int idJoven)
+    {
+        Dictionary<int, string> resultado = new Dictionary<int, string>();
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            List<Postulaciones> lista = connection.Query<Postulaciones>(
+                "SELECT * FROM Postulaciones WHERE IdUsuario = @pIdJoven",
+                new { pIdJoven = idJoven }).ToList();
+            foreach (Postulaciones p in lista)
+            {
+                if (!string.IsNullOrEmpty(p.Estado))
+                {
+                    resultado[p.IdTarea] = p.Estado;
+                }
+            }
+        }
+        return resultado;
+    }
+
+    public static bool FinalizarTareaAceptada(int idTarea, int idJoven)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            int filas = connection.Execute(
+                "UPDATE Postulaciones SET estado = 'Finalizada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdJoven",
+                new { pIdTarea = idTarea, pIdJoven = idJoven });
+            return filas > 0;
+        }
+    }
+
+    public static bool EsTareaFinalizada(int idTarea)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            int cant = connection.ExecuteScalar<int>(
+                "SELECT COUNT(*) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado = 'Finalizada'",
+                new { pIdTarea = idTarea });
+            return cant > 0;
+        }
+    }
+
+    public static bool EliminarTareaFinalizadaAdulto(int idTarea)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            int filas = connection.Execute(
+                "UPDATE Tareas SET tipoLugar = 'EliminadaAdulto' WHERE IdTarea = @pId",
+                new { pId = idTarea });
+            return filas > 0;
+        }
+    }
+
+    public static bool GuardarValoracionJoven(int idTarea, double calificacion, bool puntual)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            int filas = connection.Execute(
+                "UPDATE Postulaciones SET calificacion = @pCal, puntual = @pPuntual WHERE IdTarea = @pIdTarea AND estado IN ('Aceptada', 'Finalizada')",
+                new { pCal = calificacion, pPuntual = puntual, pIdTarea = idTarea });
+            return filas > 0;
         }
     }
 
@@ -390,7 +583,7 @@ public static class BD
                 : @"SELECT TOP 1 U.* 
                     FROM Usuarios U
                     INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
-                    WHERE P.IdTarea = @pIdTarea AND P.estado = 'Aceptada'";
+                    WHERE P.IdTarea = @pIdTarea AND P.estado IN ('Aceptada', 'Finalizada')";
 
             return connection.QueryFirstOrDefault<Usuarios>(sql, new { pIdTarea = idTarea });
         }
@@ -468,7 +661,7 @@ public static class BD
             bool esBit = EsEstadoPostulacionesBit(connection);
             string sql = esBit
                 ? "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1"
-                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada'";
+                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado IN ('Aceptada', 'Finalizada')";
             return connection.ExecuteScalar<int>(sql, new { pIdUsuario = idUsuario });
         }
     }
@@ -480,7 +673,7 @@ public static class BD
             bool esBit = EsEstadoPostulacionesBit(connection);
             string sql = esBit
                 ? "SELECT ISNULL(AVG(CAST(calificacion AS FLOAT)), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1 AND calificacion > 0"
-                : "SELECT ISNULL(AVG(CAST(calificacion AS FLOAT)), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND calificacion > 0";
+                : "SELECT ISNULL(AVG(CAST(calificacion AS FLOAT)), 0) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado IN ('Aceptada', 'Finalizada') AND calificacion > 0";
             return connection.ExecuteScalar<double>(sql, new { pIdUsuario = idUsuario });
         }
     }
@@ -492,7 +685,7 @@ public static class BD
             bool esBit = EsEstadoPostulacionesBit(connection);
             string sql = esBit
                 ? "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 1 AND puntual = 0"
-                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado = 'Aceptada' AND puntual = 0";
+                : "SELECT COUNT(*) FROM Postulaciones WHERE IdUsuario = @pIdUsuario AND estado IN ('Aceptada', 'Finalizada') AND puntual = 0";
             int impuntualidades = connection.ExecuteScalar<int>(sql, new { pIdUsuario = idUsuario });
             return impuntualidades == 0;
         }

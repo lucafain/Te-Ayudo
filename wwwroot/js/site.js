@@ -964,3 +964,23 @@ function deshacerRechazoPostulante() {
         snackbar.style.display = 'none';
     }
 }
+
+function eliminarTareaRechazada(idTarea) {
+    fetch('/Home/EliminarTareaRechazada?idTarea=' + idTarea, {
+        method: 'POST'
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos && datos.ok) {
+                let card = document.getElementById('card-tarea-rechazada-' + idTarea);
+                if (card != null) {
+                    card.style.display = 'none';
+                }
+            }
+        })
+        .catch(function (error) {
+            console.error('Error al eliminar tarea rechazada:', error);
+        });
+}

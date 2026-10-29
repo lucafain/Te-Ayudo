@@ -161,6 +161,12 @@ public static class BD
             return false;
         }
 
+        string direccionAUsar = string.IsNullOrWhiteSpace(tarea.Lugar) ? "" : tarea.Lugar.Trim();
+        if (string.IsNullOrWhiteSpace(direccionAUsar))
+        {
+            direccionAUsar = "Sin dirección especificada";
+        }
+
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             // Leemos las columnas que REALMENTE tiene la tabla Tareas en SQL Server,
@@ -173,7 +179,8 @@ public static class BD
             posiblesValores.Add("descripcion", tarea.Descripcion);
             posiblesValores.Add("estado", tarea.Estado);
             posiblesValores.Add("fechaCreacion", tarea.FechaCreacion);
-            posiblesValores.Add("lugar", tarea.Lugar);
+            posiblesValores.Add("lugar", direccionAUsar);
+            posiblesValores.Add("direccion", direccionAUsar);
             posiblesValores.Add("diaTarea", tarea.DiaTarea);
             posiblesValores.Add("horaTarea", tarea.HoraTarea);
             // Nombres alternativos que puede tener la columna en la BD
@@ -395,63 +402,59 @@ public static class BD
 
     public static Dictionary<int, string> ObtenerEstadosPostulacionesJoven(int idJoven)
     {
-        Dictionary<int, string> resultado = new Dictionary<int, string>();
+        Dictionary<int, string> estados = new Dictionary<int, string>();
+        string sql = @"SELECT IdTarea, estado FROM Postulaciones WHERE IdUsuario = @pIdJoven AND estado IN ('Aceptada', 'Rechazada', 'Finalizada')";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            List<Postulaciones> lista = connection.Query<Postulaciones>(
-                "SELECT * FROM Postulaciones WHERE IdUsuario = @pIdJoven",
-                new { pIdJoven = idJoven }).ToList();
-            foreach (Postulaciones p in lista)
+            var filas = connection.Query(sql, new { pIdJoven = idJoven }).ToList();
+            foreach (var fila in filas)
             {
-                if (!string.IsNullOrEmpty(p.Estado))
-                {
-                    resultado[p.IdTarea] = p.Estado;
-                }
+                int idT = (int)fila.IdTarea;
+                string est = (string)fila.estado;
+                estados[idT] = est;
             }
         }
-        return resultado;
+        return estados;
     }
 
     public static bool FinalizarTareaAceptada(int idTarea, int idJoven)
     {
+        string sql = "UPDATE Postulaciones SET estado = 'Finalizada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdJoven AND estado = 'Aceptada'";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            int filas = connection.Execute(
-                "UPDATE Postulaciones SET estado = 'Finalizada' WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdJoven",
-                new { pIdTarea = idTarea, pIdJoven = idJoven });
+            int filas = connection.Execute(sql, new { pIdTarea = idTarea, pIdJoven = idJoven });
             return filas > 0;
         }
     }
 
     public static bool EsTareaFinalizada(int idTarea)
     {
+        string sql = "SELECT COUNT(1) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado = 'Finalizada'";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            int cant = connection.ExecuteScalar<int>(
-                "SELECT COUNT(*) FROM Postulaciones WHERE IdTarea = @pIdTarea AND estado = 'Finalizada'",
-                new { pIdTarea = idTarea });
+            int cant = connection.ExecuteScalar<int>(sql, new { pIdTarea = idTarea });
             return cant > 0;
         }
     }
 
     public static bool EliminarTareaFinalizadaAdulto(int idTarea)
     {
+        string sqlPost = "DELETE FROM Postulaciones WHERE IdTarea = @pIdTarea";
+        string sqlTarea = "DELETE FROM Tareas WHERE IdTarea = @pIdTarea";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            int filas = connection.Execute(
-                "UPDATE Tareas SET tipoLugar = 'EliminadaAdulto' WHERE IdTarea = @pId",
-                new { pId = idTarea });
+            connection.Execute(sqlPost, new { pIdTarea = idTarea });
+            int filas = connection.Execute(sqlTarea, new { pIdTarea = idTarea });
             return filas > 0;
         }
     }
 
     public static bool GuardarValoracionJoven(int idTarea, double calificacion, bool puntual)
     {
+        string sql = "UPDATE Postulaciones SET calificacion = @pCalificacion, puntual = @pPuntual WHERE IdTarea = @pIdTarea AND estado = 'Finalizada'";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            int filas = connection.Execute(
-                "UPDATE Postulaciones SET calificacion = @pCal, puntual = @pPuntual WHERE IdTarea = @pIdTarea AND estado IN ('Aceptada', 'Finalizada')",
-                new { pCal = calificacion, pPuntual = puntual, pIdTarea = idTarea });
+            int filas = connection.Execute(sql, new { pCalificacion = calificacion, pPuntual = puntual, pIdTarea = idTarea });
             return filas > 0;
         }
     }

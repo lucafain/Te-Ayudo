@@ -194,20 +194,26 @@ public class HomeController : Controller
         ViewBag.UsuarioActual = usuarioActual;
         int idSolicitante = usuarioActual.IdUsuario;
 
-        if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion) || string.IsNullOrEmpty(Lugar) || string.IsNullOrEmpty(DiaHora))
+        // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
+        string tituloLimpio = Titulo?.Trim() ?? "";
+        string descripcionLimpia = Descripcion?.Trim() ?? "";
+        string lugarLimpio = Lugar?.Trim() ?? "";
+        string barrioTexto = (Barrio ?? "").Trim();
+        string barrioLimpio = barrioTexto.Length > 50 ? barrioTexto.Substring(0, 50) : barrioTexto;
+        string tipoLugarTexto = string.IsNullOrWhiteSpace(TipoLugar) ? "Domicilio" : TipoLugar.Trim();
+        string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
+
+        if (string.IsNullOrWhiteSpace(tituloLimpio) || string.IsNullOrWhiteSpace(descripcionLimpia) || string.IsNullOrWhiteSpace(lugarLimpio) || string.IsNullOrWhiteSpace(DiaHora))
         {
             ViewBag.ErrorMessage = "Por favor complete el nombre de la ayuda, la descripción, el lugar y la fecha/hora.";
             return View();
         }
 
-        // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
-        string tituloLimpio = Titulo.Length > 50 ? Titulo.Substring(0, 50) : Titulo;
-        string descripcionLimpia = Descripcion.Length > 500 ? Descripcion.Substring(0, 500) : Descripcion;
-        string lugarLimpio = Lugar.Length > 50 ? Lugar.Substring(0, 50) : Lugar;
-        string barrioTexto = (Barrio ?? "").Trim();
-        string barrioLimpio = barrioTexto.Length > 50 ? barrioTexto.Substring(0, 50) : barrioTexto;
-        string tipoLugarTexto = string.IsNullOrEmpty(TipoLugar) ? "Domicilio" : TipoLugar;
-        string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
+        if (tituloLimpio.Length > 50) tituloLimpio = tituloLimpio.Substring(0, 50);
+        if (descripcionLimpia.Length > 500) descripcionLimpia = descripcionLimpia.Substring(0, 500);
+        if (lugarLimpio.Length > 50) lugarLimpio = lugarLimpio.Substring(0, 50);
+        if (barrioLimpio.Length > 50) barrioLimpio = barrioLimpio.Substring(0, 50);
+        if (tipoLugarLimpio.Length > 50) tipoLugarLimpio = tipoLugarLimpio.Substring(0, 50);
 
         DateTime fechaTarea = DateTime.Now;
         TimeSpan horaTarea = new TimeSpan(10, 0, 0);
@@ -589,91 +595,26 @@ public class HomeController : Controller
 
     private int CalcularDistanciaTareaKm(Usuarios? joven, Tareas t)
     {
-        Dictionary<string, double[]> coordsBarrios = new Dictionary<string, double[]>
-        {
-            { "almagro", new double[] { -34.6090, -58.4210 } },
-            { "yatay", new double[] { -34.6095, -58.4265 } },
-            { "yatai", new double[] { -34.6095, -58.4265 } },
-            { "villa crespo", new double[] { -34.5980, -58.4420 } },
-            { "araoz", new double[] { -34.5940, -58.4280 } },
-            { "caballito", new double[] { -34.6180, -58.4420 } },
-            { "avellaneda", new double[] { -34.6240, -58.4580 } },
-            { "boyaca", new double[] { -34.6230, -58.4620 } },
-            { "flores", new double[] { -34.6280, -58.4630 } },
-            { "floresta", new double[] { -34.6310, -58.4830 } },
-            { "palermo", new double[] { -34.5830, -58.4250 } },
-            { "cordoba", new double[] { -34.5990, -58.3960 } },
-            { "corrientes", new double[] { -34.6040, -58.4110 } },
-            { "balvanera", new double[] { -34.6090, -58.4010 } },
-            { "once", new double[] { -34.6080, -58.4060 } },
-            { "abasto", new double[] { -34.6030, -58.4110 } },
-            { "recoleta", new double[] { -34.5890, -58.3930 } },
-            { "belgrano", new double[] { -34.5620, -58.4560 } },
-            { "nuñez", new double[] { -34.5450, -58.4650 } },
-            { "nunez", new double[] { -34.5450, -58.4650 } },
-            { "colegiales", new double[] { -34.5750, -58.4480 } },
-            { "chacarita", new double[] { -34.5880, -58.4540 } },
-            { "paternal", new double[] { -34.5990, -58.4680 } },
-            { "boedo", new double[] { -34.6260, -58.4170 } },
-            { "san cristobal", new double[] { -34.6230, -58.4020 } },
-            { "san telmo", new double[] { -34.6210, -58.3730 } },
-            { "monserrat", new double[] { -34.6120, -58.3820 } },
-            { "microcentro", new double[] { -34.6037, -58.3816 } },
-            { "villa urquiza", new double[] { -34.5730, -58.4870 } },
-            { "villa devoto", new double[] { -34.6010, -58.5120 } },
-            { "villa del parque", new double[] { -34.6040, -58.4910 } },
-            { "saavedra", new double[] { -34.5540, -58.4880 } },
-            { "coghlan", new double[] { -34.5600, -58.4750 } },
-            { "barracas", new double[] { -34.6420, -58.3780 } },
-            { "la boca", new double[] { -34.6350, -58.3640 } },
-            { "constitucion", new double[] { -34.6280, -58.3840 } },
-            { "retiro", new double[] { -34.5910, -58.3780 } },
-            { "puerto madero", new double[] { -34.6110, -58.3620 } },
-            { "mataderos", new double[] { -34.6580, -58.5010 } },
-            { "liniers", new double[] { -34.6430, -58.5210 } },
-            { "parque patricios", new double[] { -34.6370, -58.4010 } },
-            { "parque chacabuco", new double[] { -34.6350, -58.4380 } }
-        };
+        string barrioJoven = (joven?.Barrio ?? "").Trim().ToLower();
+        string dirJoven = (joven?.Direccion ?? "").Trim().ToLower();
+        string barrioTarea = (t.Barrio ?? "").Trim().ToLower();
+        string dirTarea = (t.Direccion ?? "").Trim().ToLower();
 
-        string textoJoven = ((joven?.Calle ?? "") + " " + (joven?.Provincia ?? "")).ToLower();
-        double latJoven = -34.6095;
-        double lonJoven = -58.4265;
-        foreach (KeyValuePair<string, double[]> par in coordsBarrios)
+        if (!string.IsNullOrEmpty(barrioJoven) && !string.IsNullOrEmpty(barrioTarea) && barrioJoven == barrioTarea)
         {
-            if (textoJoven.Contains(par.Key))
+            if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(dirTarea) && dirJoven == dirTarea)
             {
-                latJoven = par.Value[0];
-                lonJoven = par.Value[1];
-                break;
+                return 1;
             }
+            return 1 + (Math.Abs(t.IdTarea * 3) % 3);
         }
 
-        string textoTarea = ((t.Barrio ?? "") + " " + (t.Lugar ?? "")).ToLower();
-        double latTarea = 0;
-        double lonTarea = 0;
-        foreach (KeyValuePair<string, double[]> par in coordsBarrios)
+        if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(dirTarea) && dirJoven == dirTarea)
         {
-            if (textoTarea.Contains(par.Key))
-            {
-                latTarea = par.Value[0];
-                lonTarea = par.Value[1];
-                break;
-            }
+            return 1;
         }
 
-        if (latTarea != 0)
-        {
-            double dLat = (latTarea - latJoven) * 111.0;
-            double dLon = (lonTarea - lonJoven) * 91.0;
-            double dist = System.Math.Sqrt(dLat * dLat + dLon * dLon) * 1.35;
-            int km = (int)System.Math.Round(dist);
-            if (km < 1) km = 2;
-            if (km > 15) km = 12;
-            return km;
-        }
-
-        int[] distanciasBase = new int[] { 2, 3, 5, 10, 2, 5, 3, 4, 6 };
-        return distanciasBase[System.Math.Abs(t.IdTarea) % distanciasBase.Length];
+        return 4 + (Math.Abs(t.IdTarea * 7 + (barrioTarea.Length * 3)) % 12);
     }
 
     public IActionResult DetalleAyuda(int idTarea)

@@ -139,6 +139,7 @@ public static class BD
             posiblesValores.Add("aclaracion", tarea.Aclaracion);
             posiblesValores.Add("monto", tarea.Monto);
             posiblesValores.Add("tipoLugar", tarea.TipoLugar);
+            posiblesValores.Add("barrio", tarea.Barrio);
             posiblesValores.Add("IdUsuarioSolicitante", tarea.IdUsuarioSolicitante);
 
             List<string> columnasInsert = new List<string>();
@@ -195,6 +196,7 @@ public static class BD
             posiblesValores.Add("aclaracion", tarea.Aclaracion);
             posiblesValores.Add("monto", tarea.Monto);
             posiblesValores.Add("tipoLugar", tarea.TipoLugar);
+            posiblesValores.Add("barrio", tarea.Barrio);
 
             List<string> asignacionesUpdate = new List<string>();
             DynamicParameters parametros = new DynamicParameters();

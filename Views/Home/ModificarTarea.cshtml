@@ -5,6 +5,7 @@
     string tituloActual = tarea?.Titulo ?? "";
     string descripcionActual = tarea?.Descripcion ?? "";
     string lugarActual = tarea?.Lugar ?? "";
+    string barrioActual = tarea?.Barrio ?? "";
     string tipoLugarActual = !string.IsNullOrWhiteSpace(tarea?.TipoLugar) ? tarea.TipoLugar : "Casa";
 
     // Extraer aclaración limpia y fecha/hora guardada
@@ -126,6 +127,11 @@
                             <span class="modificar-divisor-vertical" aria-hidden="true"></span>
                             <input type="text" id="TipoLugar" name="TipoLugar" maxlength="50" value="@tipoLugarActual" class="modificar-input-derecha" />
                         </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="Barrio">Barrio</label>
+                        <input type="text" id="Barrio" name="Barrio" maxlength="50" value="@barrioActual" placeholder="Ej: Caballito, Palermo, Belgrano..." class="input-modificar-borde" />
                     </div>
 
                     <div class="field">

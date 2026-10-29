@@ -16,6 +16,7 @@ public class Tareas
     public double Monto { get; set; }
     public string TipoLugar { get; set; } = "";
     public int IdUsuarioSolicitante { get; set; }
+    public string? Barrio { get; set; } = "";
 
     // Constructor sin parámetros para Dapper
     public Tareas()
@@ -23,7 +24,7 @@ public class Tareas
     }
 
     // Constructor con parámetros principales
-    public Tareas(string titulo, string descripcion, bool estado, string lugar, DateTime diaTarea, TimeSpan horaTarea, string? aclaracion, double monto, string tipoLugar, int idUsuarioSolicitante)
+    public Tareas(string titulo, string descripcion, bool estado, string lugar, DateTime diaTarea, TimeSpan horaTarea, string? aclaracion, double monto, string tipoLugar, int idUsuarioSolicitante, string? barrio = "")
     {
         Titulo = titulo;
         Descripcion = descripcion;
@@ -36,5 +37,6 @@ public class Tareas
         Monto = monto;
         TipoLugar = tipoLugar;
         IdUsuarioSolicitante = idUsuarioSolicitante;
+        Barrio = barrio;
     }
 }

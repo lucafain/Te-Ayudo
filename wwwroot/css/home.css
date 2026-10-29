@@ -132,14 +132,16 @@ nav {
 /* BOTONES DEL UI KIT */
 
 .button,
+.button,
 .nav-button {
+    border: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 
     padding: 14px 21px;
-    border: 0;
+    border-radius: 999px;
 
     background: #72BF3B;
     color: #FFFFFF;
@@ -162,7 +164,9 @@ nav {
 
 /* Botones del header, como en la referencia */
 
+.button,
 .nav-button {
+    border: 0;
     border-radius: 24px;
 }
 
@@ -548,9 +552,10 @@ footer {
 
 .field input,
 .field select {
+    border: 0;
     width: 100%;
     min-height: 44px;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     padding: 10px 18px;
     background: #f0f0f0;
@@ -568,10 +573,11 @@ footer {
 }
 
 .password-toggle-btn {
+    border: 0;
     position: absolute;
     right: 12px;
     background: transparent;
-    border: 0;
+    border-radius: 999px;
     padding: 4px;
     display: inline-flex;
     align-items: center;
@@ -652,6 +658,7 @@ footer {
 }
 
 .upload-button {
+    border: 0;
     display: inline-flex;
     align-items: center;
     justify-content: flex-start;
@@ -659,7 +666,7 @@ footer {
     width: 100%;
     min-height: 40px;
     padding: 10px 16px;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     background: #fff;
     color: #111;
@@ -696,12 +703,13 @@ footer {
 }
 
 .auth-button {
+    border: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 150px;
     padding: 12px 26px;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     background: #0d6e2b;
     color: #fff;
@@ -932,7 +940,9 @@ footer {
     }
 
     .button,
-    .nav-button {
+    .button,
+.nav-button {
+    border: 0;
         transition: none;
     }
 }
@@ -961,9 +971,13 @@ footer {
 }
 
 .mapa-ubicacion-iframe {
+    border: 0;
     width: 100%;
     height: 100%;
-    border: 0;
+
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
 }
 
 .tarjeta-resumen-usuario {
@@ -1602,13 +1616,16 @@ footer {
 }
 
 .ayuda-card-top {
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
     background: #6cc037;
     height: 34px;
     width: 100%;
 }
 
 .ayuda-card-body {
-    padding: 26px 18px 22px;
+    padding: 22px 18px 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1618,9 +1635,48 @@ footer {
 }
 
 .ayuda-card-body h3 {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-weight: 400;
     font-size: 20px;
     color: #000000;
     text-align: center;
+}
+
+.ayuda-card-monto {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    color: #0d6e2b;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.ayuda-card-ubicacion {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 6px;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+}
+
+.ayuda-card-direccion {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000000;
+    text-align: left;
+}
+
+.ayuda-card-distancia {
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000000;
+    white-space: nowrap;
 }
 
 .ayuda-card-info {
@@ -1646,9 +1702,11 @@ footer {
 }
 
 .btn-ayuda-verde {
+    border: 0;
+    padding: 8px 16px;
     background: #0d6e2b;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     padding: 8px 16px;
     font-size: 12.5px;
@@ -1661,9 +1719,11 @@ footer {
 }
 
 .btn-ayuda-rojo {
+    border: 0;
+    padding: 8px 16px;
     background: #a80000;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     padding: 8px 16px;
     font-size: 12.5px;
@@ -1882,9 +1942,10 @@ footer {
 }
 
 .snackbar-btn-deshacer {
+    border: 0;
     background: #ba0000;
     color: #000000;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     padding: 6px 16px;
     font-family: 'Fredoka', Arial, Helvetica, sans-serif;
@@ -1925,9 +1986,10 @@ footer {
 
 .dt-header-selects select,
 .dt-time-row select {
+    border: 0;
     background: #17212b;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     font-family: 'Fredoka', Arial, Helvetica, sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -1956,11 +2018,12 @@ footer {
 }
 
 .dt-day {
+    border: 0;
     width: 34px;
     height: 34px;
     margin: 0 auto;
     border-radius: 50%;
-    border: 0;
+    border-radius: 999px;
     background: transparent;
     color: #ffffff;
     font-size: 13px;
@@ -1998,9 +2061,10 @@ footer {
 }
 
 .dt-ampm-btn {
+    border: 0;
     background: #137a32;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 13px;
@@ -2014,9 +2078,10 @@ footer {
 }
 
 .dt-btn-cancel {
+    border: 0;
     background: #ffffff;
     color: #55b832;
-    border: 0;
+    border-radius: 999px;
     border-radius: 10px;
     padding: 10px;
     font-size: 14px;
@@ -2024,9 +2089,10 @@ footer {
 }
 
 .dt-btn-set {
+    border: 0;
     background: #6cc037;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     border-radius: 10px;
     padding: 10px;
     font-size: 14px;
@@ -2037,9 +2103,10 @@ footer {
 /* DESCRIPCION MAS GRANDE (SOLICITAR TAREA) */
 
 .textarea-descripcion {
+    border: 0;
     width: 100%;
     min-height: 120px;
-    border: 0;
+    border-radius: 999px;
     border-radius: 20px;
     padding: 14px 18px;
     background: #ffffff;
@@ -2058,9 +2125,10 @@ footer {
 }
 
 .btn-ayuda-deshabilitado {
+    border: 0;
     background: #c9c9c9;
     color: #ffffff;
-    border: 0;
+    border-radius: 999px;
     border-radius: 999px;
     padding: 8px 16px;
     font-size: 12.5px;
@@ -2137,8 +2205,9 @@ footer {
 }
 
 .modal-postulante-cerrar {
-    background: transparent;
     border: 0;
+    background: transparent;
+    border-radius: 999px;
     font-size: 22px;
     line-height: 1;
     color: #000000;
@@ -2235,8 +2304,9 @@ footer {
 }
 
 .textarea-descripcion {
-    width: 100%;
     border: 0;
+    width: 100%;
+    border-radius: 999px;
     border-radius: 22px;
     padding: 12px 18px;
     background: #ffffff;
@@ -2279,4 +2349,8 @@ footer {
     width: 1.5px;
     height: 36px;
     background: #555555;
+}
+
+.nav-button{
+    background: #095721 !important;
 }

@@ -164,34 +164,35 @@ public class HomeController : Controller
 
     public IActionResult SolicitarTarea()
     {
-        string? email = HttpContext.Session.GetString("EmailLogueado");
-        if (!string.IsNullOrEmpty(email))
+        Usuarios? usuario = ObtenerUsuarioSesion();
+        if (usuario == null)
         {
-            ViewBag.UsuarioActual = BD.ObtenerUsuarioPorEmail(email);
+            return RedirectToAction("Login", "Home");
         }
+        if (usuario.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        ViewBag.UsuarioActual = usuario;
         return View();
     }
 
     [HttpPost]
-    public IActionResult SolicitarTarea(string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? DiaHora = "", string? Aclaracion = "", string? TipoLugar = "Domicilio", double Monto = 0)
+    public IActionResult SolicitarTarea(string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? Barrio = "", string? DiaHora = "", string? Aclaracion = "", string? TipoLugar = "Domicilio", double Monto = 0)
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? usuarioActual = null;
-        if (!string.IsNullOrEmpty(emailSesion))
+        Usuarios? usuarioActual = ObtenerUsuarioSesion();
+        if (usuarioActual == null)
         {
-            usuarioActual = BD.ObtenerUsuarioPorEmail(emailSesion);
-            ViewBag.UsuarioActual = usuarioActual;
+            return RedirectToAction("Login", "Home");
+        }
+        if (usuarioActual.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
         }
 
-        int idSolicitante = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (usuarioActual != null ? usuarioActual.IdUsuario : 1);
-        if (BD.ObtenerUsuarioPorId(idSolicitante) == null)
-        {
-            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
-            if (primerUsuario != null)
-            {
-                idSolicitante = primerUsuario.IdUsuario;
-            }
-        }
+        ViewBag.UsuarioActual = usuarioActual;
+        int idSolicitante = usuarioActual.IdUsuario;
 
         if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion) || string.IsNullOrEmpty(Lugar) || string.IsNullOrEmpty(DiaHora))
         {
@@ -203,6 +204,8 @@ public class HomeController : Controller
         string tituloLimpio = Titulo.Length > 50 ? Titulo.Substring(0, 50) : Titulo;
         string descripcionLimpia = Descripcion.Length > 500 ? Descripcion.Substring(0, 500) : Descripcion;
         string lugarLimpio = Lugar.Length > 50 ? Lugar.Substring(0, 50) : Lugar;
+        string barrioTexto = (Barrio ?? "").Trim();
+        string barrioLimpio = barrioTexto.Length > 50 ? barrioTexto.Substring(0, 50) : barrioTexto;
         string tipoLugarTexto = string.IsNullOrEmpty(TipoLugar) ? "Domicilio" : TipoLugar;
         string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
 
@@ -228,6 +231,7 @@ public class HomeController : Controller
         nuevaTarea.Estado = true; // true (1) = Tarea activa
         nuevaTarea.FechaCreacion = DateTime.Now;
         nuevaTarea.Lugar = lugarLimpio;
+        nuevaTarea.Barrio = barrioLimpio;
         nuevaTarea.DiaTarea = fechaTarea;
         nuevaTarea.HoraTarea = horaTarea;
         nuevaTarea.Aclaracion = aclaracionFinal;
@@ -423,13 +427,7 @@ public class HomeController : Controller
 
     public IActionResult Perfil()
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        if (string.IsNullOrEmpty(emailSesion))
-        {
-            return RedirectToAction("Login", "Home");
-        }
-
-        Usuarios? usuario = BD.ObtenerUsuarioPorEmail(emailSesion);
+        Usuarios? usuario = ObtenerUsuarioSesion();
         if (usuario == null)
         {
             HttpContext.Session.Clear();
@@ -452,18 +450,17 @@ public class HomeController : Controller
 
     public IActionResult PrincipalJoven()
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? joven = null;
-        if (!string.IsNullOrEmpty(emailSesion))
-        {
-            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
-        }
-
-        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
+        Usuarios? joven = ObtenerUsuarioSesion();
         if (joven == null)
         {
-            joven = BD.ObtenerHistorialJoven(idJovenLogueado);
+            return RedirectToAction("Login", "Home");
         }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
+        }
+
+        int idJovenLogueado = joven.IdUsuario;
 
         List<Tareas> tareasDisponibles = BD.ObtenerTareasDisponibles();
         Dictionary<int, Usuarios> solicitantes = new Dictionary<int, Usuarios>();
@@ -489,18 +486,17 @@ public class HomeController : Controller
 
     public IActionResult PrincipalAdulto()
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? adulto = null;
-        if (!string.IsNullOrEmpty(emailSesion))
-        {
-            adulto = BD.ObtenerUsuarioPorEmail(emailSesion);
-        }
-
-        int idAdultoLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (adulto != null ? adulto.IdUsuario : 1);
+        Usuarios? adulto = ObtenerUsuarioSesion();
         if (adulto == null)
         {
-            adulto = BD.ObtenerUsuarioPorId(idAdultoLogueado);
+            return RedirectToAction("Login", "Home");
         }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        int idAdultoLogueado = adulto.IdUsuario;
 
         ViewBag.Adulto = adulto;
         ViewBag.Jovenes = BD.ObtenerJovenesDisponibles();
@@ -511,21 +507,16 @@ public class HomeController : Controller
 
     public IActionResult Explorar()
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? joven = null;
-        if (!string.IsNullOrEmpty(emailSesion))
+        Usuarios? usuario = ObtenerUsuarioSesion();
+        if (usuario == null)
         {
-            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+            return RedirectToAction("Login", "Home");
         }
 
-        int idJovenLogueado = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
-        if (joven == null)
-        {
-            joven = BD.ObtenerHistorialJoven(idJovenLogueado);
-        }
+        int idLogueado = usuario.IdUsuario;
 
-        ViewBag.Joven = joven;
-        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idJovenLogueado);
+        ViewBag.Joven = usuario;
+        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(idLogueado);
         ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
 
         return View("Explorar");
@@ -533,13 +524,34 @@ public class HomeController : Controller
 
     public IActionResult AyudasParaRealizar(string? mensaje = null)
     {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
+        }
+
+        ViewBag.Joven = joven;
         ViewBag.SuccessMessage = mensaje;
-        ViewBag.TareasPendientes = BD.ObtenerTareasPendientes(ObtenerIdUsuarioLogueado());
+        ViewBag.TareasPendientes = BD.ObtenerTareasPendientes(joven.IdUsuario);
         return View("AyudasParaRealizar");
     }
 
     public IActionResult DetalleAyuda(int idTarea)
     {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         if (tarea == null)
         {
@@ -555,6 +567,11 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult ObtenerDetalleTareaJson(int idTarea)
     {
+        if (ObtenerUsuarioSesion() == null)
+        {
+            return Json(null);
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         if (tarea == null)
         {
@@ -577,8 +594,9 @@ public class HomeController : Controller
             titulo = tarea.Titulo,
             descripcion = tarea.Descripcion,
             lugar = tarea.Lugar,
+            barrio = tarea.Barrio ?? "",
             fecha = fechaMostrar.ToString("dd/MM/yyyy"),
-            hora = fechaMostrar.ToString("HH:mm"),
+            hora = tarea.HoraTarea.TotalMinutes > 0 ? tarea.HoraTarea.ToString(@"hh\:mm") : fechaMostrar.ToString("HH:mm"),
             aclaracion = tarea.Aclaracion ?? "",
             nombreSolicitante = nombreSolicitante,
             fotoSolicitante = solicitante?.FotoPerfil ?? "/img/user.svg"
@@ -588,22 +606,17 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult Postularse(int idTarea)
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? joven = null;
-        if (!string.IsNullOrEmpty(emailSesion))
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null)
         {
-            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+            return RedirectToAction("Login", "Home");
+        }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
         }
 
-        int idJoven = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
-        if (BD.ObtenerUsuarioPorId(idJoven) == null)
-        {
-            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
-            if (primerUsuario != null)
-            {
-                idJoven = primerUsuario.IdUsuario;
-            }
-        }
+        int idJoven = joven.IdUsuario;
 
         // estado "Pendiente": la postulación espera a que el adulto la acepte o rechace
         Postulaciones nuevaPostulacion = new Postulaciones(idJoven, idTarea, "Pendiente", 0, true);
@@ -615,22 +628,13 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult PostularseJson(int idTarea)
     {
-        string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
-        Usuarios? joven = null;
-        if (!string.IsNullOrEmpty(emailSesion))
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null || !joven.TipoUsuario)
         {
-            joven = BD.ObtenerUsuarioPorEmail(emailSesion);
+            return Json(null);
         }
 
-        int idJoven = HttpContext.Session.GetInt32("IdUsuarioLogueado") ?? (joven != null ? joven.IdUsuario : 1);
-        if (BD.ObtenerUsuarioPorId(idJoven) == null)
-        {
-            Usuarios? primerUsuario = BD.ObtenerPrimerUsuario();
-            if (primerUsuario != null)
-            {
-                idJoven = primerUsuario.IdUsuario;
-            }
-        }
+        int idJoven = joven.IdUsuario;
 
         // estado "Pendiente": la postulación espera a que el adulto la acepte o rechace
         Postulaciones nuevaPostulacion = new Postulaciones(idJoven, idTarea, "Pendiente", 0, true);
@@ -648,6 +652,16 @@ public class HomeController : Controller
 
     public IActionResult Postulados(int idTarea)
     {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         ViewBag.Tarea = tarea;
         ViewBag.Postulados = BD.ObtenerPostuladosPorTarea(idTarea);
@@ -657,6 +671,16 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult AceptarTarea(int idTarea)
     {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (!joven.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalAdulto", "Home");
+        }
+
         BD.AceptarTarea(idTarea);
         return RedirectToAction("AyudasParaRealizar", "Home", new { mensaje = "¡Aceptaste la ayuda correctamente!" });
     }
@@ -664,8 +688,14 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult RechazarTarea(int idTarea)
     {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null || !joven.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
         // Se guarda en Postulaciones como "Descartada" (la tarea sigue existiendo para los demás jóvenes)
-        bool ok = BD.RechazarTarea(idTarea, ObtenerIdUsuarioLogueado());
+        bool ok = BD.RechazarTarea(idTarea, joven.IdUsuario);
         return Json(new { ok = ok });
     }
 
@@ -673,7 +703,17 @@ public class HomeController : Controller
 
     public IActionResult MisAyudas(string? mensaje = null)
     {
-        int idAdulto = ObtenerIdUsuarioLogueado();
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        int idAdulto = adulto.IdUsuario;
         List<Tareas> misTareas = BD.ObtenerTareasPorSolicitante(idAdulto);
 
         // Slide 15: Dictionary para saber cuántos postulantes tiene cada tarea y si ya tiene joven asignado
@@ -701,6 +741,16 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult CancelarTarea(int idTarea)
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
 
         if (tarea == null)
@@ -718,6 +768,16 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult ModificarTarea(int idTarea)
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         if (tarea == null)
         {
@@ -734,8 +794,18 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult ModificarTarea(int IdTarea, string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? TipoLugar = "Casa", string? DiaHora = "", string? Aclaracion = "", string? ConfirmacionModificar = "")
+    public IActionResult ModificarTarea(int IdTarea, string? Titulo = "", string? Descripcion = "", string? Lugar = "", string? Barrio = "", string? TipoLugar = "Casa", string? DiaHora = "", string? Aclaracion = "", string? ConfirmacionModificar = "")
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
         Tareas? actual = BD.ObtenerTareaPorId(IdTarea);
         if (actual == null)
         {
@@ -750,6 +820,7 @@ public class HomeController : Controller
         string tituloLimpio = (Titulo ?? "").Trim();
         string descripcionLimpia = (Descripcion ?? "").Trim();
         string lugarLimpio = (Lugar ?? "").Trim();
+        string barrioLimpio = (Barrio ?? "").Trim();
         string tipoLugarLimpio = string.IsNullOrWhiteSpace(TipoLugar) ? "Casa" : TipoLugar.Trim();
         string diaHoraLimpio = (DiaHora ?? "").Trim();
         string aclaracionLimpia = (Aclaracion ?? "").Trim();
@@ -759,6 +830,7 @@ public class HomeController : Controller
         actual.Titulo = tituloLimpio;
         actual.Descripcion = descripcionLimpia;
         actual.Lugar = lugarLimpio;
+        actual.Barrio = barrioLimpio;
         actual.TipoLugar = tipoLugarLimpio;
         actual.Aclaracion = aclaracionLimpia;
         ViewBag.DiaHoraTexto = diaHoraLimpio;
@@ -779,6 +851,7 @@ public class HomeController : Controller
         if (tituloLimpio.Length > 50) tituloLimpio = tituloLimpio.Substring(0, 50);
         if (descripcionLimpia.Length > 500) descripcionLimpia = descripcionLimpia.Substring(0, 500);
         if (lugarLimpio.Length > 50) lugarLimpio = lugarLimpio.Substring(0, 50);
+        if (barrioLimpio.Length > 50) barrioLimpio = barrioLimpio.Substring(0, 50);
         if (tipoLugarLimpio.Length > 50) tipoLugarLimpio = tipoLugarLimpio.Substring(0, 50);
 
         DateTime fechaTarea = actual.DiaFecha.Year > 1 ? actual.DiaFecha.Date : (actual.DiaTarea.Year > 1 ? actual.DiaTarea.Date : DateTime.Now.Date);
@@ -808,6 +881,7 @@ public class HomeController : Controller
         actual.Titulo = tituloLimpio;
         actual.Descripcion = descripcionLimpia;
         actual.Lugar = lugarLimpio;
+        actual.Barrio = barrioLimpio;
         actual.TipoLugar = tipoLugarLimpio;
         actual.DiaTarea = fechaTarea;
         actual.HoraTarea = horaTarea;
@@ -825,6 +899,16 @@ public class HomeController : Controller
 
     public IActionResult PostulantesTarea(int idTarea)
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null)
+        {
+            return RedirectToAction("Login", "Home");
+        }
+        if (adulto.TipoUsuario)
+        {
+            return RedirectToAction("PrincipalJoven", "Home");
+        }
+
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         if (tarea == null)
         {
@@ -839,6 +923,11 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult ObtenerDetallePostulanteJson(int idUsuario)
     {
+        if (ObtenerUsuarioSesion() == null)
+        {
+            return Json(null);
+        }
+
         Usuarios? joven = BD.ObtenerUsuarioPorId(idUsuario);
         if (joven == null)
         {
@@ -865,6 +954,12 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult AceptarPostulante(int idTarea, int idUsuario)
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null || adulto.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
         bool ok = BD.AceptarPostulante(idTarea, idUsuario);
         return Json(new { ok = ok });
     }
@@ -872,29 +967,47 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult RechazarPostulante(int idTarea, int idUsuario)
     {
+        Usuarios? adulto = ObtenerUsuarioSesion();
+        if (adulto == null || adulto.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
         bool ok = BD.RechazarPostulante(idTarea, idUsuario);
         return Json(new { ok = ok });
     }
 
-    private int ObtenerIdUsuarioLogueado()
+    private Usuarios? ObtenerUsuarioSesion()
     {
+        Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        Response.Headers["Pragma"] = "no-cache";
+        Response.Headers["Expires"] = "0";
+
         int? idSesion = HttpContext.Session.GetInt32("IdUsuarioLogueado");
         if (idSesion != null)
         {
-            return idSesion.Value;
+            Usuarios? u = BD.ObtenerUsuarioPorId(idSesion.Value);
+            if (u != null)
+            {
+                ViewBag.UsuarioSesion = u;
+                ViewBag.FotoPerfilSesion = string.IsNullOrWhiteSpace(u.FotoPerfil) ? "/img/user.svg" : u.FotoPerfil;
+                return u;
+            }
         }
 
         string? emailSesion = HttpContext.Session.GetString("EmailLogueado");
         if (!string.IsNullOrEmpty(emailSesion))
         {
-            Usuarios? usuario = BD.ObtenerUsuarioPorEmail(emailSesion);
-            if (usuario != null)
+            Usuarios? u = BD.ObtenerUsuarioPorEmail(emailSesion);
+            if (u != null)
             {
-                return usuario.IdUsuario;
+                ViewBag.UsuarioSesion = u;
+                ViewBag.FotoPerfilSesion = string.IsNullOrWhiteSpace(u.FotoPerfil) ? "/img/user.svg" : u.FotoPerfil;
+                return u;
             }
         }
 
-        return 1;
+        return null;
     }
 
     public IActionResult CerrarSesion()
@@ -909,6 +1022,11 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult VerDetalleAyudado(int idUsuario)
     {
+        if (ObtenerUsuarioSesion() == null)
+        {
+            return Json(null);
+        }
+
         Usuarios? usuario = BD.ObtenerUsuarioPorId(idUsuario);
         return Json(usuario);
     }

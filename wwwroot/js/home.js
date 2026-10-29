@@ -225,6 +225,8 @@ if (formSolicitar != null) {
         let titulo = document.getElementById('Titulo').value.trim();
         let descripcion = document.getElementById('Descripcion').value.trim();
         let lugar = document.getElementById('Lugar').value.trim();
+        let elemBarrio = document.getElementById('Barrio');
+        let barrio = elemBarrio ? elemBarrio.value.trim() : '';
         let diaHora = document.getElementById('DiaHora').value.trim();
 
         if (titulo === '') {
@@ -263,6 +265,12 @@ if (formSolicitar != null) {
             return;
         }
 
+        if (barrio.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El barrio no puede superar los 50 caracteres.');
+            return;
+        }
+
         if (diaHora === '') {
             evento.preventDefault();
             mostrarErrorFormulario('Por favor seleccioná el día y la hora en el calendario.');
@@ -297,12 +305,20 @@ if (formModificarTarea != null) {
         let titulo = document.getElementById('Titulo').value.trim();
         let descripcion = document.getElementById('Descripcion').value.trim();
         let lugar = document.getElementById('Lugar').value.trim();
+        let elemBarrio = document.getElementById('Barrio');
+        let barrio = elemBarrio ? elemBarrio.value.trim() : '';
         let diaHora = document.getElementById('DiaHora').value.trim();
         let confirmacion = document.getElementById('ConfirmacionModificar').value.trim().toLowerCase();
 
         if (titulo === '' || descripcion === '' || lugar === '' || diaHora === '') {
             evento.preventDefault();
             mostrarErrorFormulario('Por favor completá el título, la descripción, el lugar y el día/hora.');
+            return;
+        }
+
+        if (barrio.length > 50) {
+            evento.preventDefault();
+            mostrarErrorFormulario('El barrio no puede superar los 50 caracteres.');
             return;
         }
 
@@ -474,7 +490,11 @@ function abrirDetalleTareaFetch(idTarea) {
             if (datos != null) {
                 document.getElementById('detalleTareaSolicitante').textContent = datos.nombreSolicitante || 'Adulto mayor';
                 document.getElementById('detalleTareaTitulo').textContent = datos.titulo || '';
-                document.getElementById('detalleTareaLugar').textContent = datos.lugar || '';
+                let lugarTexto = datos.lugar || '';
+                if (datos.barrio && datos.barrio !== '') {
+                    lugarTexto = lugarTexto !== '' ? (lugarTexto + ' (' + datos.barrio + ')') : datos.barrio;
+                }
+                document.getElementById('detalleTareaLugar').textContent = lugarTexto;
                 document.getElementById('detalleTareaFechaHora').textContent = (datos.fecha || '') + ' ' + (datos.hora || '') + ' hs';
 
                 let desc = datos.descripcion || '';
@@ -565,7 +585,20 @@ function abrirSelectorFechaHora() {
         if (selectMes != null && popup.getAttribute('data-init') !== 'true') {
             selectMes.value = String(ahora.getMonth());
             if (selectAnio != null) {
-                selectAnio.value = String(ahora.getFullYear());
+                let anioActual = String(ahora.getFullYear());
+                let existeAnio = false;
+                for (let i = 0; i < selectAnio.options.length; i++) {
+                    if (selectAnio.options[i].value === anioActual) {
+                        existeAnio = true;
+                    }
+                }
+                if (!existeAnio) {
+                    let opt = document.createElement('option');
+                    opt.value = anioActual;
+                    opt.textContent = anioActual;
+                    selectAnio.appendChild(opt);
+                }
+                selectAnio.value = anioActual;
             }
             dtDiaSeleccionado = ahora.getDate();
             popup.setAttribute('data-init', 'true');

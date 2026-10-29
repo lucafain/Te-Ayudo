@@ -41,6 +41,13 @@
         <section class="joven-seccion">
             <h1 class="ayudas-titulo-principal">Ayudas pedidas</h1>
 
+            <div style="margin-top: 36px; margin-bottom: 36px;">
+                <a class="btn-nueva-ayuda" href='@Url.Action("SolicitarTarea", "Home")'>
+                    Pedí una nueva Ayuda
+                </a>
+            </div>
+
+
             @if (ViewBag.SuccessMessage != null)
             {
                 <div class="auth-alert" style="max-width: 520px; margin: 0 auto 24px; background: #ffffff; color: #0d6e2b;">
@@ -129,11 +136,7 @@
                 </div>
             }
 
-            <div style="margin-top: 36px;">
-                <a class="btn-nueva-ayuda" href='@Url.Action("SolicitarTarea", "Home")'>
-                    Pedí una nueva Ayuda
-                </a>
-            </div>
+            
         </section>
     </main>
 

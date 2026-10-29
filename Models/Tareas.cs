@@ -9,6 +9,7 @@ public class Tareas
     public bool Estado { get; set; }
     public DateTime FechaCreacion { get; set; }
     public string Lugar { get; set; } = "";
+    public string Direccion {get; set;}
     public DateTime DiaTarea { get; set; }
     public DateTime DiaFecha { get; set; }
     public TimeSpan HoraTarea { get; set; }

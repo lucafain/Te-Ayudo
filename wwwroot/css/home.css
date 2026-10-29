@@ -1,4 +1,3 @@
-
 /* COLORES */
 
 :root {
@@ -2353,4 +2352,47 @@ footer {
 
 .nav-button{
     background: #095721 !important;
+}
+
+.ayudas-subtitulo-gris {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    font-size: 2.2rem;
+    color: #0f172a;
+    margin: 0 0 18px;
+    text-align: center;
+}
+
+.ayuda-card--rechazada {
+    background: #d9d9d9;
+    box-shadow: none;
+    border: 1px solid #c8c8c8;
+}
+
+.ayuda-card-top--rechazada {
+    background: #b7b7b7;
+}
+
+.ayuda-card-body--rechazada {
+    background: #ececec;
+}
+
+.ayuda-card-texto-gris {
+    margin: 0;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 1.05rem;
+    color: #3a3a3a;
+    text-align: center;
+    font-weight: 600;
+}
+
+.btn-ayuda-gris {
+    border: 0;
+    padding: 8px 16px;
+    background: #a7a7a7;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: not-allowed;
+    opacity: 0.9;
 }

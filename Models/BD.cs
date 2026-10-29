@@ -117,6 +117,12 @@ public static class BD
             return false;
         }
 
+        string direccionAUsar = string.IsNullOrWhiteSpace(tarea.Lugar) ? "" : tarea.Lugar.Trim();
+        if (string.IsNullOrWhiteSpace(direccionAUsar))
+        {
+            direccionAUsar = "Sin dirección especificada";
+        }
+
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             // Leemos las columnas que REALMENTE tiene la tabla Tareas en SQL Server,
@@ -129,7 +135,8 @@ public static class BD
             posiblesValores.Add("descripcion", tarea.Descripcion);
             posiblesValores.Add("estado", tarea.Estado);
             posiblesValores.Add("fechaCreacion", tarea.FechaCreacion);
-            posiblesValores.Add("lugar", tarea.Lugar);
+            posiblesValores.Add("lugar", direccionAUsar);
+            posiblesValores.Add("direccion", direccionAUsar);
             posiblesValores.Add("diaTarea", tarea.DiaTarea);
             posiblesValores.Add("horaTarea", tarea.HoraTarea);
             // Nombres alternativos que puede tener la columna en la BD
@@ -260,6 +267,43 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             return connection.Query<Tareas>(sql, new { pIdJoven = idJoven }).ToList();
+        }
+    }
+
+    public static List<Tareas> ObtenerTareasRechazadas(int idJoven)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? @"SELECT T.*
+                    FROM Tareas T
+                    INNER JOIN Postulaciones P ON T.IdTarea = P.IdTarea
+                    WHERE T.estado = 1
+                      AND P.IdUsuario = @pIdJoven
+                      AND P.estado = 0"
+                : @"SELECT T.*
+                    FROM Tareas T
+                    INNER JOIN Postulaciones P ON T.IdTarea = P.IdTarea
+                    WHERE T.estado = 1
+                      AND P.IdUsuario = @pIdJoven
+                      AND P.estado IN ('Descartada', 'Rechazada')";
+
+            return connection.Query<Tareas>(sql, new { pIdJoven = idJoven }).ToList();
+        }
+    }
+
+    public static bool EliminarPostulacionRechazada(int idTarea, int idJoven)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            bool esBit = EsEstadoPostulacionesBit(connection);
+            string sql = esBit
+                ? "DELETE FROM Postulaciones WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdJoven AND estado = 0"
+                : "DELETE FROM Postulaciones WHERE IdTarea = @pIdTarea AND IdUsuario = @pIdJoven AND estado IN ('Descartada', 'Rechazada')";
+
+            int filas = connection.Execute(sql, new { pIdTarea = idTarea, pIdJoven = idJoven });
+            return filas > 0;
         }
     }
 

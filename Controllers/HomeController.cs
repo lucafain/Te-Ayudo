@@ -194,20 +194,26 @@ public class HomeController : Controller
         ViewBag.UsuarioActual = usuarioActual;
         int idSolicitante = usuarioActual.IdUsuario;
 
-        if (string.IsNullOrEmpty(Titulo) || string.IsNullOrEmpty(Descripcion) || string.IsNullOrEmpty(Lugar) || string.IsNullOrEmpty(DiaHora))
+        // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
+        string tituloLimpio = Titulo?.Trim() ?? "";
+        string descripcionLimpia = Descripcion?.Trim() ?? "";
+        string lugarLimpio = Lugar?.Trim() ?? "";
+        string barrioTexto = (Barrio ?? "").Trim();
+        string barrioLimpio = barrioTexto.Length > 50 ? barrioTexto.Substring(0, 50) : barrioTexto;
+        string tipoLugarTexto = string.IsNullOrWhiteSpace(TipoLugar) ? "Domicilio" : TipoLugar.Trim();
+        string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
+
+        if (string.IsNullOrWhiteSpace(tituloLimpio) || string.IsNullOrWhiteSpace(descripcionLimpia) || string.IsNullOrWhiteSpace(lugarLimpio) || string.IsNullOrWhiteSpace(DiaHora))
         {
             ViewBag.ErrorMessage = "Por favor complete el nombre de la ayuda, la descripción, el lugar y la fecha/hora.";
             return View();
         }
 
-        // Slide 12: Métodos de string (.Length, .Substring) para respetar varchar(50) de la BD
-        string tituloLimpio = Titulo.Length > 50 ? Titulo.Substring(0, 50) : Titulo;
-        string descripcionLimpia = Descripcion.Length > 500 ? Descripcion.Substring(0, 500) : Descripcion;
-        string lugarLimpio = Lugar.Length > 50 ? Lugar.Substring(0, 50) : Lugar;
-        string barrioTexto = (Barrio ?? "").Trim();
-        string barrioLimpio = barrioTexto.Length > 50 ? barrioTexto.Substring(0, 50) : barrioTexto;
-        string tipoLugarTexto = string.IsNullOrEmpty(TipoLugar) ? "Domicilio" : TipoLugar;
-        string tipoLugarLimpio = tipoLugarTexto.Length > 50 ? tipoLugarTexto.Substring(0, 50) : tipoLugarTexto;
+        if (tituloLimpio.Length > 50) tituloLimpio = tituloLimpio.Substring(0, 50);
+        if (descripcionLimpia.Length > 500) descripcionLimpia = descripcionLimpia.Substring(0, 500);
+        if (lugarLimpio.Length > 50) lugarLimpio = lugarLimpio.Substring(0, 50);
+        if (barrioLimpio.Length > 50) barrioLimpio = barrioLimpio.Substring(0, 50);
+        if (tipoLugarLimpio.Length > 50) tipoLugarLimpio = tipoLugarLimpio.Substring(0, 50);
 
         DateTime fechaTarea = DateTime.Now;
         TimeSpan horaTarea = new TimeSpan(10, 0, 0);
@@ -537,7 +543,21 @@ public class HomeController : Controller
         ViewBag.Joven = joven;
         ViewBag.SuccessMessage = mensaje;
         ViewBag.TareasPendientes = BD.ObtenerTareasPendientes(joven.IdUsuario);
+        ViewBag.TareasRechazadas = BD.ObtenerTareasRechazadas(joven.IdUsuario);
         return View("AyudasParaRealizar");
+    }
+
+    [HttpPost]
+    public IActionResult EliminarTareaRechazada(int idTarea)
+    {
+        Usuarios? joven = ObtenerUsuarioSesion();
+        if (joven == null || !joven.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
+        bool ok = BD.EliminarPostulacionRechazada(idTarea, joven.IdUsuario);
+        return Json(new { ok = ok });
     }
 
     public IActionResult DetalleAyuda(int idTarea)

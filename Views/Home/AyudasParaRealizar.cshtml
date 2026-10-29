@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Ayudas para realizar";
     List<Tareas>? tareasPendientes = ViewBag.TareasPendientes as List<Tareas>;
+    List<Tareas>? tareasRechazadas = ViewBag.TareasRechazadas as List<Tareas>;
     Usuarios? jovenActual = ViewBag.Joven as Usuarios;
 
     // Coordenadas aproximadas (lat, lon) de barrios de CABA para estimar los km de distancia
@@ -111,8 +112,8 @@
                 Explorá
             </a>
 
-            <a class="nav-button nav-button--joven" href='@Url.Action("Index", "Home")#preguntas'>
-                Preguntas frecuentes
+           <a class="nav-button nav-help" href='@Url.Action("AyudasParaRealizar", "Home")' id="ExplorarAyuda">
+            Realiza ayudas
             </a>
             
             <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
@@ -182,6 +183,49 @@
                 <div class="joven-actividades-caja" style="max-width: 560px; margin: 0 auto;">
                     <div class="joven-actividad-fila" style="justify-content: center;">
                         <p>No hay ayudas pendientes para realizar en este momento.</p>
+                    </div>
+                </div>
+            }
+
+            @if (tareasRechazadas != null && tareasRechazadas.Count > 0)
+            {
+                <div class="ayudas-gris-seccion" style="margin-top: 40px;">
+                    <h2 class="ayudas-subtitulo-gris">No te seleccionaron</h2>
+                    <div class="ayudas-grid ayudas-grid--gris">
+                        @foreach (Tareas tarea in tareasRechazadas)
+                        {
+                            string montoMostrar = tarea.Monto > 0 ? tarea.Monto.ToString("0") : "5000";
+                            string direccionMostrar = !string.IsNullOrWhiteSpace(tarea.Lugar)
+                                ? tarea.Lugar
+                                : (!string.IsNullOrWhiteSpace(tarea.Barrio) ? tarea.Barrio : "CABA");
+
+                            <article class="ayuda-card ayuda-card--rechazada" id="card-tarea-rechazada-@tarea.IdTarea">
+                                <div class="ayuda-card-top ayuda-card-top--rechazada">
+                                    <span class="ayuda-card-monto">$@montoMostrar</span>
+                                </div>
+
+                                <div class="ayuda-card-body ayuda-card-body--rechazada">
+                                    <h3>@tarea.Titulo</h3>
+                                    <p class="ayuda-card-texto-gris">No fuiste seleccionado para la tarea</p>
+
+                                    <div class="ayuda-card-botones">
+                                        <button type="button" class="btn-ayuda-gris" disabled>Eliminado</button>
+                                        <button type="button" class="btn-ayuda-rojo" onclick="eliminarTareaRechazada(@tarea.IdTarea)">Eliminar</button>
+                                    </div>
+
+                                    <div class="ayuda-card-ubicacion">
+                                        <span class="ayuda-card-direccion">@direccionMostrar</span>
+                                        <span class="ayuda-card-distancia">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            A 5km de ti
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        }
                     </div>
                 </div>
             }

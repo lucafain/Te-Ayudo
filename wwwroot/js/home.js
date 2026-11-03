@@ -573,7 +573,7 @@ function abrirDetalleTareaAceptadaFetch(idTarea) {
         });
 }
 
-function eliminarTareaRechazadaFetch(idTarea) {
+function eliminarTareaRechazada(idTarea) {
     let card = document.getElementById('card-tarea-' + idTarea);
     if (card != null) {
         card.style.display = 'none';
@@ -581,6 +581,41 @@ function eliminarTareaRechazadaFetch(idTarea) {
     fetch('/Home/EliminarTareaRechazada?idTarea=' + idTarea, { method: 'POST' })
         .catch(function (error) {
             console.error('Error al eliminar tarea rechazada:', error);
+        });
+}
+
+function verInfoAyudado(idUsuario) {
+    fetch('/Home/VerDetalleAyudado?idUsuario=' + idUsuario)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                let contenedor = document.getElementById('contenedorDetalleFetch');
+                let nombre = datos.nombre || datos.Nombre || '';
+                let apellido = datos.apellido || datos.Apellido || '';
+                let email = datos.email || datos.Email || 'No especificado';
+                let provincia = datos.provincia || datos.Provincia || '';
+                let calle = datos.calle || datos.Calle || '';
+                let direccion = datos.direccion || datos.Direccion || '';
+                let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
+                let tipoTexto = tipoBool ? 'Joven' : 'Adulto mayor';
+
+                let nombreCompleto = (nombre + ' ' + apellido).trim();
+                if (nombreCompleto === '') {
+                    nombreCompleto = email;
+                }
+
+                document.getElementById('detalleNombre').textContent = 'Información de ' + nombreCompleto;
+                document.getElementById('detalleEmail').textContent = 'Email: ' + email;
+                document.getElementById('detalleTelefono').textContent = 'Ubicación: ' + calle + ' ' + direccion + ' (' + provincia + ')';
+                document.getElementById('detalleTipo').textContent = 'Tipo de usuario: ' + tipoTexto;
+
+                contenedor.style.display = 'block';
+            }
+        })
+        .catch(function (error) {
+            console.error('Error en fetch:', error);
         });
 }
 

@@ -5,217 +5,565 @@
     Dictionary<int, int>? distanciasTareas = ViewBag.DistanciasTareas as Dictionary<int, int>;
     Dictionary<int, string>? estadosPostulacion = ViewBag.EstadosPostulacion as Dictionary<int, string>;
     string nombreJoven = joven != null ? $"{joven.Nombre} {joven.Apellido}" : "Joven Voluntario";
-    string srcFotoNav = (joven != null && !string.IsNullOrEmpty(joven.FotoPerfil))
-        ? (joven.FotoPerfil.StartsWith("/") ? joven.FotoPerfil : "/img/" + joven.FotoPerfil)
-        : "/img/Logo.png";
+    bool tieneFoto = joven != null && !string.IsNullOrEmpty(joven.FotoPerfil);
+    string srcFotoNav = tieneFoto
+        ? (joven!.FotoPerfil.StartsWith("/") ? joven.FotoPerfil : "/img/" + joven.FotoPerfil)
+        : "";
 }
 
-<!-- Navbar Principal Joven -->
-<header id="header-bar">
-    <div id="branding">
-        <a href='@Url.Action("PrincipalJoven", "Home")'>
+<div class="ar-page">
+
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="ar-header">
+        <a class="ar-brand" href='@Url.Action("PrincipalJoven", "Home")' title="Te Ayudo">
             <img src="~/img/Logo.png" alt="Logo Te Ayudo" />
         </a>
-        <div>
-            <h1>Te Ayudo</h1>
-        </div>
-    </div>
 
-    <nav id="navigation">
-        <a href='@Url.Action("PrincipalJoven", "Home")' class="nav-button">Explorá</a>
-        <a href='@Url.Action("Conversaciones", "Home")' class="nav-button">Conversaciones</a>
-        <a href='@Url.Action("AyudasParaRealizar", "Home")' class="nav-button nav-button-highlight">Realizá Ayudas</a>
-        <button type="button" class="nav-bell-btn" title="Notificaciones">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-        </button>
-        <a href='@Url.Action("Perfil", "Home")' class="nav-perfil-avatar" title="Mi Perfil">
-            <img src="@srcFotoNav" alt="Foto de @nombreJoven" />
-        </a>
-    </nav>
-</header>
+        <nav class="ar-nav" aria-label="Navegación principal">
+            <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Explorá</a>
+            <a href='@Url.Action("Conversaciones", "Home")' class="ar-nav-btn">Conversaciones</a>
+            <a href='@Url.Action("AyudasParaRealizar", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
+            <button type="button" class="ar-bell" title="Notificaciones" aria-label="Notificaciones">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </button>
+            <a href='@Url.Action("Perfil", "Home")' class="ar-avatar" title="Mi Perfil">
+                @if (tieneFoto)
+                {
+                    <img src="@srcFotoNav" alt="Foto de @nombreJoven" />
+                }
+                else
+                {
+                    <svg viewBox="0 0 52 52" aria-label="Mi perfil">
+                        <circle cx="26" cy="19" r="9" fill="none" stroke="#fff" stroke-width="3" />
+                        <path d="M7 52c0-12 8-19 19-19s19 7 19 19" fill="none" stroke="#fff" stroke-width="3" />
+                    </svg>
+                }
+            </a>
+        </nav>
+    </header>
 
-<section class="ayudas-container">
-    <!-- ==================== VISTA 1: LISTADO DE TAREAS ==================== -->
-    <div id="vistaListaAyudas">
-        <div class="ayudas-header">
-            <h2>Ayudas disponibles para vos</h2>
-            <p>Postulate a las tareas solicitadas por los adultos mayores o gestioná tus postulaciones.</p>
-        </div>
+    <main class="ar-main">
 
-        @if (ViewBag.SuccessMessage != null)
-        {
-            <div class="alert-success-box" id="bannerMensajeExito">
-                <p>@ViewBag.SuccessMessage</p>
-            </div>
-        }
+        <!-- ==================== VISTA 1: LISTADO ==================== -->
+        <div id="vistaListaAyudas" class="ar-vista">
+            <h1 class="ar-title">Ayudas para realizar</h1>
 
-        <div id="contenedorTarjetasAyudas">
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="ar-alert" id="bannerMensajeExito" role="status">@ViewBag.SuccessMessage</div>
+            }
+
             @if (tareasPendientes == null || tareasPendientes.Count == 0)
             {
-                <div class="empty-tasks-box">
+                <div class="ar-empty">
                     <p>Por el momento no hay tareas pendientes disponibles.</p>
-                    <a href='@Url.Action("PrincipalJoven", "Home")' class="btn-volver-panel">Volver al Inicio</a>
+                    <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Volver al inicio</a>
                 </div>
             }
             else
             {
-                <div class="tasks-grid" id="gridTareasDisponibles">
+                <div class="ar-grid" id="gridTareasDisponibles">
                     @foreach (Tareas t in tareasPendientes)
                     {
-                        int kmDistancia = (distanciasTareas != null && distanciasTareas.ContainsKey(t.IdTarea))
+                        int km = (distanciasTareas != null && distanciasTareas.ContainsKey(t.IdTarea))
                             ? distanciasTareas[t.IdTarea]
                             : 2;
-                        string estadoPost = (estadosPostulacion != null && estadosPostulacion.ContainsKey(t.IdTarea))
+                        string estado = (estadosPostulacion != null && estadosPostulacion.ContainsKey(t.IdTarea))
                             ? estadosPostulacion[t.IdTarea]
                             : "";
-                        string textoUbicacion = !string.IsNullOrWhiteSpace(t.Lugar)
+                        string lugar = !string.IsNullOrWhiteSpace(t.Lugar)
                             ? t.Lugar
                             : (!string.IsNullOrWhiteSpace(t.Barrio) ? t.Barrio : "Ubicación cercana");
+                        string claseEstado = estado == "Aceptada" ? "is-aceptada"
+                            : estado == "Rechazada" ? "is-rechazada"
+                            : estado == "Finalizada" ? "is-finalizada"
+                            : "";
 
-                        if (estadoPost == "Aceptada")
-                        {
-                            <div class="task-card-joven task-card-aceptada" id="card-tarea-@t.IdTarea">
-                                <div class="task-card-joven-top task-card-top-aceptada">
-                                    <span class="task-card-joven-price task-price-white">$@t.Monto</span>
-                                    <span class="task-card-status-dot"></span>
-                                </div>
-                                <div class="task-card-joven-body">
-                                    <h3 class="task-card-joven-title">@t.Titulo</h3>
-                                    <p class="task-card-status-subtitle">La tarea fue Aceptada</p>
-                                    <div class="task-card-joven-actions">
-                                        <button type="button" class="btn-joven-ver-mas btn-aceptada-ver-mas" onclick="verDetalleTareaAceptada(@t.IdTarea)">Ver más</button>
-                                    </div>
-                                    <div class="task-card-joven-footer">
-                                        <span class="task-card-joven-pin" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" width="22" height="22" fill="#e52521">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="task-card-joven-distance">@textoUbicacion (A @(kmDistancia)km de ti)</span>
-                                    </div>
-                                </div>
+                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea"
+                                 data-id="@t.IdTarea" data-monto="@t.Monto" data-titulo="@t.Titulo" data-lugar="@lugar">
+
+                            <div class="ar-card-top">
+                                @if (estado != "Finalizada")
+                                {
+                                    <span class="ar-price">$@t.Monto</span>
+                                }
+                                @if (estado == "Aceptada")
+                                {
+                                    <span class="ar-dot" aria-hidden="true"></span>
+                                }
                             </div>
-                        }
-                        else if (estadoPost == "Rechazada")
-                        {
-                            <div class="task-card-joven task-card-rechazada" id="card-tarea-@t.IdTarea">
-                                <div class="task-card-joven-top task-card-top-rechazada">
-                                    <span class="task-card-joven-price task-price-white">$@t.Monto</span>
+
+                            <div class="ar-card-body">
+                                <div>
+                                    <h2 class="ar-card-title">@t.Titulo</h2>
+                                    @if (estado == "Aceptada")
+                                    {
+                                        <p class="ar-card-sub">La tarea fue Aceptada</p>
+                                    }
+                                    else if (estado == "Rechazada")
+                                    {
+                                        <p class="ar-card-sub">No fuiste seleccionado para la tarea</p>
+                                    }
+                                    else if (estado == "Finalizada")
+                                    {
+                                        <p class="ar-card-sub">Tarea finalizada</p>
+                                    }
                                 </div>
-                                <div class="task-card-joven-body">
-                                    <h3 class="task-card-joven-title">@t.Titulo</h3>
-                                    <p class="task-card-status-subtitle">No fuiste seleccionado para la tarea</p>
-                                    <div class="task-card-joven-actions">
-                                        <button type="button" class="btn-joven-eliminar-rechazada" onclick="eliminarTareaRechazadaFetch(@t.IdTarea)">Eliminar</button>
-                                    </div>
-                                    <div class="task-card-joven-footer">
-                                        <span class="task-card-joven-pin" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" width="22" height="22" fill="#e52521">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
+
+                                <div class="ar-actions">
+                                    @if (estado == "Aceptada")
+                                    {
+                                        <button type="button" class="ar-btn ar-btn-ver" data-accion="ver-aceptada">Ver más</button>
+                                    }
+                                    else if (estado == "Rechazada")
+                                    {
+                                        <button type="button" class="ar-btn" data-accion="eliminar">Eliminar</button>
+                                    }
+                                    else if (estado == "Finalizada")
+                                    {
+                                        <button type="button" class="ar-btn ar-btn-gris" data-accion="ver-finalizada">Ver detalle</button>
+                                        <button type="button" class="ar-btn ar-btn-gris" data-accion="eliminar">Eliminar</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="ar-btn ar-btn-ver" data-accion="ver">Ver más</button>
+                                        <button type="button" class="ar-btn ar-btn-rechazar" data-accion="rechazar">Rechazar</button>
+                                    }
+                                </div>
+
+                                @if (estado != "Finalizada")
+                                {
+                                    <div class="ar-card-foot">
+                                        <span class="ar-foot-lugar">@lugar</span>
+                                        <span class="ar-foot-dist">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"></path>
+                                                <circle cx="12" cy="9" r="2.5"></circle>
                                             </svg>
+                                            A @(km)km de ti
                                         </span>
-                                        <span class="task-card-joven-distance">@textoUbicacion (A @(kmDistancia)km de ti)</span>
                                     </div>
-                                </div>
+                                }
                             </div>
-                        }
-                        else
-                        {
-                            <div class="task-card-joven" id="card-tarea-@t.IdTarea">
-                                <div class="task-card-joven-top">
-                                    <span class="task-card-joven-price">$@t.Monto</span>
-                                </div>
-                                <div class="task-card-joven-body">
-                                    <h3 class="task-card-joven-title">@t.Titulo</h3>
-                                    <div class="task-card-joven-actions">
-                                        <button type="button" class="btn-joven-ver-mas" onclick="verDetalleTareaFetch(@t.IdTarea)">Ver más</button>
-                                        <button type="button" class="btn-joven-rechazar" onclick="rechazarTareaFetch(@t.IdTarea)">Rechazar</button>
-                                    </div>
-                                    <div class="task-card-joven-footer">
-                                        <span class="task-card-joven-pin" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" width="22" height="22" fill="#e52521">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="task-card-joven-distance">@textoUbicacion (A @(kmDistancia)km de ti)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                        </article>
                     }
                 </div>
             }
         </div>
-    </div>
 
-    <!-- ==================== VISTA 2: DETALLE DE LA TAREA (SIN RECARGAR) ==================== -->
-    <div id="vistaDetalleAyuda" class="detalle-tarea-wrapper" style="display: none;">
-        <div class="detalle-card-wireframe">
-            <div class="detalle-top-row">
-                <a href="javascript:void(0)" onclick="volverAListaAyudas()" class="detalle-back-arrow" title="Volver al listado">&#8592;</a>
-                <h2 class="detalle-main-title" id="detTitulo">Detalle de Tarea</h2>
-            </div>
+        <!-- ==================== VISTA 2: DETALLE (tarea disponible) ==================== -->
+        <div id="vistaDetalleAyuda" class="ar-vista" hidden>
+            <div class="ar-detalle-card">
+                <button type="button" class="ar-back" data-accion="volver-lista" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
+                <h2 class="ar-detalle-title" id="detTitulo">Detalle de tarea</h2>
 
-            <div class="detalle-info-list">
-                <p><strong>Descripción:</strong> <span id="detDescripcion"></span></p>
-                <p><strong>Presupuesto:</strong> $<span id="detMonto"></span></p>
-                <p><strong>Duración máxima:</strong> <span id="detDuracion"></span></p>
-                <p><strong>Tiempo disponible:</strong> <span id="detHorario"></span></p>
-                <p><strong>Adulto mayor solicitante:</strong> <span id="detSolicitante"></span></p>
-                <p><strong>Domicilio:</strong> <span id="detDomicilio"></span></p>
-                <p><strong>Acompañamiento:</strong> <span id="detAcompaniamiento"></span></p>
-            </div>
+                <div class="ar-detalle-list">
+                    <p><strong>Descripción:</strong> <span id="detDescripcion"></span></p>
+                    <p><strong>Presupuesto:</strong> $<span id="detMonto"></span></p>
+                    <p><strong>Duración máxima:</strong> <span id="detDuracion"></span></p>
+                    <p><strong>Tiempo disponible:</strong> <span id="detHorario"></span></p>
+                    <p><strong>Adulto mayor solicitante:</strong> <span id="detSolicitante"></span></p>
+                    <p><strong>Domicilio:</strong> <span id="detDomicilio"></span></p>
+                    <p><strong>Acompañamiento:</strong> <span id="detAcompaniamiento"></span></p>
+                </div>
 
-            <!-- Acciones de la vista de detalle -->
-            <div class="detalle-bottom-actions">
-                <button type="button" id="btnPostularseFetch" class="btn-detalle-aceptar" onclick="postularseTareaFetch()">Aceptar</button>
-                <button type="button" id="btnRechazarDetalleFetch" class="btn-detalle-rechazar" onclick="rechazarDesdeDetalleFetch()">Rechazar</button>
-                <button type="button" id="btnVerPostuladosFetch" class="btn-detalle-postulados" onclick="verPostuladosTareaFetch()">Ver postulados</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== VISTA 2B: DETALLE DE TAREA ACEPTADA (WIREFRAME EXACTO) ==================== -->
-    <div id="vistaDetalleAceptada" class="detalle-aceptada-wrapper" style="display: none;">
-        <div class="detalle-aceptada-card">
-            <a href="javascript:void(0)" onclick="volverAListaAyudas()" class="detalle-aceptada-back" title="Volver">&#8592;</a>
-            <h2 class="detalle-aceptada-title" id="detAceptadaTitulo">Detalle de Tarea</h2>
-
-            <div class="detalle-aceptada-info">
-                <p><strong>Descripción:</strong> <span id="detAceptadaDescripcion"></span></p>
-                <p><strong>Tiempo disponible:</strong> <span id="detAceptadaHorario"></span></p>
-                <p><strong>Duración máxima:</strong> <span id="detAceptadaDuracion"></span></p>
-                <p><strong>Presupuesto:</strong> $<span id="detAceptadaMonto"></span></p>
-                <p><strong>Solicitante:</strong> <span id="detAceptadaSolicitante"></span></p>
-                <p><strong>Domicilio:</strong> <span id="detAceptadaDomicilio"></span></p>
-            </div>
-
-            <div class="detalle-aceptada-actions">
-                <button type="button" class="btn-finalizar-tarea-aceptada" onclick="finalizarTareaAceptadaFetch()">Finalizar Tarea</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== VISTA 3: POSTULADOS DE LA TAREA (SOLO LECTURA) ==================== -->
-    <div id="vistaPostuladosAyuda" class="postulados-wrapper" style="display: none;">
-        <div class="postulados-header-bar">
-            <a href="javascript:void(0)" onclick="volverADetalleDesdePostulados()" class="detalle-back-arrow" title="Volver al detalle">&#8592;</a>
-            <div class="postulados-title-pill">
-                <h2>Postulados: <span id="postuladosNombreTarea"></span></h2>
+                <div class="ar-detalle-actions">
+                    <button type="button" id="btnPostularse" class="ar-btn ar-btn-ver" data-accion="postularse">Aceptar</button>
+                    <button type="button" id="btnRechazarDetalle" class="ar-btn ar-btn-rechazar" data-accion="rechazar-detalle">Rechazar</button>
+                    <button type="button" id="btnVerPostulados" class="ar-btn ar-btn-ver" data-accion="ver-postulados" hidden>Ver postulados</button>
+                </div>
             </div>
         </div>
 
-        <div id="listaPostuladosContainer" class="postulados-cards-container">
-            <!-- Se llena dinámicamente con fetch -->
-        </div>
-    </div>
-</section>
+        <!-- ==================== VISTA 2B: DETALLE (tarea aceptada / finalizada) ==================== -->
+        <div id="vistaDetalleAceptada" class="ar-vista" hidden>
+            <div class="ar-detalle-card">
+                <button type="button" class="ar-back" data-accion="volver-lista" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
+                <h2 class="ar-detalle-title" id="detAceptadaTitulo">Detalle de tarea</h2>
 
-<!-- Snackbar inferior al rechazar tarea -->
-<div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;">
-    <span>Se rechazó la ayuda de manera exitosa.</span>
-    <button type="button" class="snackbar-close-btn" onclick="cerrarSnackbarRechazo()">&#10005;</button>
+                <div class="ar-detalle-list">
+                    <p><strong>Descripción:</strong> <span id="detAceptadaDescripcion"></span></p>
+                    <p><strong>Tiempo disponible:</strong> <span id="detAceptadaHorario"></span></p>
+                    <p><strong>Duración máxima:</strong> <span id="detAceptadaDuracion"></span></p>
+                    <p><strong>Presupuesto:</strong> $<span id="detAceptadaMonto"></span></p>
+                    <p><strong>Solicitante:</strong> <span id="detAceptadaSolicitante"></span></p>
+                    <p><strong>Domicilio:</strong> <span id="detAceptadaDomicilio"></span></p>
+                </div>
+
+                <div class="ar-detalle-actions">
+                    <button type="button" id="btnFinalizarTarea" class="ar-btn ar-btn-ver" data-accion="finalizar">Finalizar tarea</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 3: POSTULADOS (solo lectura) ==================== -->
+        <div id="vistaPostuladosAyuda" class="ar-vista" hidden>
+            <div class="ar-detalle-card" style="max-width: 900px;">
+                <button type="button" class="ar-back" data-accion="volver-detalle" title="Volver al detalle" aria-label="Volver al detalle">&#8592;</button>
+                <h2 class="ar-detalle-title">Postulados: <span id="postuladosNombreTarea"></span></h2>
+                <div id="listaPostuladosContainer" class="ar-post-list"></div>
+            </div>
+        </div>
+    </main>
 </div>
+
+<!-- Modal con la info de un postulado -->
+<div id="modalPostulado" class="ar-modal" hidden>
+    <div class="ar-modal-box" role="dialog" aria-modal="true" aria-labelledby="modalPostuladoNombre">
+        <h3 id="modalPostuladoNombre"></h3>
+        <p id="modalPostuladoEmail"></p>
+        <p id="modalPostuladoUbicacion"></p>
+        <p id="modalPostuladoTipo"></p>
+        <button type="button" class="ar-btn ar-btn-ver" data-accion="cerrar-modal">Cerrar</button>
+    </div>
+</div>
+
+<!-- Snackbar al rechazar -->
+<div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;" role="status">
+    <span>Se rechazó la ayuda de manera exitosa.</span>
+    <button type="button" class="snackbar-btn-deshacer" id="btnDeshacerRechazo">Deshacer</button>
+</div>
+
+<script>
+    (function () {
+        'use strict';
+
+        var URLS = {
+            detalle: '@Url.Action("ObtenerDetalleTareaJson", "Home")',
+            rechazar: '@Url.Action("RechazarTarea", "Home")',
+            eliminar: '@Url.Action("EliminarTareaRechazada", "Home")',
+            finalizar: '@Url.Action("FinalizarTareaAceptada", "Home")',
+            postular: '@Url.Action("PostularseJson", "Home")',
+            infoPostulado: '@Url.Action("VerDetalleAyudado", "Home")',
+            lista: '@Url.Action("AyudasParaRealizar", "Home")'
+        };
+
+        var VISTAS = ['vistaListaAyudas', 'vistaDetalleAyuda', 'vistaDetalleAceptada', 'vistaPostuladosAyuda'];
+        var DESHACER_MS = 3000;
+
+        var idActual = 0;
+        var postuladosCache = {};      // idTarea -> { titulo, lista }
+        var timerRechazo = null;
+        var idPendienteRechazo = null;
+
+        function $(id) { return document.getElementById(id); }
+
+        function mostrarVista(id) {
+            for (var i = 0; i < VISTAS.length; i++) {
+                $(VISTAS[i]).hidden = (VISTAS[i] !== id);
+            }
+            window.scrollTo({ top: 0 });
+        }
+
+        function setTexto(id, valor, porDefecto) {
+            var el = $(id);
+            if (el) {
+                el.textContent = (valor !== undefined && valor !== null && valor !== '') ? valor : (porDefecto || '-');
+            }
+        }
+
+        function pedirJson(url, opciones) {
+            return fetch(url, opciones).then(function (r) {
+                if (!r.ok) { throw new Error('HTTP ' + r.status); }
+                return r.json();
+            });
+        }
+
+        function pedir(url, opciones) {
+            return fetch(url, opciones).then(function (r) {
+                if (!r.ok) { throw new Error('HTTP ' + r.status); }
+                return r;
+            });
+        }
+
+        function tarjeta(id) { return $('card-tarea-' + id); }
+
+        // ------------------------------------------------------------
+        // Detalle
+        // ------------------------------------------------------------
+        function armarDescripcion(d) {
+            var desc = d.descripcion || '';
+            if (d.aclaracion) { desc = desc ? (desc + ' · ' + d.aclaracion) : d.aclaracion; }
+            return desc;
+        }
+
+        function armarDomicilio(d, card) {
+            var txt = d.lugar || (card ? card.dataset.lugar : '') || '';
+            if (d.barrio) { txt = txt ? (txt + ' (' + d.barrio + ')') : d.barrio; }
+            return txt;
+        }
+
+        function armarHorario(d) {
+            var f = d.fechaDia || d.fecha || '';
+            var h = d.hora ? (d.hora + ' hs') : '';
+            return (f + ' ' + h).trim();
+        }
+
+        function armarAcompaniamiento(d) {
+            var v = d.acompaniamiento;
+            if (v === undefined || v === null) { v = d.acompanamiento; }
+            if (v === true) { return 'Sí'; }
+            if (v === false) { return 'No'; }
+            return v || 'No especificado';
+        }
+
+        function abrirDetalle(id) {
+            idActual = id;
+            var card = tarjeta(id);
+            pedirJson(URLS.detalle + '?idTarea=' + encodeURIComponent(id)).then(function (d) {
+                setTexto('detTitulo', d.titulo || (card && card.dataset.titulo), 'Detalle de tarea');
+                setTexto('detDescripcion', armarDescripcion(d));
+                setTexto('detMonto', d.monto || (card && card.dataset.monto));
+                setTexto('detDuracion', d.duracion || d.duracionMaxima);
+                setTexto('detHorario', armarHorario(d));
+                setTexto('detSolicitante', d.nombreSolicitante, 'Adulto mayor');
+                setTexto('detDomicilio', armarDomicilio(d, card));
+                setTexto('detAcompaniamiento', armarAcompaniamiento(d));
+
+                $('btnPostularse').disabled = false;
+                $('btnVerPostulados').hidden = !postuladosCache[id];
+                mostrarVista('vistaDetalleAyuda');
+            }).catch(function (e) {
+                console.error('Error al abrir el detalle:', e);
+                alert('No pudimos cargar el detalle de la ayuda. Probá de nuevo.');
+            });
+        }
+
+        function abrirDetalleAceptada(id, finalizada) {
+            idActual = id;
+            var card = tarjeta(id);
+            pedirJson(URLS.detalle + '?idTarea=' + encodeURIComponent(id)).then(function (d) {
+                setTexto('detAceptadaTitulo', d.titulo || (card && card.dataset.titulo), 'Detalle de tarea');
+                setTexto('detAceptadaDescripcion', armarDescripcion(d));
+                setTexto('detAceptadaHorario', armarHorario(d));
+                setTexto('detAceptadaDuracion', d.duracion || d.duracionMaxima);
+                setTexto('detAceptadaMonto', d.monto || (card && card.dataset.monto));
+                setTexto('detAceptadaSolicitante', d.nombreSolicitante, 'Adulto mayor');
+                setTexto('detAceptadaDomicilio', armarDomicilio(d, card));
+
+                var btn = $('btnFinalizarTarea');
+                btn.hidden = !!finalizada;
+                btn.disabled = false;
+                mostrarVista('vistaDetalleAceptada');
+            }).catch(function (e) {
+                console.error('Error al abrir el detalle:', e);
+                alert('No pudimos cargar el detalle de la ayuda. Probá de nuevo.');
+            });
+        }
+
+        // ------------------------------------------------------------
+        // Postularse / postulados
+        // ------------------------------------------------------------
+        function postularse() {
+            if (idActual <= 0) { return; }
+            var btn = $('btnPostularse');
+            btn.disabled = true;
+            var id = idActual;
+
+            pedirJson(URLS.postular + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).then(function (d) {
+                postuladosCache[id] = {
+                    titulo: d.tituloTarea || (tarjeta(id) ? tarjeta(id).dataset.titulo : ''),
+                    lista: d.postulados || []
+                };
+                $('btnVerPostulados').hidden = false;
+                renderPostulados(id);
+            }).catch(function (e) {
+                console.error('Error al postularse:', e);
+                btn.disabled = false;
+                alert('No pudimos registrar tu postulación. Probá de nuevo.');
+            });
+        }
+
+        function renderPostulados(id) {
+            var info = postuladosCache[id];
+            if (!info) { return; }
+
+            setTexto('postuladosNombreTarea', info.titulo);
+            var cont = $('listaPostuladosContainer');
+            cont.textContent = '';
+
+            if (!info.lista.length) {
+                var vacio = document.createElement('p');
+                vacio.className = 'ar-post-empty';
+                vacio.textContent = 'Todavía no hay postulados para esta ayuda.';
+                cont.appendChild(vacio);
+            }
+
+            info.lista.forEach(function (u) {
+                var idU = u.idUsuario || u.IdUsuario;
+                var nombre = ((u.nombre || u.Nombre || '') + ' ' + (u.apellido || u.Apellido || '')).trim();
+                if (!nombre) { nombre = u.email || u.Email || 'Joven voluntario'; }
+                var foto = u.fotoPerfil || u.FotoPerfil || '/img/user.svg';
+
+                var art = document.createElement('article');
+                art.className = 'ar-post-card';
+
+                var img = document.createElement('img');
+                img.src = foto;
+                img.alt = nombre;
+                art.appendChild(img);
+
+                var box = document.createElement('div');
+                var h3 = document.createElement('h3');
+                h3.textContent = nombre;
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'ar-btn ar-btn-ver';
+                b.textContent = 'Ver más';
+                b.addEventListener('click', function () { verInfoPostulado(idU); });
+                box.appendChild(h3);
+                box.appendChild(b);
+                art.appendChild(box);
+
+                cont.appendChild(art);
+            });
+
+            mostrarVista('vistaPostuladosAyuda');
+        }
+
+        function verInfoPostulado(idUsuario) {
+            pedirJson(URLS.infoPostulado + '?idUsuario=' + encodeURIComponent(idUsuario)).then(function (d) {
+                var nombre = ((d.nombre || d.Nombre || '') + ' ' + (d.apellido || d.Apellido || '')).trim();
+                var email = d.email || d.Email || 'No especificado';
+                var provincia = d.provincia || d.Provincia || '';
+                var calle = d.calle || d.Calle || '';
+                var dir = d.direccion || d.Direccion || '';
+                var tipo = d.tipoUsuario !== undefined ? d.tipoUsuario : d.TipoUsuario;
+
+                setTexto('modalPostuladoNombre', nombre || email);
+                setTexto('modalPostuladoEmail', 'Email: ' + email);
+                setTexto('modalPostuladoUbicacion', 'Ubicación: ' + (calle + ' ' + dir).trim() + (provincia ? ' (' + provincia + ')' : ''));
+                setTexto('modalPostuladoTipo', 'Tipo de usuario: ' + (tipo ? 'Joven' : 'Adulto mayor'));
+                $('modalPostulado').hidden = false;
+            }).catch(function (e) {
+                console.error('Error al cargar el postulado:', e);
+                alert('No pudimos cargar la información de esta persona.');
+            });
+        }
+
+        // ------------------------------------------------------------
+        // Rechazar con "Deshacer" (3 segundos)
+        // ------------------------------------------------------------
+        function confirmarRechazo(id) {
+            pedir(URLS.rechazar + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).catch(function (e) {
+                console.error('Error al rechazar la tarea:', e);
+                var c = tarjeta(id);
+                if (c) { c.style.display = ''; }
+                alert('No pudimos rechazar la ayuda. Probá de nuevo.');
+            });
+        }
+
+        function rechazarConDeshacer(id) {
+            // Si había otro rechazo pendiente, se confirma ya mismo.
+            if (timerRechazo !== null && idPendienteRechazo !== null) {
+                clearTimeout(timerRechazo);
+                confirmarRechazo(idPendienteRechazo);
+            }
+
+            idPendienteRechazo = id;
+            var card = tarjeta(id);
+            if (card) { card.style.display = 'none'; }
+
+            var snack = $('snackbarRechazo');
+            snack.style.display = 'flex';
+
+            timerRechazo = setTimeout(function () {
+                snack.style.display = 'none';
+                if (idPendienteRechazo !== null) {
+                    confirmarRechazo(idPendienteRechazo);
+                    idPendienteRechazo = null;
+                }
+                timerRechazo = null;
+            }, DESHACER_MS);
+        }
+
+        function deshacerRechazo() {
+            if (timerRechazo !== null) {
+                clearTimeout(timerRechazo);
+                timerRechazo = null;
+            }
+            if (idPendienteRechazo !== null) {
+                var card = tarjeta(idPendienteRechazo);
+                if (card) { card.style.display = ''; }
+                idPendienteRechazo = null;
+            }
+            $('snackbarRechazo').style.display = 'none';
+        }
+
+        // ------------------------------------------------------------
+        // Eliminar / finalizar
+        // ------------------------------------------------------------
+        function eliminarTarjeta(id) {
+            pedir(URLS.eliminar + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).then(function () {
+                var card = tarjeta(id);
+                if (card) { card.remove(); }
+            }).catch(function (e) {
+                console.error('Error al eliminar la tarea:', e);
+                alert('No pudimos eliminar la ayuda. Probá de nuevo.');
+            });
+        }
+
+        function finalizarTarea() {
+            if (idActual <= 0) { return; }
+            var btn = $('btnFinalizarTarea');
+            btn.disabled = true;
+
+            pedir(URLS.finalizar + '?idTarea=' + encodeURIComponent(idActual), { method: 'POST' }).then(function () {
+                window.location.href = URLS.lista + '?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
+            }).catch(function (e) {
+                console.error('Error al finalizar la tarea:', e);
+                btn.disabled = false;
+                alert('No pudimos finalizar la ayuda. Probá de nuevo.');
+            });
+        }
+
+        // ------------------------------------------------------------
+        // Eventos (delegación)
+        // ------------------------------------------------------------
+        document.addEventListener('click', function (ev) {
+            var el = ev.target.closest('[data-accion]');
+            if (!el) { return; }
+
+            var accion = el.getAttribute('data-accion');
+            var card = el.closest('.ar-card');
+            var id = card ? Number(card.getAttribute('data-id')) : idActual;
+
+            switch (accion) {
+                case 'ver': abrirDetalle(id); break;
+                case 'ver-aceptada': abrirDetalleAceptada(id, false); break;
+                case 'ver-finalizada': abrirDetalleAceptada(id, true); break;
+                case 'rechazar': rechazarConDeshacer(id); break;
+                case 'eliminar': eliminarTarjeta(id); break;
+                case 'volver-lista': mostrarVista('vistaListaAyudas'); break;
+                case 'volver-detalle': mostrarVista('vistaDetalleAyuda'); break;
+                case 'postularse': postularse(); break;
+                case 'ver-postulados': renderPostulados(idActual); break;
+                case 'finalizar': finalizarTarea(); break;
+                case 'cerrar-modal': $('modalPostulado').hidden = true; break;
+                case 'rechazar-detalle':
+                    mostrarVista('vistaListaAyudas');
+                    rechazarConDeshacer(idActual);
+                    break;
+            }
+        });
+
+        $('btnDeshacerRechazo').addEventListener('click', deshacerRechazo);
+
+        $('modalPostulado').addEventListener('click', function (ev) {
+            if (ev.target === this) { this.hidden = true; }
+        });
+
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') { $('modalPostulado').hidden = true; }
+        });
+
+        // El banner de éxito desaparece solo.
+        var banner = $('bannerMensajeExito');
+        if (banner) {
+            setTimeout(function () { banner.style.display = 'none'; }, 4000);
+        }
+    })();
+</script>

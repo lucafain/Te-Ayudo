@@ -548,7 +548,7 @@ public class HomeController : Controller
         return View("Explorar");
     }
 
-    public IActionResult AyudasParaRealizar(string? mensaje = null)
+    public IActionResult RealizarAyudas(string? mensaje = null)
     {
         Usuarios? joven = ObtenerUsuarioSesion();
         if (joven == null)
@@ -590,7 +590,7 @@ public class HomeController : Controller
         ViewBag.TareasPendientes = listaOriginal;
         ViewBag.DistanciasTareas = distanciasTareas;
         ViewBag.EstadosPostulacion = BD.ObtenerEstadosPostulacionesJoven(joven.IdUsuario);
-        return View("AyudasParaRealizar");
+        return View("RealizarAyudas");
     }
 
     private int CalcularDistanciaTareaKm(Usuarios? joven, Tareas t)
@@ -632,7 +632,7 @@ public class HomeController : Controller
         Tareas? tarea = BD.ObtenerTareaPorId(idTarea);
         if (tarea == null)
         {
-            return RedirectToAction("AyudasParaRealizar", "Home");
+            return RedirectToAction("RealizarAyudas", "Home");
         }
 
         Usuarios? solicitante = BD.ObtenerUsuarioPorId(tarea.IdUsuarioSolicitante);
@@ -805,7 +805,7 @@ public class HomeController : Controller
         }
 
         BD.AceptarTarea(idTarea);
-        return RedirectToAction("AyudasParaRealizar", "Home", new { mensaje = "¡Aceptaste la ayuda correctamente!" });
+        return RedirectToAction("RealizarAyudas", "Home", new { mensaje = "¡Aceptaste la ayuda correctamente!" });
     }
 
     [HttpPost]

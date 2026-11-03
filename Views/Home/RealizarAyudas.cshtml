@@ -22,7 +22,7 @@
         <nav class="ar-nav" aria-label="Navegación principal">
             <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Explorá</a>
             <a href='@Url.Action("Conversaciones", "Home")' class="ar-nav-btn">Conversaciones</a>
-            <a href='@Url.Action("AyudasParaRealizar", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
+            <a href='@Url.Action("RealizarAyudas", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
             <button type="button" class="ar-bell" title="Notificaciones" aria-label="Notificaciones">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -238,7 +238,7 @@
             finalizar: '@Url.Action("FinalizarTareaAceptada", "Home")',
             postular: '@Url.Action("PostularseJson", "Home")',
             infoPostulado: '@Url.Action("VerDetalleAyudado", "Home")',
-            lista: '@Url.Action("AyudasParaRealizar", "Home")'
+            lista: '@Url.Action("RealizarAyudas", "Home")'
         };
 
         var VISTAS = ['vistaListaAyudas', 'vistaDetalleAyuda', 'vistaDetalleAceptada', 'vistaPostuladosAyuda'];

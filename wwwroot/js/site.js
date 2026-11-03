@@ -477,7 +477,7 @@ function deshacerRechazoTarea() {
 }
 
 
-// Flujo FETCH en AyudasParaRealizar (Ver más -> Detalle -> Postularse -> Postulados)
+// Flujo FETCH en RealizarAyudas (Ver más -> Detalle -> Postularse -> Postulados)
 let idTareaSeleccionadaFetch = 0;
 
 function abrirDetalleTareaFetch(idTarea) {
@@ -635,7 +635,7 @@ function finalizarTareaAceptadaFetch() {
     }
     fetch('/Home/FinalizarTareaAceptada?idTarea=' + idTareaSeleccionadaFetch, { method: 'POST' })
         .then(function () {
-            window.location.href = '/Home/AyudasParaRealizar?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
+            window.location.href = '/Home/RealizarAyudas?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
         })
         .catch(function (error) {
             console.error('Error al finalizar tarea:', error);

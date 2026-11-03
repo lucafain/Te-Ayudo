@@ -71,8 +71,8 @@
                         string estadoPost = (estadosPostulacion != null && estadosPostulacion.ContainsKey(t.IdTarea))
                             ? estadosPostulacion[t.IdTarea]
                             : "";
-                        string textoUbicacion = !string.IsNullOrWhiteSpace(t.Direccion)
-                            ? t.Direccion
+                        string textoUbicacion = !string.IsNullOrWhiteSpace(t.Lugar)
+                            ? t.Lugar
                             : (!string.IsNullOrWhiteSpace(t.Barrio) ? t.Barrio : "Ubicación cercana");
 
                         if (estadoPost == "Aceptada")

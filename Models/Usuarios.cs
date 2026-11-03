@@ -16,6 +16,7 @@ public class Usuarios
     public string Contrasena { get; set; } = "";
     public bool AceptaTerminos { get; set; }
     public string FotoPerfil { get; set; } = "";
+    public string Barrio { get; set; } = "";
 
     // Constructor sin parámetros para Dapper
     public Usuarios()

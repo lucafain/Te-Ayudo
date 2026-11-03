@@ -596,20 +596,20 @@ public class HomeController : Controller
     private int CalcularDistanciaTareaKm(Usuarios? joven, Tareas t)
     {
         string barrioJoven = (joven?.Barrio ?? "").Trim().ToLower();
-        string dirJoven = (joven?.Direccion ?? "").Trim().ToLower();
+        string dirJoven = (joven?.Direccion + joven?.Calle ?? "").Trim().ToLower();
         string barrioTarea = (t.Barrio ?? "").Trim().ToLower();
-        string dirTarea = (t.Direccion ?? "").Trim().ToLower();
+        string lugarTarea = (t.Lugar ?? "").Trim().ToLower();
 
         if (!string.IsNullOrEmpty(barrioJoven) && !string.IsNullOrEmpty(barrioTarea) && barrioJoven == barrioTarea)
         {
-            if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(dirTarea) && dirJoven == dirTarea)
+            if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(lugarTarea) && dirJoven == lugarTarea)
             {
                 return 1;
             }
             return 1 + (Math.Abs(t.IdTarea * 3) % 3);
         }
 
-        if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(dirTarea) && dirJoven == dirTarea)
+        if (!string.IsNullOrEmpty(dirJoven) && !string.IsNullOrEmpty(lugarTarea) && dirJoven == lugarTarea)
         {
             return 1;
         }

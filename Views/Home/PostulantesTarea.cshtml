@@ -1,9 +1,25 @@
 @{
     ViewData["Title"] = "Postulantes";
-    Tareas? tarea = ViewBag.Tarea as Tareas;
-    List<Usuarios>? postulantes = ViewBag.Postulantes as List<Usuarios>;
-    int idTarea = tarea?.IdTarea ?? 0;
-    string tituloTarea = !string.IsNullOrEmpty(tarea?.Titulo) ? tarea.Titulo : "esta ayuda";
+    Tareas tarea = ViewBag.Tarea;
+    List<Usuarios> postulantes = ViewBag.Postulantes;
+    int idTarea = 0;
+    string tituloTarea = "esta ayuda";
+    if (tarea != null)
+    {
+        idTarea = tarea.IdTarea;
+        if (tarea.Titulo != null && tarea.Titulo != "")
+        {
+            tituloTarea = tarea.Titulo;
+        }
+    }
+
+    string rutaFotoNav = "/img/user.svg";
+    bool tieneFotoPropia = false;
+    if (ViewBag.FotoPerfilSesion != null && ViewBag.FotoPerfilSesion != "" && ViewBag.FotoPerfilSesion != "/img/user.svg")
+    {
+        rutaFotoNav = ViewBag.FotoPerfilSesion;
+        tieneFotoPropia = true;
+    }
 }
 
 <div class="joven-page">
@@ -33,23 +49,17 @@
             </a>
 
             <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
-                @{
-                    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (ViewBag.Adulto?.FotoPerfil as string) ?? "").Trim();
-                    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
-                    string srcFotoNav = tieneFotoPropia
-                        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                            ? rutaFotoNav
-                            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
-                        : Url.Content("~/img/user.svg");
-                }
                 @if (tieneFotoPropia)
                 {
-                    <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <img src="@rutaFotoNav" alt="Perfil" class="nav-perfil-foto" />
                 }
-                <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-                </svg>
+                else
+                {
+                    <svg class="nav-perfil-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                        <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    </svg>
+                }
             </a>
         </nav>
     </header>
@@ -58,16 +68,41 @@
         <section class="postulados-contenedor" id="contenedorPostulantes" data-id-tarea="@idTarea">
             <h1 class="postulados-titulo">Postulantes para @tituloTarea</h1>
 
+            @if (tarea != null)
+            {
+                <div class="ar-detalle-card" style="margin-bottom: 28px; text-align: left;">
+                    <div class="ar-detalle-list">
+                        <p><strong>Descripción:</strong> @tarea.Descripcion</p>
+                        <p><strong>Precio:</strong> $@tarea.Monto</p>
+                        @if (tarea.Lugar != null && tarea.Lugar != "")
+                        {
+                            <p><strong>Dirección:</strong> @tarea.Lugar</p>
+                        }
+                        else
+                        {
+                            <p><strong>Dirección:</strong> -</p>
+                        }
+                        @if (tarea.Barrio != null && tarea.Barrio != "")
+                        {
+                            <p><strong>Barrio:</strong> @tarea.Barrio</p>
+                        }
+                    </div>
+                </div>
+            }
+
             @if (postulantes != null && postulantes.Count > 0)
             {
                 <div class="postulados-grid">
                     @foreach (Usuarios joven in postulantes)
                     {
-                        string srcFoto = string.IsNullOrEmpty(joven.FotoPerfil)
-                            ? Url.Content("~/img/user.svg")
-                            : Url.Content("~" + joven.FotoPerfil);
-                        string nombreJoven = ((joven.Nombre ?? "") + " " + (joven.Apellido ?? "")).Trim();
-                        if (string.IsNullOrEmpty(nombreJoven))
+                        string srcFoto = "/img/user.svg";
+                        if (joven.FotoPerfil != null && joven.FotoPerfil != "")
+                        {
+                            srcFoto = joven.FotoPerfil;
+                        }
+
+                        string nombreJoven = joven.Nombre + " " + joven.Apellido;
+                        if (nombreJoven.Replace(" ", "") == "")
                         {
                             nombreJoven = joven.Email;
                         }
@@ -108,7 +143,6 @@
         </section>
     </main>
 
-    <!-- MODAL DEL POSTULANTE (SE COMPLETA CON FETCH) -->
     <div id="modalPostulante" class="modal-postulante-fondo" style="display: none;">
         <div class="modal-postulante-card">
             <div class="modal-postulante-top">

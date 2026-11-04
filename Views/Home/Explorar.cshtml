@@ -1,18 +1,31 @@
 @{
     ViewData["Title"] = "Explorá";
-    Usuarios? usuarioNav = (ViewBag.UsuarioSesion as Usuarios) ?? (ViewBag.Joven as Usuarios);
-    bool esJovenNav = usuarioNav == null || usuarioNav.TipoUsuario;
-    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (usuarioNav?.FotoPerfil as string) ?? "").Trim();
-    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
-    string srcFotoNav = tieneFotoPropia
-        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-            ? rutaFotoNav
-            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
-        : Url.Content("~/img/user.svg");
+    Usuarios usuarioNav = ViewBag.Joven;
+    bool esJovenNav = true;
+    if (usuarioNav != null)
+    {
+        esJovenNav = usuarioNav.TipoUsuario;
+    }
+
+    string rutaFotoNav = "/img/user.svg";
+    bool tieneFotoPropia = false;
+    if (ViewBag.FotoPerfilSesion != null && ViewBag.FotoPerfilSesion != "" && ViewBag.FotoPerfilSesion != "/img/user.svg")
+    {
+        rutaFotoNav = ViewBag.FotoPerfilSesion;
+        tieneFotoPropia = true;
+    }
+
+    string accionLogo = "PrincipalJoven";
+    string linkPreguntas = Url.Action("Index", "Home") + "#preguntas";
+    if (!esJovenNav)
+    {
+        accionLogo = "PrincipalAdulto";
+        linkPreguntas = Url.Action("PrincipalAdulto", "Home") + "#preguntas-adulto";
+    }
 }
 
 <header class="header header--joven">
-    <a class="logo" href='@Url.Action(esJovenNav ? "PrincipalJoven" : "PrincipalAdulto", "Home")'>
+    <a class="logo" href='@Url.Action(accionLogo, "Home")'>
         <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
     </a>
 
@@ -28,10 +41,9 @@
             Explorá
         </a>
 
-        <a class="nav-button" href='@(esJovenNav ? Url.Action("Index", "Home") + "#preguntas" : Url.Action("PrincipalAdulto", "Home") + "#preguntas-adulto")'>
+        <a class="nav-button" href='@linkPreguntas'>
             Preguntas frecuentes
         </a>
-
 
         <a class="nav-button nav-help" href='@Url.Action("RealizarAyudas", "Home")' id="ExplorarAyuda">
             Realiza ayudas
@@ -40,12 +52,15 @@
         <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
             @if (tieneFotoPropia)
             {
-                <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <img src="@rutaFotoNav" alt="Perfil" class="nav-perfil-foto" />
             }
-            <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-                <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-            </svg>
+            else
+            {
+                <svg class="nav-perfil-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                </svg>
+            }
         </a>
     </nav>
 </header>
@@ -68,14 +83,19 @@
         <h2>Historial</h2>
         <div class="tarjeta-resumen-usuario">
             @{
-                string rutaFotoJoven = (string?)ViewBag.Joven?.FotoPerfil ?? "";
-                string srcJoven = string.IsNullOrEmpty(rutaFotoJoven)
-                    ? Url.Content("~/img/user.svg")
-                    : Url.Content("~/" + rutaFotoJoven.TrimStart('~', '/'));
-                string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
-                if (string.IsNullOrEmpty(nombreJoven))
+                string srcJoven = "/img/user.svg";
+                string nombreJoven = "Joven de la comunidad";
+                if (usuarioNav != null)
                 {
-                    nombreJoven = ViewBag.Joven?.Email ?? "Joven de la comunidad";
+                    if (usuarioNav.FotoPerfil != null && usuarioNav.FotoPerfil != "")
+                    {
+                        srcJoven = usuarioNav.FotoPerfil;
+                    }
+                    nombreJoven = usuarioNav.Nombre + " " + usuarioNav.Apellido;
+                    if (nombreJoven.Replace(" ", "") == "")
+                    {
+                        nombreJoven = usuarioNav.Email;
+                    }
                 }
             }
             <img src="@srcJoven" alt="Foto Joven" class="avatar-resumen-joven" />
@@ -90,21 +110,23 @@
         <h2>Últimos ayudados</h2>
         <div class="contenedor-lista-ayudados">
             @{
-                List<Usuarios>? listaAyudados = ViewBag.UltimosAyudados as List<Usuarios>;
+                List<Usuarios> listaAyudados = ViewBag.UltimosAyudados;
             }
             @if (listaAyudados != null && listaAyudados.Count > 0)
             {
                 int posicion = 1;
                 foreach (Usuarios adulto in listaAyudados)
                 {
-                    string rutaFotoAdulto = adulto.FotoPerfil ?? "";
-                    string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
-                        ? Url.Content("~/img/user.svg")
-                        : Url.Content("~/" + rutaFotoAdulto.TrimStart('~', '/'));
-                    string nombreAdulto = ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim();
-                    if (string.IsNullOrEmpty(nombreAdulto))
+                    string srcAdulto = "/img/user.svg";
+                    if (adulto.FotoPerfil != null && adulto.FotoPerfil != "")
                     {
-                        nombreAdulto = adulto.Email ?? "Adulto mayor";
+                        srcAdulto = adulto.FotoPerfil;
+                    }
+
+                    string nombreAdulto = adulto.Nombre + " " + adulto.Apellido;
+                    if (nombreAdulto.Replace(" ", "") == "")
+                    {
+                        nombreAdulto = adulto.Email;
                     }
 
                     <div class="item-tarjeta-ayudado">

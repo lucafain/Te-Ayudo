@@ -1,10 +1,10 @@
 @{
     ViewData["Title"] = "Solicitar Ayuda";
-    Usuarios? usuario = ViewBag.UsuarioActual;
+    Usuarios usuario = ViewBag.UsuarioActual;
     string lugarInicial = "";
-    if (usuario != null && !string.IsNullOrEmpty(usuario.Calle))
+    if (usuario != null && usuario.Calle != null && usuario.Calle != "")
     {
-        lugarInicial = (usuario.Calle + " " + usuario.Direccion).Trim();
+        lugarInicial = usuario.Calle + " " + usuario.Direccion;
     }
 }
 
@@ -82,7 +82,6 @@
                         <input type="hidden" id="DiaHora" name="DiaHora" />
                     </div>
 
-                    <!-- SELECTOR PERSONALIZADO DE FECHA Y HORA (ESTILO OSCURO) -->
                     <div id="customDateTimePopup" class="dt-popup-wrapper" style="display: none;">
                         <div class="dt-card">
                             <div class="dt-header-selects">

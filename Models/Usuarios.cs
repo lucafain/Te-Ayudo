@@ -1,29 +1,35 @@
 namespace TeAyudo.Models;
 
-// Modelo Usuarios con getters y setters automáticos (Slides 60-63 del PDF)
 public class Usuarios
 {
     public int IdUsuario { get; set; }
-    public string Nombre { get; set; } = "";
-    public string Apellido { get; set; } = "";
-    public string Email { get; set; } = "";
-    public string Provincia { get; set; } = "";
+    public string Nombre { get; set; }
+    public string Apellido { get; set; }
+    public string Email { get; set; }
+    public string Provincia { get; set; }
     public int Direccion { get; set; }
-    public string Calle { get; set; } = "";
-    public string CodigoPostal { get; set; } = "";
+    public string Calle { get; set; }
+    public string CodigoPostal { get; set; }
     public DateTime FechaRegistro { get; set; }
     public bool TipoUsuario { get; set; }
-    public string Contrasena { get; set; } = "";
+    public string Contrasena { get; set; }
     public bool AceptaTerminos { get; set; }
-    public string FotoPerfil { get; set; } = "";
-    public string Barrio { get; set; } = "";
+    public string FotoPerfil { get; set; }
+    public string Barrio { get; set; }
 
-    // Constructor sin parámetros para Dapper
     public Usuarios()
     {
+        Nombre = "";
+        Apellido = "";
+        Email = "";
+        Provincia = "";
+        Calle = "";
+        CodigoPostal = "";
+        Contrasena = "";
+        FotoPerfil = "";
+        Barrio = "";
     }
 
-    // Constructor con parámetros principales
     public Usuarios(string nombre, string apellido, string email, string provincia, int direccion, string calle, string codigoPostal, bool tipoUsuario, string contrasena, bool aceptaTerminos, string fotoPerfil)
     {
         Nombre = nombre;
@@ -38,5 +44,6 @@ public class Usuarios
         Contrasena = contrasena;
         AceptaTerminos = aceptaTerminos;
         FotoPerfil = fotoPerfil;
+        Barrio = "";
     }
 }

@@ -1,18 +1,15 @@
 @{
     ViewData["Title"] = "Inicio Joven";
-    string nombreJoven = ((ViewBag.Joven?.Nombre ?? "") + " " + (ViewBag.Joven?.Apellido ?? "")).Trim();
-    if (string.IsNullOrEmpty(nombreJoven))
+    Usuarios joven = ViewBag.Joven;
+    string nombreJoven = "Usuario";
+    if (joven != null)
     {
-        nombreJoven = ViewBag.Joven?.Email ?? "Usuario";
+        nombreJoven = joven.Nombre + " " + joven.Apellido;
+        if (nombreJoven.Replace(" ", "") == "")
+        {
+            nombreJoven = joven.Email;
+        }
     }
-
-    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (ViewBag.Joven?.FotoPerfil as string) ?? "").Trim();
-    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
-    string srcFotoNav = tieneFotoPropia
-        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-            ? rutaFotoNav
-            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
-        : Url.Content("~/img/user.svg");
 }
 
 <div class="joven-page">
@@ -38,9 +35,9 @@
             </a>
             
             <a class="nav-button nav-help" href='@Url.Action("RealizarAyudas", "Home")'>
-            Realiza ayudas
-            
-         
+                Realiza ayudas
+            </a>
+
             <a class="nav-button nav-button--joven" href='@Url.Action("Perfil", "Home")'>
                 Perfil
             </a>
@@ -77,7 +74,7 @@
                             </svg>
                         </div>
                     </div>
-                    <p>Realiza una  <strong>Ayuda</strong></p>
+                    <p>Realiza una <strong>Ayuda</strong></p>
                 </a>
 
                 <a class="joven-accion-item" href="#ultimas-actividades">
@@ -152,29 +149,38 @@
 
             <div class="joven-actividades-caja">
                 @{
-                    List<Tareas>? tareasDisponibles = ViewBag.TareasDisponibles as List<Tareas>;
-                    Dictionary<int, Usuarios>? solicitantes = ViewBag.Solicitantes as Dictionary<int, Usuarios>;
+                    List<Tareas> tareasDisponibles = ViewBag.TareasDisponibles;
+                    Dictionary<int, Usuarios> solicitantes = ViewBag.Solicitantes;
                 }
                 @if (tareasDisponibles != null && tareasDisponibles.Count > 0)
                 {
                     foreach (Tareas tarea in tareasDisponibles)
                     {
-                        DateTime fechaMostrar = tarea.DiaFecha.Year > 1 ? tarea.DiaFecha : (tarea.DiaTarea.Year > 1 ? tarea.DiaTarea : tarea.FechaCreacion);
-                        Usuarios? adulto = (solicitantes != null && solicitantes.ContainsKey(tarea.IdUsuarioSolicitante))
-                            ? solicitantes[tarea.IdUsuarioSolicitante]
-                            : null;
-
-                        string rutaFotoAdulto = adulto?.FotoPerfil ?? "";
-                        string srcAdulto = string.IsNullOrEmpty(rutaFotoAdulto)
-                            ? Url.Content("~/img/user.svg")
-                            : Url.Content("~" + rutaFotoAdulto);
-
-                        string nombreAdulto = adulto != null
-                            ? ((adulto.Nombre ?? "") + " " + (adulto.Apellido ?? "")).Trim()
-                            : "";
-                        if (string.IsNullOrEmpty(nombreAdulto))
+                        DateTime fechaMostrar = tarea.FechaCreacion;
+                        if (tarea.DiaTarea.Year > 1)
                         {
-                            nombreAdulto = adulto?.Email ?? "Adulto mayor";
+                            fechaMostrar = tarea.DiaTarea;
+                        }
+
+                        Usuarios adulto = null;
+                        if (solicitantes != null && solicitantes.ContainsKey(tarea.IdUsuarioSolicitante))
+                        {
+                            adulto = solicitantes[tarea.IdUsuarioSolicitante];
+                        }
+
+                        string srcAdulto = "/img/user.svg";
+                        string nombreAdulto = "Adulto mayor";
+                        if (adulto != null)
+                        {
+                            if (adulto.FotoPerfil != null && adulto.FotoPerfil != "")
+                            {
+                                srcAdulto = adulto.FotoPerfil;
+                            }
+                            nombreAdulto = adulto.Nombre + " " + adulto.Apellido;
+                            if (nombreAdulto.Replace(" ", "") == "")
+                            {
+                                nombreAdulto = adulto.Email;
+                            }
                         }
 
                         <div class="joven-actividad-fila" onclick="verInfoAyudado(@tarea.IdUsuarioSolicitante)">

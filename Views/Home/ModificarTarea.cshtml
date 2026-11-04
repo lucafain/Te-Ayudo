@@ -1,15 +1,25 @@
 @{
     ViewData["Title"] = "Modificar ayuda";
-    Tareas? tarea = ViewBag.Tarea as Tareas;
-    int idTarea = tarea?.IdTarea ?? 0;
-    string tituloActual = tarea?.Titulo ?? "";
-    string descripcionActual = tarea?.Descripcion ?? "";
-    string lugarActual = tarea?.Lugar ?? "";
-    string barrioActual = tarea?.Barrio ?? "";
-    string tipoLugarActual = !string.IsNullOrWhiteSpace(tarea?.TipoLugar) ? tarea.TipoLugar : "Casa";
+    Tareas tarea = ViewBag.Tarea;
+    int idTarea = 0;
+    string tituloActual = "";
+    string descripcionActual = "";
+    string lugarActual = "";
+    string barrioActual = "";
+    string tipoLugarActual = "Casa";
+    string aclaracionBruta = "";
 
-    // Extraer aclaración limpia y fecha/hora guardada
-    string aclaracionBruta = tarea?.Aclaracion ?? "";
+    if (tarea != null)
+    {
+        idTarea = tarea.IdTarea;
+        if (tarea.Titulo != null) tituloActual = tarea.Titulo;
+        if (tarea.Descripcion != null) descripcionActual = tarea.Descripcion;
+        if (tarea.Lugar != null) lugarActual = tarea.Lugar;
+        if (tarea.Barrio != null) barrioActual = tarea.Barrio;
+        if (tarea.TipoLugar != null && tarea.TipoLugar != "") tipoLugarActual = tarea.TipoLugar;
+        if (tarea.Aclaracion != null) aclaracionBruta = tarea.Aclaracion;
+    }
+
     string aclaracionLimpia = aclaracionBruta;
     string fechaExtraidaDeAclaracion = "";
 
@@ -17,43 +27,51 @@
     if (idxParentesis >= 0)
     {
         aclaracionLimpia = aclaracionBruta.Substring(0, idxParentesis);
-        int inicioFecha = idxParentesis + " (Día y hora: ".Length;
+        int inicioFecha = idxParentesis + 14;
         int finFecha = aclaracionBruta.IndexOf(")", inicioFecha);
         if (finFecha > inicioFecha)
         {
             fechaExtraidaDeAclaracion = aclaracionBruta.Substring(inicioFecha, finFecha - inicioFecha);
         }
     }
-    else if (aclaracionBruta.StartsWith("Día y hora: "))
+    else if (aclaracionBruta.IndexOf("Día y hora: ") == 0)
     {
         aclaracionLimpia = "";
-        fechaExtraidaDeAclaracion = aclaracionBruta.Substring("Día y hora: ".Length).Trim();
+        fechaExtraidaDeAclaracion = aclaracionBruta.Substring(12);
     }
 
-    string diaHoraMostrar = ViewBag.DiaHoraTexto as string ?? "";
-    if (string.IsNullOrEmpty(diaHoraMostrar))
+    string diaHoraMostrar = "";
+    if (ViewBag.DiaHoraTexto != null)
     {
-        if (tarea != null && tarea.DiaFecha.Year > 1)
+        diaHoraMostrar = ViewBag.DiaHoraTexto;
+    }
+    if (diaHoraMostrar == "")
+    {
+        if (tarea != null && tarea.DiaTarea.Year > 1)
         {
-            diaHoraMostrar = tarea.DiaFecha.ToString("dd/MM/yyyy HH:mm");
-        }
-        else if (tarea != null && tarea.DiaTarea.Year > 1)
-        {
-            TimeSpan hora = tarea.HoraTarea.TotalMinutes > 0 ? tarea.HoraTarea : new TimeSpan(17, 30, 0);
+            TimeSpan hora = new TimeSpan(17, 30, 0);
+            if (tarea.HoraTarea.TotalMinutes > 0)
+            {
+                hora = tarea.HoraTarea;
+            }
             diaHoraMostrar = tarea.DiaTarea.ToString("dd/MM/yyyy") + " " + hora.ToString(@"hh\:mm");
         }
-        else if (!string.IsNullOrEmpty(fechaExtraidaDeAclaracion))
+        else if (fechaExtraidaDeAclaracion != "")
         {
             diaHoraMostrar = fechaExtraidaDeAclaracion;
-        }
-        else if (tarea != null && tarea.FechaCreacion.Year > 1)
-        {
-            diaHoraMostrar = tarea.FechaCreacion.ToString("dd/MM/yyyy HH:mm");
         }
         else
         {
             diaHoraMostrar = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         }
+    }
+
+    string rutaFotoNav = "/img/user.svg";
+    bool tieneFotoPropia = false;
+    if (ViewBag.FotoPerfilSesion != null && ViewBag.FotoPerfilSesion != "" && ViewBag.FotoPerfilSesion != "/img/user.svg")
+    {
+        rutaFotoNav = ViewBag.FotoPerfilSesion;
+        tieneFotoPropia = true;
     }
 }
 
@@ -84,23 +102,17 @@
             </a>
 
             <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
-                @{
-                    string rutaFotoNav = ((ViewBag.FotoPerfilSesion as string) ?? (ViewBag.Adulto?.FotoPerfil as string) ?? "").Trim();
-                    bool tieneFotoPropia = !string.IsNullOrWhiteSpace(rutaFotoNav) && !rutaFotoNav.EndsWith("user.svg", StringComparison.OrdinalIgnoreCase);
-                    string srcFotoNav = tieneFotoPropia
-                        ? (rutaFotoNav.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                            ? rutaFotoNav
-                            : Url.Content("~/" + rutaFotoNav.TrimStart('~', '/')))
-                        : Url.Content("~/img/user.svg");
-                }
                 @if (tieneFotoPropia)
                 {
-                    <img src="@srcFotoNav" alt="Perfil" class="nav-perfil-foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <img src="@rutaFotoNav" alt="Perfil" class="nav-perfil-foto" />
                 }
-                <svg class="nav-perfil-svg" style="@(tieneFotoPropia ? "display:none;" : "")" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-                    <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
-                </svg>
+                else
+                {
+                    <svg class="nav-perfil-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="14.5" r="7" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                        <path d="M7 38 C7 27.5 13 23.5 20 23.5 C27 23.5 33 27.5 33 38 Z" fill="#ffffff" stroke="#233645" stroke-width="2.5"/>
+                    </svg>
+                }
             </a>
         </nav>
     </header>

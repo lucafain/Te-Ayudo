@@ -5,18 +5,8 @@ if (menu != null && navigation != null) {
     menu.addEventListener('click', function () {
         let abierto = menu.getAttribute('aria-expanded') !== 'true';
         menu.setAttribute('aria-expanded', String(abierto));
-        menu.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
         navigation.classList.toggle('open', abierto);
     });
-
-    let enlaces = navigation.querySelectorAll('a');
-    for (let i = 0; i < enlaces.length; i++) {
-        enlaces[i].addEventListener('click', function () {
-            navigation.classList.remove('open');
-            menu.setAttribute('aria-expanded', 'false');
-            menu.setAttribute('aria-label', 'Abrir menú');
-        });
-    }
 }
 
 let year = document.getElementById('year');
@@ -44,7 +34,11 @@ if (btnTogglePassword != null) {
     btnTogglePassword.addEventListener('click', function () {
         let inputPass = document.getElementById('Contrasena');
         if (inputPass != null) {
-            inputPass.type = inputPass.type === 'password' ? 'text' : 'password';
+            if (inputPass.type === 'password') {
+                inputPass.type = 'text';
+            } else {
+                inputPass.type = 'password';
+            }
         }
     });
 }
@@ -62,24 +56,18 @@ function mostrarErrorFormulario(motivo) {
 let formLogin = document.getElementById('formLogin');
 if (formLogin != null) {
     formLogin.addEventListener('submit', function (evento) {
-        let email = document.getElementById('Email').value.trim();
+        let email = document.getElementById('Email').value;
         let contrasena = document.getElementById('Contrasena').value;
 
-        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+        if (email === '' || email.indexOf('@') === -1) {
             evento.preventDefault();
             mostrarErrorFormulario('Debe ingresar un correo electrónico válido.');
             return;
         }
 
-        if (email.length > 50) {
+        if (contrasena === '') {
             evento.preventDefault();
-            mostrarErrorFormulario('El correo electrónico no puede superar los 50 caracteres.');
-            return;
-        }
-
-        if (contrasena === '' || contrasena.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar una contraseña válida (máximo 50 caracteres).');
+            mostrarErrorFormulario('Debe ingresar una contraseña.');
             return;
         }
     });
@@ -88,21 +76,13 @@ if (formLogin != null) {
 let formRegistro = document.getElementById('formRegistro');
 if (formRegistro != null) {
     formRegistro.addEventListener('submit', function (evento) {
-        let email = document.getElementById('Email').value.trim();
-        let nombre = document.getElementById('Nombre').value.trim();
+        let email = document.getElementById('Email').value;
+        let nombre = document.getElementById('Nombre').value;
         let contrasena = document.getElementById('Contrasena').value;
-        let inputTelefono = document.getElementById('Telefono');
-        let telefono = inputTelefono != null ? inputTelefono.value.trim() : '';
 
-        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+        if (email === '' || email.indexOf('@') === -1) {
             evento.preventDefault();
-            mostrarErrorFormulario('El correo electrónico es obligatorio y debe tener un formato válido.');
-            return;
-        }
-
-        if (email.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El correo electrónico no puede superar los 50 caracteres.');
+            mostrarErrorFormulario('El correo electrónico es obligatorio y debe ser válido.');
             return;
         }
 
@@ -112,27 +92,9 @@ if (formRegistro != null) {
             return;
         }
 
-        if (nombre.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El nombre de usuario no puede superar los 50 caracteres.');
-            return;
-        }
-
         if (contrasena === '' || contrasena.length < 4) {
             evento.preventDefault();
-            mostrarErrorFormulario('La contraseña es obligatoria y debe tener al menos 4 caracteres.');
-            return;
-        }
-
-        if (contrasena.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('La contraseña no puede superar los 50 caracteres.');
-            return;
-        }
-
-        if (telefono !== '' && isNaN(Number(telefono.replace(/[-+ ]/g, '')))) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El número telefónico solo puede contener números.');
+            mostrarErrorFormulario('La contraseña debe tener al menos 4 caracteres.');
             return;
         }
     });
@@ -141,67 +103,21 @@ if (formRegistro != null) {
 let formTrabajar = document.getElementById('formTrabajar');
 if (formTrabajar != null) {
     formTrabajar.addEventListener('submit', function (evento) {
-        let nombre = document.getElementById('Nombre').value.trim();
-        let apellido = document.getElementById('Apellido').value.trim();
-        let email = document.getElementById('Email').value.trim();
+        let nombre = document.getElementById('Nombre').value;
+        let apellido = document.getElementById('Apellido').value;
+        let email = document.getElementById('Email').value;
         let contrasena = document.getElementById('Contrasena').value;
-        let provincia = document.getElementById('Provincia').value.trim();
-        let calle = document.getElementById('Calle').value.trim();
-        let direccion = document.getElementById('Direccion').value.trim();
-        let codigoPostal = document.getElementById('CodigoPostal').value.trim();
         let acepta = document.getElementById('AceptaTerminos').checked;
 
-        if (nombre === '' || apellido === '') {
+        if (nombre === '' || apellido === '' || email === '' || contrasena === '') {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe completar su nombre y apellido.');
-            return;
-        }
-
-        if (nombre.length > 50 || apellido.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El nombre y el apellido no pueden superar los 50 caracteres.');
-            return;
-        }
-
-        if (email === '' || email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar un correo electrónico válido (máximo 50 caracteres).');
-            return;
-        }
-
-        if (contrasena === '' || contrasena.length < 4 || contrasena.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('La contraseña debe tener entre 4 y 50 caracteres.');
-            return;
-        }
-
-        if (provincia === '' || provincia.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar su provincia (máximo 50 caracteres).');
-            return;
-        }
-
-        if (calle === '' || calle.length > 100) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar su calle (máximo 100 caracteres).');
-            return;
-        }
-
-        if (direccion === '' || isNaN(Number(direccion)) || Number(direccion) < 0) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar una altura/número de dirección válido.');
-            return;
-        }
-
-        if (codigoPostal === '' || codigoPostal.length > 8) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar un código postal válido (máximo 8 caracteres).');
+            mostrarErrorFormulario('Debe completar los datos obligatorios.');
             return;
         }
 
         if (!acepta) {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe aceptar los términos y condiciones para registrarse.');
+            mostrarErrorFormulario('Debe aceptar los términos y condiciones.');
             return;
         }
     });
@@ -210,10 +126,10 @@ if (formTrabajar != null) {
 let formOlvide = document.getElementById('formOlvide');
 if (formOlvide != null) {
     formOlvide.addEventListener('submit', function (evento) {
-        let email = document.getElementById('Email').value.trim();
-        if (email === '' || email.indexOf('@') === -1 || email.length > 50) {
+        let email = document.getElementById('Email').value;
+        if (email === '' || email.indexOf('@') === -1) {
             evento.preventDefault();
-            mostrarErrorFormulario('Debe ingresar un correo electrónico válido para buscar su contraseña.');
+            mostrarErrorFormulario('Debe ingresar un correo electrónico válido.');
             return;
         }
     });
@@ -222,78 +138,14 @@ if (formOlvide != null) {
 let formSolicitar = document.getElementById('formSolicitar');
 if (formSolicitar != null) {
     formSolicitar.addEventListener('submit', function (evento) {
-        let titulo = document.getElementById('Titulo').value.trim();
-        let descripcion = document.getElementById('Descripcion').value.trim();
-        let lugar = document.getElementById('Lugar').value.trim();
-        let elemBarrio = document.getElementById('Barrio');
-        let barrio = elemBarrio ? elemBarrio.value.trim() : '';
-        let diaHora = document.getElementById('DiaHora').value.trim();
+        let titulo = document.getElementById('Titulo').value;
+        let descripcion = document.getElementById('Descripcion').value;
+        let lugar = document.getElementById('Lugar').value;
+        let diaHora = document.getElementById('DiaHora').value;
 
-        if (titulo === '') {
+        if (titulo === '' || descripcion === '' || lugar === '' || diaHora === '') {
             evento.preventDefault();
-            mostrarErrorFormulario('Por favor ingresá el nombre de la ayuda que necesitás.');
-            return;
-        }
-
-        if (titulo.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El nombre de la ayuda no puede superar los 50 caracteres.');
-            return;
-        }
-
-        if (descripcion === '') {
-            evento.preventDefault();
-            mostrarErrorFormulario('Por favor completá la descripción de la ayuda.');
-            return;
-        }
-
-        if (descripcion.length > 500) {
-            evento.preventDefault();
-            mostrarErrorFormulario('La descripción no puede superar los 500 caracteres.');
-            return;
-        }
-
-        if (lugar === '') {
-            evento.preventDefault();
-            mostrarErrorFormulario('Por favor indicá el lugar donde necesitás la ayuda.');
-            return;
-        }
-
-        if (lugar.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El lugar no puede superar los 50 caracteres.');
-            return;
-        }
-
-        if (barrio.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El barrio no puede superar los 50 caracteres.');
-            return;
-        }
-
-        if (diaHora === '') {
-            evento.preventDefault();
-            mostrarErrorFormulario('Por favor seleccioná el día y la hora en el calendario.');
-            return;
-        }
-
-        let fechaElegida = new Date(diaHora);
-        if (isNaN(fechaElegida.getTime())) {
-            evento.preventDefault();
-            mostrarErrorFormulario('La fecha y hora elegidas no son válidas.');
-            return;
-        }
-
-        if (fechaElegida < new Date()) {
-            evento.preventDefault();
-            mostrarErrorFormulario('La fecha y hora de la ayuda no pueden ser anteriores a hoy.');
-            return;
-        }
-
-        let aclaracion = document.getElementById('Aclaracion').value.trim();
-        if (aclaracion.length > 500) {
-            evento.preventDefault();
-            mostrarErrorFormulario('Las aclaraciones no pueden superar los 500 caracteres.');
+            mostrarErrorFormulario('Por favor completá el título, la descripción, el lugar y la fecha/hora.');
             return;
         }
     });
@@ -302,13 +154,11 @@ if (formSolicitar != null) {
 let formModificarTarea = document.getElementById('formModificarTarea');
 if (formModificarTarea != null) {
     formModificarTarea.addEventListener('submit', function (evento) {
-        let titulo = document.getElementById('Titulo').value.trim();
-        let descripcion = document.getElementById('Descripcion').value.trim();
-        let lugar = document.getElementById('Lugar').value.trim();
-        let elemBarrio = document.getElementById('Barrio');
-        let barrio = elemBarrio ? elemBarrio.value.trim() : '';
-        let diaHora = document.getElementById('DiaHora').value.trim();
-        let confirmacion = document.getElementById('ConfirmacionModificar').value.trim().toLowerCase();
+        let titulo = document.getElementById('Titulo').value;
+        let descripcion = document.getElementById('Descripcion').value;
+        let lugar = document.getElementById('Lugar').value;
+        let diaHora = document.getElementById('DiaHora').value;
+        let confirmacion = document.getElementById('ConfirmacionModificar').value.toLowerCase();
 
         if (titulo === '' || descripcion === '' || lugar === '' || diaHora === '') {
             evento.preventDefault();
@@ -316,21 +166,15 @@ if (formModificarTarea != null) {
             return;
         }
 
-        if (barrio.length > 50) {
-            evento.preventDefault();
-            mostrarErrorFormulario('El barrio no puede superar los 50 caracteres.');
-            return;
-        }
-
         if (confirmacion !== 'modificar') {
             evento.preventDefault();
-            mostrarErrorFormulario('Debés escribir exactamente "modificar" abajo de todo para confirmar los cambios.');
+            mostrarErrorFormulario('Debés escribir "modificar" para confirmar los cambios.');
             return;
         }
     });
 }
 
-// Petición server-side FETCH (Slides 142-146 del PDF)
+// ===== FETCH: VER DETALLE DE UN USUARIO (Slides 142-146) =====
 function verInfoAyudado(idUsuario) {
     fetch('/Home/VerDetalleAyudado?idUsuario=' + idUsuario)
         .then(function (response) {
@@ -339,251 +183,248 @@ function verInfoAyudado(idUsuario) {
         .then(function (datos) {
             if (datos != null) {
                 let contenedor = document.getElementById('contenedorDetalleFetch');
-                let nombre = datos.nombre || datos.Nombre || '';
-                let apellido = datos.apellido || datos.Apellido || '';
-                let email = datos.email || datos.Email || 'No especificado';
-                let provincia = datos.provincia || datos.Provincia || '';
-                let calle = datos.calle || datos.Calle || '';
-                let direccion = datos.direccion || datos.Direccion || '';
-                let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
-                let tipoTexto = tipoBool ? 'Joven' : 'Adulto mayor';
+                let nombre = datos.nombre || '';
+                let apellido = datos.apellido || '';
+                let email = datos.email || 'No especificado';
+                let provincia = datos.provincia || '';
+                let calle = datos.calle || '';
+                let direccion = datos.direccion || '';
+                let tipoTexto = datos.tipoUsuario ? 'Joven' : 'Adulto mayor';
 
-                let nombreCompleto = (nombre + ' ' + apellido).trim();
-                if (nombreCompleto === '') {
-                    nombreCompleto = email;
-                }
-
-                document.getElementById('detalleNombre').textContent = 'Información de ' + nombreCompleto;
+                document.getElementById('detalleNombre').textContent = 'Información de ' + nombre + ' ' + apellido;
                 document.getElementById('detalleEmail').textContent = 'Email: ' + email;
                 document.getElementById('detalleTelefono').textContent = 'Ubicación: ' + calle + ' ' + direccion + ' (' + provincia + ')';
                 document.getElementById('detalleTipo').textContent = 'Tipo de usuario: ' + tipoTexto;
 
                 contenedor.style.display = 'block';
             }
-        })
-        .catch(function (error) {
-            console.error('Error en fetch:', error);
         });
 }
 
-
-// Petición FETCH para cargar los datos del detalle de la ayuda (DetalleAyuda.cshtml)
-let contenedorDetalleAyuda = document.getElementById('detalleAyudaFetchContainer');
-if (contenedorDetalleAyuda != null) {
-    let idTarea = contenedorDetalleAyuda.getAttribute('data-id-tarea');
-    if (idTarea != null && idTarea !== '0') {
-        fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (datos) {
-                if (datos != null) {
-                    let elSolicitante = document.getElementById('detalleTareaSolicitante');
-                    let elTitulo = document.getElementById('detalleTareaTitulo');
-                    let elLugar = document.getElementById('detalleTareaLugar');
-                    let elFechaHora = document.getElementById('detalleTareaFechaHora');
-                    let elDescripcion = document.getElementById('detalleTareaDescripcion');
-                    let elFoto = document.getElementById('detalleTareaFoto');
-
-                    if (elSolicitante != null && datos.nombreSolicitante) {
-                        elSolicitante.textContent = datos.nombreSolicitante;
-                    }
-                    if (elTitulo != null && datos.titulo) {
-                        elTitulo.textContent = datos.titulo;
-                    }
-                    if (elLugar != null && datos.lugar) {
-                        elLugar.textContent = datos.lugar;
-                    }
-                    if (elFechaHora != null && datos.fecha) {
-                        elFechaHora.textContent = datos.fecha + ' ' + (datos.hora || '') + ' hs';
-                    }
-                    if (elDescripcion != null) {
-                        let textoDesc = datos.descripcion || '';
-                        if (datos.aclaracion && datos.aclaracion !== '') {
-                            textoDesc = textoDesc + ' · ' + datos.aclaracion;
-                        }
-                        elDescripcion.textContent = textoDesc;
-                    }
-                    if (elFoto != null && datos.fotoSolicitante) {
-                        elFoto.src = datos.fotoSolicitante;
-                    }
-                }
-            })
-            .catch(function (error) {
-                console.error('Error al cargar detalle de ayuda con fetch:', error);
-            });
-    }
-}
-
-
-// Snackbar de 3 segundos para rechazar tarea con opción de Deshacer
+// ===== REALIZAR AYUDAS (vista del joven) =====
+let idTareaActual = 0;
 let timerRechazo = null;
-let idTareaPendienteRechazo = null;
+let idPendienteRechazo = null;
 
-function confirmarRechazoServidor(idTarea) {
-    fetch('/Home/RechazarTarea?idTarea=' + idTarea, { method: 'POST' })
-        .catch(function (error) {
-            console.error('Error al rechazar tarea:', error);
+function mostrarVista(idVista) {
+    let vistas = ['vistaListaAyudas', 'vistaDetalleAyuda', 'vistaDetalleAceptada', 'vistaPostuladosAyuda'];
+    for (let i = 0; i < vistas.length; i++) {
+        let el = document.getElementById(vistas[i]);
+        if (el != null) {
+            el.hidden = (vistas[i] !== idVista);
+        }
+    }
+}
+
+function abrirDetalle(idTarea) {
+    idTareaActual = idTarea;
+    fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                document.getElementById('detTitulo').textContent = datos.titulo || 'Detalle de tarea';
+                let desc = datos.descripcion || '';
+                if (datos.aclaracion && datos.aclaracion !== '') {
+                    desc = desc + ' · ' + datos.aclaracion;
+                }
+                document.getElementById('detDescripcion').textContent = desc;
+                document.getElementById('detMonto').textContent = datos.monto || '5000';
+                document.getElementById('detDuracion').textContent = '-';
+                document.getElementById('detHorario').textContent = (datos.fechaDia || datos.fecha || '') + ' ' + (datos.hora || '') + ' hs';
+                document.getElementById('detSolicitante').textContent = datos.nombreSolicitante || 'Adulto mayor';
+
+                let domicilio = datos.lugar || '';
+                if (datos.barrio && datos.barrio !== '') {
+                    domicilio = domicilio + ' (' + datos.barrio + ')';
+                }
+                document.getElementById('detDomicilio').textContent = domicilio;
+                document.getElementById('detAcompaniamiento').textContent = 'No especificado';
+
+                document.getElementById('btnPostularse').disabled = false;
+                mostrarVista('vistaDetalleAyuda');
+            }
         });
 }
 
-function rechazarTareaConUndo(idTarea) {
-    if (timerRechazo != null && idTareaPendienteRechazo != null) {
-        clearTimeout(timerRechazo);
-        confirmarRechazoServidor(idTareaPendienteRechazo);
+function abrirDetalleAceptada(idTarea, esFinalizada) {
+    idTareaActual = idTarea;
+    fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                document.getElementById('detAceptadaTitulo').textContent = datos.titulo || 'Detalle de tarea';
+                let desc = datos.descripcion || '';
+                if (datos.aclaracion && datos.aclaracion !== '') {
+                    desc = desc + ' · ' + datos.aclaracion;
+                }
+                document.getElementById('detAceptadaDescripcion').textContent = desc;
+                document.getElementById('detAceptadaHorario').textContent = (datos.fechaDia || datos.fecha || '') + ' ' + (datos.hora || '') + ' hs';
+                document.getElementById('detAceptadaDuracion').textContent = '-';
+                document.getElementById('detAceptadaMonto').textContent = datos.monto || '5000';
+                document.getElementById('detAceptadaSolicitante').textContent = datos.nombreSolicitante || 'Adulto mayor';
+
+                let domicilio = datos.lugar || '';
+                if (datos.barrio && datos.barrio !== '') {
+                    domicilio = domicilio + ' (' + datos.barrio + ')';
+                }
+                document.getElementById('detAceptadaDomicilio').textContent = domicilio;
+
+                let btn = document.getElementById('btnFinalizarTarea');
+                if (btn != null) {
+                    btn.hidden = esFinalizada;
+                    btn.disabled = false;
+                }
+                mostrarVista('vistaDetalleAceptada');
+            }
+        });
+}
+
+function postularse() {
+    if (idTareaActual <= 0) {
+        return;
     }
 
-    idTareaPendienteRechazo = idTarea;
+    fetch('/Home/PostularseJson?idTarea=' + idTareaActual, { method: 'POST' })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                document.getElementById('postuladosNombreTarea').textContent = datos.tituloTarea || '';
+                let cont = document.getElementById('listaPostuladosContainer');
+                cont.innerHTML = '';
+
+                let lista = datos.postulados || [];
+                for (let i = 0; i < lista.length; i++) {
+                    let u = lista[i];
+                    let idU = u.idUsuario || u.IdUsuario;
+                    let nombre = (u.nombre || '') + ' ' + (u.apellido || '');
+                    let foto = u.fotoPerfil || '/img/user.svg';
+
+                    cont.innerHTML = cont.innerHTML +
+                        '<article class="ar-post-card">' +
+                        '<img src="' + foto + '" alt="' + nombre + '" />' +
+                        '<div>' +
+                        '<h3>' + nombre + '</h3>' +
+                        '<button type="button" class="ar-btn ar-btn-ver" onclick="verInfoPostulado(' + idU + ')">Ver más</button>' +
+                        '</div>' +
+                        '</article>';
+                }
+
+                document.getElementById('btnVerPostulados').hidden = false;
+                mostrarVista('vistaPostuladosAyuda');
+            }
+        });
+}
+
+function verInfoPostulado(idUsuario) {
+    fetch('/Home/VerDetalleAyudado?idUsuario=' + idUsuario)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (datos) {
+            if (datos != null) {
+                let nombre = (datos.nombre || '') + ' ' + (datos.apellido || '');
+                let email = datos.email || 'No especificado';
+                let calle = datos.calle || '';
+                let dir = datos.direccion || '';
+                let provincia = datos.provincia || '';
+                let tipo = datos.tipoUsuario ? 'Joven' : 'Adulto mayor';
+
+                document.getElementById('modalPostuladoNombre').textContent = nombre;
+                document.getElementById('modalPostuladoEmail').textContent = 'Email: ' + email;
+                document.getElementById('modalPostuladoUbicacion').textContent = 'Ubicación: ' + calle + ' ' + dir + ' (' + provincia + ')';
+                document.getElementById('modalPostuladoTipo').textContent = 'Tipo de usuario: ' + tipo;
+                document.getElementById('modalPostulado').hidden = false;
+            }
+        });
+}
+
+function cerrarModalPostulado() {
+    document.getElementById('modalPostulado').hidden = true;
+}
+
+function confirmarRechazo(idTarea) {
+    fetch('/Home/RechazarTarea?idTarea=' + idTarea, { method: 'POST' });
+}
+
+function rechazarConDeshacer(idTarea) {
+    if (timerRechazo != null && idPendienteRechazo != null) {
+        clearTimeout(timerRechazo);
+        confirmarRechazo(idPendienteRechazo);
+    }
+
+    idPendienteRechazo = idTarea;
     let card = document.getElementById('card-tarea-' + idTarea);
     if (card != null) {
         card.style.display = 'none';
     }
 
-    let snackbar = document.getElementById('snackbarRechazo');
-    if (snackbar != null) {
-        snackbar.style.display = 'flex';
+    let snack = document.getElementById('snackbarRechazo');
+    if (snack != null) {
+        snack.style.display = 'flex';
     }
 
     timerRechazo = setTimeout(function () {
-        if (snackbar != null) {
-            snackbar.style.display = 'none';
+        if (snack != null) {
+            snack.style.display = 'none';
         }
-        if (idTareaPendienteRechazo != null) {
-            confirmarRechazoServidor(idTareaPendienteRechazo);
-            idTareaPendienteRechazo = null;
+        if (idPendienteRechazo != null) {
+            confirmarRechazo(idPendienteRechazo);
+            idPendienteRechazo = null;
         }
         timerRechazo = null;
     }, 3000);
 }
 
-function deshacerRechazoTarea() {
+function rechazarDesdeDetalle() {
+    mostrarVista('vistaListaAyudas');
+    rechazarConDeshacer(idTareaActual);
+}
+
+function deshacerRechazo() {
     if (timerRechazo != null) {
         clearTimeout(timerRechazo);
         timerRechazo = null;
     }
-
-    if (idTareaPendienteRechazo != null) {
-        let card = document.getElementById('card-tarea-' + idTareaPendienteRechazo);
+    if (idPendienteRechazo != null) {
+        let card = document.getElementById('card-tarea-' + idPendienteRechazo);
         if (card != null) {
-            card.style.display = 'flex';
+            card.style.display = '';
         }
-        idTareaPendienteRechazo = null;
+        idPendienteRechazo = null;
     }
-
-    let snackbar = document.getElementById('snackbarRechazo');
-    if (snackbar != null) {
-        snackbar.style.display = 'none';
+    let snack = document.getElementById('snackbarRechazo');
+    if (snack != null) {
+        snack.style.display = 'none';
     }
 }
 
-
-// Flujo FETCH en RealizarAyudas (Ver más -> Detalle -> Postularse -> Postulados)
-let idTareaSeleccionadaFetch = 0;
-
-function abrirDetalleTareaFetch(idTarea) {
-    idTareaSeleccionadaFetch = idTarea;
-    fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (datos) {
-            if (datos != null) {
-                document.getElementById('detalleTareaSolicitante').textContent = datos.nombreSolicitante || 'Adulto mayor';
-                document.getElementById('detalleTareaTitulo').textContent = datos.titulo || '';
-                let lugarTexto = datos.lugar || '';
-                if (datos.barrio && datos.barrio !== '') {
-                    lugarTexto = lugarTexto !== '' ? (lugarTexto + ' (' + datos.barrio + ')') : datos.barrio;
-                }
-                document.getElementById('detalleTareaLugar').textContent = lugarTexto;
-                document.getElementById('detalleTareaFechaHora').textContent = (datos.fecha || '') + ' ' + (datos.hora || '') + ' hs';
-
-                let desc = datos.descripcion || '';
-                if (datos.aclaracion && datos.aclaracion !== '') {
-                    desc = desc + ' · ' + datos.aclaracion;
-                }
-                document.getElementById('detalleTareaDescripcion').textContent = desc;
-
-                let elFoto = document.getElementById('detalleTareaFoto');
-                if (elFoto != null && datos.fotoSolicitante) {
-                    elFoto.src = datos.fotoSolicitante;
-                }
-
-                document.getElementById('vistaGrillaAyudas').style.display = 'none';
-                document.getElementById('vistaPostuladosAyuda').style.display = 'none';
-                document.getElementById('vistaDetalleAyuda').style.display = 'block';
-            }
-        })
-        .catch(function (error) {
-            console.error('Error en abrirDetalleTareaFetch:', error);
-        });
-}
-
-function abrirDetalleTareaAceptadaFetch(idTarea) {
-    idTareaSeleccionadaFetch = idTarea;
-    fetch('/Home/ObtenerDetalleTareaJson?idTarea=' + idTarea)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (datos) {
-            if (datos != null) {
-                let elMonto = document.getElementById('detalleAceptadaMonto');
-                if (elMonto != null) {
-                    elMonto.textContent = '$' + (datos.monto || '5000');
-                }
-                let elSol = document.getElementById('detalleAceptadaSolicitante');
-                if (elSol != null) {
-                    elSol.textContent = datos.nombreSolicitante || 'Adulto mayor';
-                }
-                let elTit = document.getElementById('detalleAceptadaTitulo');
-                if (elTit != null) {
-                    elTit.textContent = datos.titulo || '';
-                }
-                let elLug = document.getElementById('detalleAceptadaLugar');
-                if (elLug != null) {
-                    elLug.textContent = datos.lugar || '';
-                }
-                let elFec = document.getElementById('detalleAceptadaFechaHora');
-                if (elFec != null) {
-                    elFec.textContent = (datos.fechaDia || datos.fecha || '') + '  ' + (datos.hora || '') + ' hs';
-                }
-                let elDesc = document.getElementById('detalleAceptadaDescripcion');
-                if (elDesc != null) {
-                    let desc = datos.descripcion || '';
-                    if (datos.aclaracion && datos.aclaracion !== '') {
-                        desc = desc !== '' ? (desc + ' · ' + datos.aclaracion) : datos.aclaracion;
-                    }
-                    elDesc.textContent = desc;
-                }
-                let elFoto = document.getElementById('detalleAceptadaFoto');
-                if (elFoto != null && datos.fotoSolicitante) {
-                    elFoto.src = datos.fotoSolicitante;
-                }
-
-                document.getElementById('vistaGrillaAyudas').style.display = 'none';
-                document.getElementById('vistaDetalleAyuda').style.display = 'none';
-                document.getElementById('vistaPostuladosAyuda').style.display = 'none';
-                let vAceptada = document.getElementById('vistaDetalleAceptada');
-                if (vAceptada != null) {
-                    vAceptada.style.display = 'block';
-                }
-            }
-        })
-        .catch(function (error) {
-            console.error('Error en abrirDetalleTareaAceptadaFetch:', error);
-        });
-}
-
-function eliminarTareaRechazadaFetch(idTarea) {
-    let card = document.getElementById('card-tarea-' + idTarea);
-    if (card != null) {
-        card.style.display = 'none';
-    }
+function eliminarTarjeta(idTarea) {
     fetch('/Home/EliminarTareaRechazada?idTarea=' + idTarea, { method: 'POST' })
-        .catch(function (error) {
-            console.error('Error al eliminar tarea rechazada:', error);
+        .then(function () {
+            let card = document.getElementById('card-tarea-' + idTarea);
+            if (card != null) {
+                card.style.display = 'none';
+            }
         });
 }
 
+function finalizarTarea() {
+    if (idTareaActual <= 0) {
+        return;
+    }
+    fetch('/Home/FinalizarTareaAceptada?idTarea=' + idTareaActual, { method: 'POST' })
+        .then(function () {
+            window.location.href = '/Home/RealizarAyudas?mensaje=¡Finalizaste la ayuda correctamente!';
+        });
+}
+
+// ===== VALORACIÓN DEL JOVEN (TicketAyuda.cshtml) =====
 function abrirValoracionJoven() {
     let vTicket = document.getElementById('vistaTicketDetalle');
     let vVal = document.getElementById('vistaValoracionJoven');
@@ -629,112 +470,14 @@ function seleccionarPuntualidadJoven(esPuntual) {
     }
 }
 
-function finalizarTareaAceptadaFetch() {
-    if (idTareaSeleccionadaFetch <= 0) {
-        return;
-    }
-    fetch('/Home/FinalizarTareaAceptada?idTarea=' + idTareaSeleccionadaFetch, { method: 'POST' })
-        .then(function () {
-            window.location.href = '/Home/RealizarAyudas?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
-        })
-        .catch(function (error) {
-            console.error('Error al finalizar tarea:', error);
-        });
-}
-
-function volverAGrillaAyudas() {
-    let vAceptada = document.getElementById('vistaDetalleAceptada');
-    if (vAceptada != null) {
-        vAceptada.style.display = 'none';
-    }
-    document.getElementById('vistaDetalleAyuda').style.display = 'none';
-    document.getElementById('vistaPostuladosAyuda').style.display = 'none';
-    document.getElementById('vistaGrillaAyudas').style.display = 'block';
-}
-
-function postularmeConFetch() {
-    if (idTareaSeleccionadaFetch <= 0) {
-        return;
-    }
-
-    fetch('/Home/PostularseJson?idTarea=' + idTareaSeleccionadaFetch, { method: 'POST' })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (datos) {
-            if (datos != null) {
-                let titulo = datos.tituloTarea || 'esta ayuda';
-                let elTitPost = document.getElementById('tituloPostuladosFetch') || document.getElementById('postuladosTituloTexto');
-                if (elTitPost != null) {
-                    elTitPost.textContent = '¡Ya estás postulado para ' + titulo + '!';
-                }
-
-                let grilla = document.getElementById('grillaPostuladosFetch');
-                grilla.innerHTML = '';
-
-                let lista = datos.postulados || [];
-                for (let i = 0; i < lista.length; i++) {
-                    let u = lista[i];
-                    let idU = u.idUsuario || u.IdUsuario || 1;
-                    let nom = ((u.nombre || u.Nombre || '') + ' ' + (u.apellido || u.Apellido || '')).trim();
-                    if (nom === '') {
-                        nom = u.email || u.Email || 'Joven voluntario';
-                    }
-                    let foto = u.fotoPerfil || u.FotoPerfil || '/img/user.svg';
-
-                    let card = document.createElement('article');
-                    card.className = 'postulado-card';
-                    card.innerHTML =
-                        '<img src="' + foto + '" alt="' + nom + '" class="postulado-avatar" />' +
-                        '<div class="postulado-info">' +
-                        '<h3>' + nom + '</h3>' +
-                        '<button type="button" class="btn-ayuda-verde" onclick="verInfoAyudado(' + idU + ')">Ver más</button>' +
-                        '</div>';
-                    grilla.appendChild(card);
-                }
-
-                document.getElementById('vistaGrillaAyudas').style.display = 'none';
-                document.getElementById('vistaDetalleAyuda').style.display = 'none';
-                document.getElementById('vistaPostuladosAyuda').style.display = 'block';
-            }
-        })
-        .catch(function (error) {
-            console.error('Error al postularse con fetch:', error);
-        });
-}
-
-// Selector personalizado de Fecha y Hora (SolicitarTarea.cshtml)
+// ===== SELECTOR DE FECHA Y HORA (SolicitarTarea.cshtml) =====
 let dtDiaSeleccionado = new Date().getDate();
 let dtEsPm = false;
 
 function abrirSelectorFechaHora() {
     let popup = document.getElementById('customDateTimePopup');
     if (popup != null) {
-        let ahora = new Date();
-        let selectMes = document.getElementById('dtMonthSelect');
-        let selectAnio = document.getElementById('dtYearSelect');
-        if (selectMes != null && popup.getAttribute('data-init') !== 'true') {
-            selectMes.value = String(ahora.getMonth());
-            if (selectAnio != null) {
-                let anioActual = String(ahora.getFullYear());
-                let existeAnio = false;
-                for (let i = 0; i < selectAnio.options.length; i++) {
-                    if (selectAnio.options[i].value === anioActual) {
-                        existeAnio = true;
-                    }
-                }
-                if (!existeAnio) {
-                    let opt = document.createElement('option');
-                    opt.value = anioActual;
-                    opt.textContent = anioActual;
-                    selectAnio.appendChild(opt);
-                }
-                selectAnio.value = anioActual;
-            }
-            dtDiaSeleccionado = ahora.getDate();
-            popup.setAttribute('data-init', 'true');
-            renderizarCalendario();
-        }
+        renderizarCalendario();
         popup.style.display = 'flex';
     }
 }
@@ -769,19 +512,9 @@ function renderizarCalendario() {
 
     let mes = Number(selectMes.value);
     let anio = Number(selectAnio.value);
-    let primerDiaSemana = new Date(anio, mes, 1).getDay();
-    let offsetLunes = (primerDiaSemana + 6) % 7;
     let totalDiasMes = new Date(anio, mes + 1, 0).getDate();
-    let diasMesAnterior = new Date(anio, mes, 0).getDate();
 
     grid.innerHTML = '';
-
-    for (let i = offsetLunes - 1; i >= 0; i--) {
-        let spanPrev = document.createElement('span');
-        spanPrev.className = 'dt-day dt-day--muted';
-        spanPrev.textContent = String(diasMesAnterior - i);
-        grid.appendChild(spanPrev);
-    }
 
     for (let d = 1; d <= totalDiasMes; d++) {
         let btnDia = document.createElement('button');
@@ -805,12 +538,12 @@ function confirmarFechaHora() {
     let anio = Number(selectAnio.value);
     let dia = dtDiaSeleccionado;
 
-    let partesHora = (selectHora.value || '10:00').split(':');
+    let partesHora = selectHora.value.split(':');
     let horaNum = Number(partesHora[0]);
-    let minStr = partesHora[1] || '00';
+    let minStr = partesHora[1];
 
     if (dtEsPm && horaNum < 12) {
-        horaNum += 12;
+        horaNum = horaNum + 12;
     } else if (!dtEsPm && horaNum === 12) {
         horaNum = 0;
     }
@@ -820,28 +553,19 @@ function confirmarFechaHora() {
     let horaStr = horaNum < 10 ? '0' + horaNum : String(horaNum);
 
     let valorIso = anio + '-' + mesStr + '-' + diaStr + 'T' + horaStr + ':' + minStr;
-    let inputOculto = document.getElementById('DiaHora');
-    let inputVisible = document.getElementById('DiaHoraVisible');
-
-    if (inputOculto != null) {
-        inputOculto.value = valorIso;
-    }
-    if (inputVisible != null) {
-        let sufijo = dtEsPm ? 'PM' : 'AM';
-        inputVisible.value = diaStr + '/' + mesStr + '/' + anio + ' · ' + selectHora.value + ' - ' + selectHoraFin.value + ' ' + sufijo;
-    }
+    document.getElementById('DiaHora').value = valorIso;
+    let sufijo = dtEsPm ? 'PM' : 'AM';
+    document.getElementById('DiaHoraVisible').value = diaStr + '/' + mesStr + '/' + anio + ' · ' + selectHora.value + ' - ' + selectHoraFin.value + ' ' + sufijo;
 
     cerrarSelectorFechaHora();
 }
 
-
-// ===== POSTULANTES DE UNA TAREA (vista del adulto) =====
+// ===== POSTULANTES DE UNA TAREA (PostulantesTarea.cshtml) =====
 let contenedorPostulantes = document.getElementById('contenedorPostulantes');
 let idTareaPostulantes = contenedorPostulantes != null ? contenedorPostulantes.getAttribute('data-id-tarea') : 0;
 let idPostulanteModal = 0;
 let nombrePostulanteModal = '';
 
-// Abre el modal y carga los datos del joven con FETCH
 function abrirModalPostulante(idUsuario) {
     fetch('/Home/ObtenerDetallePostulanteJson?idUsuario=' + idUsuario)
         .then(function (response) {
@@ -870,9 +594,6 @@ function abrirModalPostulante(idUsuario) {
 
                 document.getElementById('modalPostulante').style.display = 'flex';
             }
-        })
-        .catch(function (error) {
-            console.error('Error al cargar postulante:', error);
         });
 }
 
@@ -882,7 +603,7 @@ function cerrarModalPostulante() {
 
 function aceptarPostulanteDirecto(idUsuario, nombre) {
     idPostulanteModal = idUsuario;
-    nombrePostulanteModal = nombre || 'este joven';
+    nombrePostulanteModal = nombre;
     aceptarPostulanteFetch();
 }
 
@@ -891,12 +612,9 @@ function aceptarPostulanteFetch() {
         .then(function (response) {
             return response.json();
         })
-        .then(function (datos) {
+        .then(function () {
             let mensaje = '¡Aceptaste a ' + nombrePostulanteModal + ' para tu ayuda!';
-            window.location.href = '/Home/MisAyudas?mensaje=' + encodeURIComponent(mensaje);
-        })
-        .catch(function (error) {
-            console.error('Error al aceptar postulante:', error);
+            window.location.href = '/Home/MisAyudas?mensaje=' + mensaje;
         });
 }
 
@@ -905,15 +623,11 @@ function rechazarDesdeModal() {
     rechazarPostulanteConUndo(idPostulanteModal);
 }
 
-// Snackbar de 3 segundos para rechazar postulante con opción de Deshacer
 let timerRechazoPostulante = null;
 let idPostulantePendienteRechazo = null;
 
 function confirmarRechazoPostulanteServidor(idUsuario) {
-    fetch('/Home/RechazarPostulante?idTarea=' + idTareaPostulantes + '&idUsuario=' + idUsuario, { method: 'POST' })
-        .catch(function (error) {
-            console.error('Error al rechazar postulante:', error);
-        });
+    fetch('/Home/RechazarPostulante?idTarea=' + idTareaPostulantes + '&idUsuario=' + idUsuario, { method: 'POST' });
 }
 
 function rechazarPostulanteConUndo(idUsuario) {
@@ -963,24 +677,4 @@ function deshacerRechazoPostulante() {
     if (snackbar != null) {
         snackbar.style.display = 'none';
     }
-}
-
-function eliminarTareaRechazada(idTarea) {
-    fetch('/Home/EliminarTareaRechazada?idTarea=' + idTarea, {
-        method: 'POST'
-    })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (datos) {
-            if (datos && datos.ok) {
-                let card = document.getElementById('card-tarea-rechazada-' + idTarea);
-                if (card != null) {
-                    card.style.display = 'none';
-                }
-            }
-        })
-        .catch(function (error) {
-            console.error('Error al eliminar tarea rechazada:', error);
-        });
 }

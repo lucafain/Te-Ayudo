@@ -1,27 +1,35 @@
 @{
     ViewData["Title"] = "Ayudas Para Realizar";
-    Usuarios? joven = ViewBag.Joven as Usuarios;
-    List<Tareas>? tareasPendientes = ViewBag.TareasPendientes as List<Tareas>;
-    Dictionary<int, int>? distanciasTareas = ViewBag.DistanciasTareas as Dictionary<int, int>;
-    Dictionary<int, string>? estadosPostulacion = ViewBag.EstadosPostulacion as Dictionary<int, string>;
-    string nombreJoven = joven != null ? $"{joven.Nombre} {joven.Apellido}" : "Joven Voluntario";
-    bool tieneFoto = joven != null && !string.IsNullOrEmpty(joven.FotoPerfil);
-    string srcFotoNav = tieneFoto
-        ? (joven!.FotoPerfil.StartsWith("/") ? joven.FotoPerfil : "/img/" + joven.FotoPerfil)
-        : "";
+    Usuarios joven = ViewBag.Joven;
+    List<Tareas> tareasPendientes = ViewBag.TareasPendientes;
+    Dictionary<int, int> distanciasTareas = ViewBag.DistanciasTareas;
+    Dictionary<int, string> estadosPostulacion = ViewBag.EstadosPostulacion;
+
+    string nombreJoven = "Joven Voluntario";
+    bool tieneFoto = false;
+    string srcFotoNav = "/img/user.svg";
+
+    if (joven != null)
+    {
+        nombreJoven = joven.Nombre + " " + joven.Apellido;
+        if (joven.FotoPerfil != null && joven.FotoPerfil != "" && joven.FotoPerfil != "/img/user.svg")
+        {
+            tieneFoto = true;
+            srcFotoNav = joven.FotoPerfil;
+        }
+    }
 }
 
 <div class="ar-page">
 
-    <!-- ==================== NAVBAR ==================== -->
     <header class="ar-header">
         <a class="ar-brand" href='@Url.Action("PrincipalJoven", "Home")' title="Te Ayudo">
-            <img src="~/img/Logo.png" alt="Logo Te Ayudo" />
+            <img src="~/img/logo-teayudo.png" alt="Logo Te Ayudo" />
         </a>
 
         <nav class="ar-nav" aria-label="Navegación principal">
             <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Explorá</a>
-            <a href='@Url.Action("Conversaciones", "Home")' class="ar-nav-btn">Conversaciones</a>
+            <a href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades' class="ar-nav-btn">Conversaciones</a>
             <a href='@Url.Action("RealizarAyudas", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
             <button type="button" class="ar-bell" title="Notificaciones" aria-label="Notificaciones">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -47,7 +55,7 @@
 
     <main class="ar-main">
 
-        <!-- ==================== VISTA 1: LISTADO ==================== -->
+        <!-- VISTA 1: LISTADO -->
         <div id="vistaListaAyudas" class="ar-vista">
             <h1 class="ar-title">Ayudas para realizar</h1>
 
@@ -68,22 +76,50 @@
                 <div class="ar-grid" id="gridTareasDisponibles">
                     @foreach (Tareas t in tareasPendientes)
                     {
-                        int km = (distanciasTareas != null && distanciasTareas.ContainsKey(t.IdTarea))
-                            ? distanciasTareas[t.IdTarea]
-                            : 2;
-                        string estado = (estadosPostulacion != null && estadosPostulacion.ContainsKey(t.IdTarea))
-                            ? estadosPostulacion[t.IdTarea]
-                            : "";
-                        string lugar = !string.IsNullOrWhiteSpace(t.Lugar)
-                            ? t.Lugar
-                            : (!string.IsNullOrWhiteSpace(t.Barrio) ? t.Barrio : "Ubicación cercana");
-                        string claseEstado = estado == "Aceptada" ? "is-aceptada"
-                            : estado == "Rechazada" ? "is-rechazada"
-                            : estado == "Finalizada" ? "is-finalizada"
-                            : "";
+                        int km = 2;
+                        if (distanciasTareas != null && distanciasTareas.ContainsKey(t.IdTarea))
+                        {
+                            km = distanciasTareas[t.IdTarea];
+                        }
 
-                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea"
-                                 data-id="@t.IdTarea" data-monto="@t.Monto" data-titulo="@t.Titulo" data-lugar="@lugar">
+                        string estado = "";
+                        if (estadosPostulacion != null && estadosPostulacion.ContainsKey(t.IdTarea))
+                        {
+                            estado = estadosPostulacion[t.IdTarea];
+                        }
+
+                        string lugar = "Ubicación cercana";
+                        if (t.Lugar != null && t.Lugar != "")
+                        {
+                            if (t.Barrio != null && t.Barrio != "")
+                            {
+                                lugar = t.Lugar + " (" + t.Barrio + ")";
+                            }
+                            else
+                            {
+                                lugar = t.Lugar;
+                            }
+                        }
+                        else if (t.Barrio != null && t.Barrio != "")
+                        {
+                            lugar = t.Barrio;
+                        }
+
+                        string claseEstado = "";
+                        if (estado == "Aceptada")
+                        {
+                            claseEstado = "is-aceptada";
+                        }
+                        else if (estado == "Rechazada")
+                        {
+                            claseEstado = "is-rechazada";
+                        }
+                        else if (estado == "Finalizada")
+                        {
+                            claseEstado = "is-finalizada";
+                        }
+
+                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea">
 
                             <div class="ar-card-top">
                                 @if (estado != "Finalizada")
@@ -116,21 +152,21 @@
                                 <div class="ar-actions">
                                     @if (estado == "Aceptada")
                                     {
-                                        <button type="button" class="ar-btn ar-btn-ver" data-accion="ver-aceptada">Ver más</button>
+                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalleAceptada(@t.IdTarea, false)">Ver más</button>
                                     }
                                     else if (estado == "Rechazada")
                                     {
-                                        <button type="button" class="ar-btn" data-accion="eliminar">Eliminar</button>
+                                        <button type="button" class="ar-btn" onclick="eliminarTarjeta(@t.IdTarea)">Eliminar</button>
                                     }
                                     else if (estado == "Finalizada")
                                     {
-                                        <button type="button" class="ar-btn ar-btn-gris" data-accion="ver-finalizada">Ver detalle</button>
-                                        <button type="button" class="ar-btn ar-btn-gris" data-accion="eliminar">Eliminar</button>
+                                        <button type="button" class="ar-btn ar-btn-gris" onclick="abrirDetalleAceptada(@t.IdTarea, true)">Ver detalle</button>
+                                        <button type="button" class="ar-btn ar-btn-gris" onclick="eliminarTarjeta(@t.IdTarea)">Eliminar</button>
                                     }
                                     else
                                     {
-                                        <button type="button" class="ar-btn ar-btn-ver" data-accion="ver">Ver más</button>
-                                        <button type="button" class="ar-btn ar-btn-rechazar" data-accion="rechazar">Rechazar</button>
+                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalle(@t.IdTarea)">Ver más</button>
+                                        <button type="button" class="ar-btn ar-btn-rechazar" onclick="rechazarConDeshacer(@t.IdTarea)">Rechazar</button>
                                     }
                                 </div>
 
@@ -154,10 +190,10 @@
             }
         </div>
 
-        <!-- ==================== VISTA 2: DETALLE (tarea disponible) ==================== -->
+        <!-- VISTA 2: DETALLE (tarea disponible) -->
         <div id="vistaDetalleAyuda" class="ar-vista" hidden>
             <div class="ar-detalle-card">
-                <button type="button" class="ar-back" data-accion="volver-lista" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
+                <button type="button" class="ar-back" onclick="mostrarVista('vistaListaAyudas')" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
                 <h2 class="ar-detalle-title" id="detTitulo">Detalle de tarea</h2>
 
                 <div class="ar-detalle-list">
@@ -171,17 +207,17 @@
                 </div>
 
                 <div class="ar-detalle-actions">
-                    <button type="button" id="btnPostularse" class="ar-btn ar-btn-ver" data-accion="postularse">Aceptar</button>
-                    <button type="button" id="btnRechazarDetalle" class="ar-btn ar-btn-rechazar" data-accion="rechazar-detalle">Rechazar</button>
-                    <button type="button" id="btnVerPostulados" class="ar-btn ar-btn-ver" data-accion="ver-postulados" hidden>Ver postulados</button>
+                    <button type="button" id="btnPostularse" class="ar-btn ar-btn-ver" onclick="postularse()">Aceptar</button>
+                    <button type="button" id="btnRechazarDetalle" class="ar-btn ar-btn-rechazar" onclick="rechazarDesdeDetalle()">Rechazar</button>
+                    <button type="button" id="btnVerPostulados" class="ar-btn ar-btn-ver" onclick="mostrarVista('vistaPostuladosAyuda')" hidden>Ver postulados</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== VISTA 2B: DETALLE (tarea aceptada / finalizada) ==================== -->
+        <!-- VISTA 2B: DETALLE (tarea aceptada / finalizada) -->
         <div id="vistaDetalleAceptada" class="ar-vista" hidden>
             <div class="ar-detalle-card">
-                <button type="button" class="ar-back" data-accion="volver-lista" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
+                <button type="button" class="ar-back" onclick="mostrarVista('vistaListaAyudas')" title="Volver al listado" aria-label="Volver al listado">&#8592;</button>
                 <h2 class="ar-detalle-title" id="detAceptadaTitulo">Detalle de tarea</h2>
 
                 <div class="ar-detalle-list">
@@ -194,15 +230,15 @@
                 </div>
 
                 <div class="ar-detalle-actions">
-                    <button type="button" id="btnFinalizarTarea" class="ar-btn ar-btn-ver" data-accion="finalizar">Finalizar tarea</button>
+                    <button type="button" id="btnFinalizarTarea" class="ar-btn ar-btn-ver" onclick="finalizarTarea()">Finalizar tarea</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== VISTA 3: POSTULADOS (solo lectura) ==================== -->
+        <!-- VISTA 3: POSTULADOS -->
         <div id="vistaPostuladosAyuda" class="ar-vista" hidden>
             <div class="ar-detalle-card" style="max-width: 900px;">
-                <button type="button" class="ar-back" data-accion="volver-detalle" title="Volver al detalle" aria-label="Volver al detalle">&#8592;</button>
+                <button type="button" class="ar-back" onclick="mostrarVista('vistaDetalleAyuda')" title="Volver al detalle" aria-label="Volver al detalle">&#8592;</button>
                 <h2 class="ar-detalle-title">Postulados: <span id="postuladosNombreTarea"></span></h2>
                 <div id="listaPostuladosContainer" class="ar-post-list"></div>
             </div>
@@ -217,353 +253,12 @@
         <p id="modalPostuladoEmail"></p>
         <p id="modalPostuladoUbicacion"></p>
         <p id="modalPostuladoTipo"></p>
-        <button type="button" class="ar-btn ar-btn-ver" data-accion="cerrar-modal">Cerrar</button>
+        <button type="button" class="ar-btn ar-btn-ver" onclick="cerrarModalPostulado()">Cerrar</button>
     </div>
 </div>
 
 <!-- Snackbar al rechazar -->
 <div id="snackbarRechazo" class="snackbar-rechazo" style="display: none;" role="status">
     <span>Se rechazó la ayuda de manera exitosa.</span>
-    <button type="button" class="snackbar-btn-deshacer" id="btnDeshacerRechazo">Deshacer</button>
+    <button type="button" class="snackbar-btn-deshacer" id="btnDeshacerRechazo" onclick="deshacerRechazo()">Deshacer</button>
 </div>
-
-<script>
-    (function () {
-        'use strict';
-
-        var URLS = {
-            detalle: '@Url.Action("ObtenerDetalleTareaJson", "Home")',
-            rechazar: '@Url.Action("RechazarTarea", "Home")',
-            eliminar: '@Url.Action("EliminarTareaRechazada", "Home")',
-            finalizar: '@Url.Action("FinalizarTareaAceptada", "Home")',
-            postular: '@Url.Action("PostularseJson", "Home")',
-            infoPostulado: '@Url.Action("VerDetalleAyudado", "Home")',
-            lista: '@Url.Action("RealizarAyudas", "Home")'
-        };
-
-        var VISTAS = ['vistaListaAyudas', 'vistaDetalleAyuda', 'vistaDetalleAceptada', 'vistaPostuladosAyuda'];
-        var DESHACER_MS = 3000;
-
-        var idActual = 0;
-        var postuladosCache = {};      // idTarea -> { titulo, lista }
-        var timerRechazo = null;
-        var idPendienteRechazo = null;
-
-        function $(id) { return document.getElementById(id); }
-
-        function mostrarVista(id) {
-            for (var i = 0; i < VISTAS.length; i++) {
-                $(VISTAS[i]).hidden = (VISTAS[i] !== id);
-            }
-            window.scrollTo({ top: 0 });
-        }
-
-        function setTexto(id, valor, porDefecto) {
-            var el = $(id);
-            if (el) {
-                el.textContent = (valor !== undefined && valor !== null && valor !== '') ? valor : (porDefecto || '-');
-            }
-        }
-
-        function pedirJson(url, opciones) {
-            return fetch(url, opciones).then(function (r) {
-                if (!r.ok) { throw new Error('HTTP ' + r.status); }
-                return r.json();
-            });
-        }
-
-        function pedir(url, opciones) {
-            return fetch(url, opciones).then(function (r) {
-                if (!r.ok) { throw new Error('HTTP ' + r.status); }
-                return r;
-            });
-        }
-
-        function tarjeta(id) { return $('card-tarea-' + id); }
-
-        // ------------------------------------------------------------
-        // Detalle
-        // ------------------------------------------------------------
-        function armarDescripcion(d) {
-            var desc = d.descripcion || '';
-            if (d.aclaracion) { desc = desc ? (desc + ' · ' + d.aclaracion) : d.aclaracion; }
-            return desc;
-        }
-
-        function armarDomicilio(d, card) {
-            var txt = d.lugar || (card ? card.dataset.lugar : '') || '';
-            if (d.barrio) { txt = txt ? (txt + ' (' + d.barrio + ')') : d.barrio; }
-            return txt;
-        }
-
-        function armarHorario(d) {
-            var f = d.fechaDia || d.fecha || '';
-            var h = d.hora ? (d.hora + ' hs') : '';
-            return (f + ' ' + h).trim();
-        }
-
-        function armarAcompaniamiento(d) {
-            var v = d.acompaniamiento;
-            if (v === undefined || v === null) { v = d.acompanamiento; }
-            if (v === true) { return 'Sí'; }
-            if (v === false) { return 'No'; }
-            return v || 'No especificado';
-        }
-
-        function abrirDetalle(id) {
-            idActual = id;
-            var card = tarjeta(id);
-            pedirJson(URLS.detalle + '?idTarea=' + encodeURIComponent(id)).then(function (d) {
-                setTexto('detTitulo', d.titulo || (card && card.dataset.titulo), 'Detalle de tarea');
-                setTexto('detDescripcion', armarDescripcion(d));
-                setTexto('detMonto', d.monto || (card && card.dataset.monto));
-                setTexto('detDuracion', d.duracion || d.duracionMaxima);
-                setTexto('detHorario', armarHorario(d));
-                setTexto('detSolicitante', d.nombreSolicitante, 'Adulto mayor');
-                setTexto('detDomicilio', armarDomicilio(d, card));
-                setTexto('detAcompaniamiento', armarAcompaniamiento(d));
-
-                $('btnPostularse').disabled = false;
-                $('btnVerPostulados').hidden = !postuladosCache[id];
-                mostrarVista('vistaDetalleAyuda');
-            }).catch(function (e) {
-                console.error('Error al abrir el detalle:', e);
-                alert('No pudimos cargar el detalle de la ayuda. Probá de nuevo.');
-            });
-        }
-
-        function abrirDetalleAceptada(id, finalizada) {
-            idActual = id;
-            var card = tarjeta(id);
-            pedirJson(URLS.detalle + '?idTarea=' + encodeURIComponent(id)).then(function (d) {
-                setTexto('detAceptadaTitulo', d.titulo || (card && card.dataset.titulo), 'Detalle de tarea');
-                setTexto('detAceptadaDescripcion', armarDescripcion(d));
-                setTexto('detAceptadaHorario', armarHorario(d));
-                setTexto('detAceptadaDuracion', d.duracion || d.duracionMaxima);
-                setTexto('detAceptadaMonto', d.monto || (card && card.dataset.monto));
-                setTexto('detAceptadaSolicitante', d.nombreSolicitante, 'Adulto mayor');
-                setTexto('detAceptadaDomicilio', armarDomicilio(d, card));
-
-                var btn = $('btnFinalizarTarea');
-                btn.hidden = !!finalizada;
-                btn.disabled = false;
-                mostrarVista('vistaDetalleAceptada');
-            }).catch(function (e) {
-                console.error('Error al abrir el detalle:', e);
-                alert('No pudimos cargar el detalle de la ayuda. Probá de nuevo.');
-            });
-        }
-
-        // ------------------------------------------------------------
-        // Postularse / postulados
-        // ------------------------------------------------------------
-        function postularse() {
-            if (idActual <= 0) { return; }
-            var btn = $('btnPostularse');
-            btn.disabled = true;
-            var id = idActual;
-
-            pedirJson(URLS.postular + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).then(function (d) {
-                postuladosCache[id] = {
-                    titulo: d.tituloTarea || (tarjeta(id) ? tarjeta(id).dataset.titulo : ''),
-                    lista: d.postulados || []
-                };
-                $('btnVerPostulados').hidden = false;
-                renderPostulados(id);
-            }).catch(function (e) {
-                console.error('Error al postularse:', e);
-                btn.disabled = false;
-                alert('No pudimos registrar tu postulación. Probá de nuevo.');
-            });
-        }
-
-        function renderPostulados(id) {
-            var info = postuladosCache[id];
-            if (!info) { return; }
-
-            setTexto('postuladosNombreTarea', info.titulo);
-            var cont = $('listaPostuladosContainer');
-            cont.textContent = '';
-
-            if (!info.lista.length) {
-                var vacio = document.createElement('p');
-                vacio.className = 'ar-post-empty';
-                vacio.textContent = 'Todavía no hay postulados para esta ayuda.';
-                cont.appendChild(vacio);
-            }
-
-            info.lista.forEach(function (u) {
-                var idU = u.idUsuario || u.IdUsuario;
-                var nombre = ((u.nombre || u.Nombre || '') + ' ' + (u.apellido || u.Apellido || '')).trim();
-                if (!nombre) { nombre = u.email || u.Email || 'Joven voluntario'; }
-                var foto = u.fotoPerfil || u.FotoPerfil || '/img/user.svg';
-
-                var art = document.createElement('article');
-                art.className = 'ar-post-card';
-
-                var img = document.createElement('img');
-                img.src = foto;
-                img.alt = nombre;
-                art.appendChild(img);
-
-                var box = document.createElement('div');
-                var h3 = document.createElement('h3');
-                h3.textContent = nombre;
-                var b = document.createElement('button');
-                b.type = 'button';
-                b.className = 'ar-btn ar-btn-ver';
-                b.textContent = 'Ver más';
-                b.addEventListener('click', function () { verInfoPostulado(idU); });
-                box.appendChild(h3);
-                box.appendChild(b);
-                art.appendChild(box);
-
-                cont.appendChild(art);
-            });
-
-            mostrarVista('vistaPostuladosAyuda');
-        }
-
-        function verInfoPostulado(idUsuario) {
-            pedirJson(URLS.infoPostulado + '?idUsuario=' + encodeURIComponent(idUsuario)).then(function (d) {
-                var nombre = ((d.nombre || d.Nombre || '') + ' ' + (d.apellido || d.Apellido || '')).trim();
-                var email = d.email || d.Email || 'No especificado';
-                var provincia = d.provincia || d.Provincia || '';
-                var calle = d.calle || d.Calle || '';
-                var dir = d.direccion || d.Direccion || '';
-                var tipo = d.tipoUsuario !== undefined ? d.tipoUsuario : d.TipoUsuario;
-
-                setTexto('modalPostuladoNombre', nombre || email);
-                setTexto('modalPostuladoEmail', 'Email: ' + email);
-                setTexto('modalPostuladoUbicacion', 'Ubicación: ' + (calle + ' ' + dir).trim() + (provincia ? ' (' + provincia + ')' : ''));
-                setTexto('modalPostuladoTipo', 'Tipo de usuario: ' + (tipo ? 'Joven' : 'Adulto mayor'));
-                $('modalPostulado').hidden = false;
-            }).catch(function (e) {
-                console.error('Error al cargar el postulado:', e);
-                alert('No pudimos cargar la información de esta persona.');
-            });
-        }
-
-        // ------------------------------------------------------------
-        // Rechazar con "Deshacer" (3 segundos)
-        // ------------------------------------------------------------
-        function confirmarRechazo(id) {
-            pedir(URLS.rechazar + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).catch(function (e) {
-                console.error('Error al rechazar la tarea:', e);
-                var c = tarjeta(id);
-                if (c) { c.style.display = ''; }
-                alert('No pudimos rechazar la ayuda. Probá de nuevo.');
-            });
-        }
-
-        function rechazarConDeshacer(id) {
-            // Si había otro rechazo pendiente, se confirma ya mismo.
-            if (timerRechazo !== null && idPendienteRechazo !== null) {
-                clearTimeout(timerRechazo);
-                confirmarRechazo(idPendienteRechazo);
-            }
-
-            idPendienteRechazo = id;
-            var card = tarjeta(id);
-            if (card) { card.style.display = 'none'; }
-
-            var snack = $('snackbarRechazo');
-            snack.style.display = 'flex';
-
-            timerRechazo = setTimeout(function () {
-                snack.style.display = 'none';
-                if (idPendienteRechazo !== null) {
-                    confirmarRechazo(idPendienteRechazo);
-                    idPendienteRechazo = null;
-                }
-                timerRechazo = null;
-            }, DESHACER_MS);
-        }
-
-        function deshacerRechazo() {
-            if (timerRechazo !== null) {
-                clearTimeout(timerRechazo);
-                timerRechazo = null;
-            }
-            if (idPendienteRechazo !== null) {
-                var card = tarjeta(idPendienteRechazo);
-                if (card) { card.style.display = ''; }
-                idPendienteRechazo = null;
-            }
-            $('snackbarRechazo').style.display = 'none';
-        }
-
-        // ------------------------------------------------------------
-        // Eliminar / finalizar
-        // ------------------------------------------------------------
-        function eliminarTarjeta(id) {
-            pedir(URLS.eliminar + '?idTarea=' + encodeURIComponent(id), { method: 'POST' }).then(function () {
-                var card = tarjeta(id);
-                if (card) { card.remove(); }
-            }).catch(function (e) {
-                console.error('Error al eliminar la tarea:', e);
-                alert('No pudimos eliminar la ayuda. Probá de nuevo.');
-            });
-        }
-
-        function finalizarTarea() {
-            if (idActual <= 0) { return; }
-            var btn = $('btnFinalizarTarea');
-            btn.disabled = true;
-
-            pedir(URLS.finalizar + '?idTarea=' + encodeURIComponent(idActual), { method: 'POST' }).then(function () {
-                window.location.href = URLS.lista + '?mensaje=' + encodeURIComponent('¡Finalizaste la ayuda correctamente!');
-            }).catch(function (e) {
-                console.error('Error al finalizar la tarea:', e);
-                btn.disabled = false;
-                alert('No pudimos finalizar la ayuda. Probá de nuevo.');
-            });
-        }
-
-        // ------------------------------------------------------------
-        // Eventos (delegación)
-        // ------------------------------------------------------------
-        document.addEventListener('click', function (ev) {
-            var el = ev.target.closest('[data-accion]');
-            if (!el) { return; }
-
-            var accion = el.getAttribute('data-accion');
-            var card = el.closest('.ar-card');
-            var id = card ? Number(card.getAttribute('data-id')) : idActual;
-
-            switch (accion) {
-                case 'ver': abrirDetalle(id); break;
-                case 'ver-aceptada': abrirDetalleAceptada(id, false); break;
-                case 'ver-finalizada': abrirDetalleAceptada(id, true); break;
-                case 'rechazar': rechazarConDeshacer(id); break;
-                case 'eliminar': eliminarTarjeta(id); break;
-                case 'volver-lista': mostrarVista('vistaListaAyudas'); break;
-                case 'volver-detalle': mostrarVista('vistaDetalleAyuda'); break;
-                case 'postularse': postularse(); break;
-                case 'ver-postulados': renderPostulados(idActual); break;
-                case 'finalizar': finalizarTarea(); break;
-                case 'cerrar-modal': $('modalPostulado').hidden = true; break;
-                case 'rechazar-detalle':
-                    mostrarVista('vistaListaAyudas');
-                    rechazarConDeshacer(idActual);
-                    break;
-            }
-        });
-
-        $('btnDeshacerRechazo').addEventListener('click', deshacerRechazo);
-
-        $('modalPostulado').addEventListener('click', function (ev) {
-            if (ev.target === this) { this.hidden = true; }
-        });
-
-        document.addEventListener('keydown', function (ev) {
-            if (ev.key === 'Escape') { $('modalPostulado').hidden = true; }
-        });
-
-        // El banner de éxito desaparece solo.
-        var banner = $('bannerMensajeExito');
-        if (banner) {
-            setTimeout(function () { banner.style.display = 'none'; }, 4000);
-        }
-    })();
-</script>

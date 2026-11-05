@@ -101,10 +101,71 @@ public static class BD
 
     public static List<Usuarios> ObtenerUltimosAyudados(int idJoven)
     {
-        string sql = "SELECT * FROM Usuarios WHERE tipoUsuario = 0";
+        string sql = @"SELECT U.* 
+            FROM Usuarios U
+            INNER JOIN Tareas T ON U.IdUsuario = T.IdUsuarioSolicitante
+            INNER JOIN Postulaciones P ON T.IdTarea = P.IdTarea
+            WHERE P.IdUsuario = @pIdJoven AND P.estado IN ('Aceptada', 'Finalizada')
+            ORDER BY P.IdPostulacion DESC";
+
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            return connection.Query<Usuarios>(sql).ToList();
+            List<Usuarios> lista = connection.Query<Usuarios>(sql, new { pIdJoven = idJoven }).ToList();
+            List<Usuarios> sinRepetidos = new List<Usuarios>();
+            Dictionary<int, Usuarios> vistos = new Dictionary<int, Usuarios>();
+
+            foreach (Usuarios u in lista)
+            {
+                if (!vistos.ContainsKey(u.IdUsuario))
+                {
+                    vistos.Add(u.IdUsuario, u);
+                    sinRepetidos.Add(u);
+                }
+            }
+
+            return sinRepetidos;
+        }
+    }
+
+    public static List<Usuarios> ObtenerPersonasQueAyudaron(int idAdulto)
+    {
+        string sql = @"SELECT U.* 
+            FROM Usuarios U
+            INNER JOIN Postulaciones P ON U.IdUsuario = P.IdUsuario
+            INNER JOIN Tareas T ON P.IdTarea = T.IdTarea
+            WHERE T.IdUsuarioSolicitante = @pIdAdulto AND P.estado IN ('Aceptada', 'Finalizada')
+            ORDER BY P.IdPostulacion DESC";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            List<Usuarios> lista = connection.Query<Usuarios>(sql, new { pIdAdulto = idAdulto }).ToList();
+            List<Usuarios> sinRepetidos = new List<Usuarios>();
+            Dictionary<int, Usuarios> vistos = new Dictionary<int, Usuarios>();
+
+            foreach (Usuarios u in lista)
+            {
+                if (!vistos.ContainsKey(u.IdUsuario))
+                {
+                    vistos.Add(u.IdUsuario, u);
+                    sinRepetidos.Add(u);
+                }
+            }
+
+            return sinRepetidos;
+        }
+    }
+
+    public static List<Tareas> ObtenerTareasRealizadasPorJoven(int idJoven)
+    {
+        string sql = @"SELECT T.* 
+            FROM Tareas T
+            INNER JOIN Postulaciones P ON T.IdTarea = P.IdTarea
+            WHERE P.IdUsuario = @pIdJoven AND P.estado IN ('Aceptada', 'Finalizada')
+            ORDER BY T.IdTarea DESC";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            return connection.Query<Tareas>(sql, new { pIdJoven = idJoven }).ToList();
         }
     }
 
@@ -192,10 +253,6 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             List<Tareas> misTareas = connection.Query<Tareas>(sql, new { pId = idUsuarioSolicitante }).ToList();
-            if (misTareas.Count == 0)
-            {
-                misTareas = connection.Query<Tareas>("SELECT * FROM Tareas ORDER BY IdTarea DESC").ToList();
-            }
             return misTareas;
         }
     }

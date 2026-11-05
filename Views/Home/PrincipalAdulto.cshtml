@@ -94,7 +94,7 @@
                     <p>Ver <strong>ayudas</strong></p>
                 </a>
 
-                <a class="adulto-accion-card" href='@Url.Action("MisAyudas", "Home")'>
+                <a class="adulto-accion-card" href="#ultimas-actividades">
                     <div class="adulto-accion-blanco">
                         <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="#115e2e">
                             <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
@@ -103,7 +103,7 @@
                     <p>Ver <strong>notificaciones</strong></p>
                 </a>
 
-                <a class="adulto-accion-card" href='@Url.Action("MisAyudas", "Home")'>
+                <a class="adulto-accion-card" href="#ultimas-actividades">
                     <div class="adulto-accion-blanco">
                         <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="#115e2e">
                             <path d="M12 3C6.5 3 2 6.6 2 11c0 2.1 1 4.1 2.7 5.5L3.5 20l3.8-1.5c1.4.5 3 .8 4.7.8 5.5 0 10-3.6 10-8.3S17.5 3 12 3zm-4 9a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4z"/>
@@ -192,6 +192,82 @@
                     </summary>
                     <p>El monto lo definís vos al publicar la ayuda según el tipo de tarea.</p>
                 </details>
+            </div>
+        </section>
+
+        <section class="joven-seccion" id="ultimas-actividades">
+            <h2>Ultimas actividades</h2>
+
+            <div class="joven-actividades-caja">
+                @{
+                    List<Tareas> tareasConJoven = ViewBag.TareasConJoven;
+                    Dictionary<int, Usuarios> jovenesAsignados = ViewBag.JovenesAsignados;
+                }
+                @if (tareasConJoven != null && tareasConJoven.Count > 0)
+                {
+                    foreach (Tareas tarea in tareasConJoven)
+                    {
+                        DateTime fechaMostrar = tarea.FechaCreacion;
+                        if (tarea.DiaTarea.Year > 1)
+                        {
+                            fechaMostrar = tarea.DiaTarea;
+                        }
+
+                        Usuarios joven = null;
+                        if (jovenesAsignados != null && jovenesAsignados.ContainsKey(tarea.IdTarea))
+                        {
+                            joven = jovenesAsignados[tarea.IdTarea];
+                        }
+
+                        string srcJoven = "/img/user.svg";
+                        string nombreJoven = "Joven voluntario";
+                        int idJoven = 0;
+                        if (joven != null)
+                        {
+                            idJoven = joven.IdUsuario;
+                            if (joven.FotoPerfil != null && joven.FotoPerfil != "")
+                            {
+                                srcJoven = joven.FotoPerfil;
+                            }
+                            nombreJoven = joven.Nombre + " " + joven.Apellido;
+                            if (nombreJoven.Replace(" ", "") == "")
+                            {
+                                nombreJoven = joven.Email;
+                            }
+                        }
+
+                        <div class="joven-actividad-fila" onclick="verInfoAyudado(@idJoven)">
+                            <div class="joven-actividad-usuario">
+                                <img src="@srcJoven" alt="@nombreJoven" class="joven-actividad-avatar" />
+                                <span class="joven-actividad-nombre">@nombreJoven</span>
+                            </div>
+
+                            <div class="joven-actividad-centro">
+                                <p>Trabajo realizado: @tarea.Titulo</p>
+                                <p>Precio: @(tarea.Monto)$</p>
+                            </div>
+
+                            <div class="joven-actividad-fecha">
+                                <p>Fecha: @fechaMostrar.ToString("d/M/yy")</p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="joven-actividad-fila">
+                        <div class="joven-actividad-centro" style="width: 100%; text-align: center;">
+                            <p>Aún no hay personas que te hayan ayudado registradas en tus últimas actividades.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div id="contenedorDetalleFetch" class="detalle-fetch-card" style="display: none;">
+                <h3 id="detalleNombre"></h3>
+                <p id="detalleEmail"></p>
+                <p id="detalleTelefono"></p>
+                <p id="detalleTipo"></p>
             </div>
         </section>
     </main>

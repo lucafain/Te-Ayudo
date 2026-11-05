@@ -482,9 +482,9 @@ public class HomeController : Controller
             return RedirectToAction("PrincipalAdulto", "Home");
         }
 
-        List<Tareas> tareasDisponibles = BD.ObtenerTareasDisponibles();
+        List<Tareas> tareasRealizadas = BD.ObtenerTareasRealizadasPorJoven(joven.IdUsuario);
         Dictionary<int, Usuarios> solicitantes = new Dictionary<int, Usuarios>();
-        foreach (Tareas tarea in tareasDisponibles)
+        foreach (Tareas tarea in tareasRealizadas)
         {
             if (!solicitantes.ContainsKey(tarea.IdUsuarioSolicitante))
             {
@@ -498,7 +498,7 @@ public class HomeController : Controller
 
         ViewBag.Joven = joven;
         ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(joven.IdUsuario);
-        ViewBag.TareasDisponibles = tareasDisponibles;
+        ViewBag.TareasDisponibles = tareasRealizadas;
         ViewBag.Solicitantes = solicitantes;
 
         return View("PrincipalJoven");
@@ -516,9 +516,29 @@ public class HomeController : Controller
             return RedirectToAction("PrincipalJoven", "Home");
         }
 
+        List<Tareas> misTareas = BD.ObtenerTareasPorSolicitante(adulto.IdUsuario);
+        List<Tareas> tareasConJoven = new List<Tareas>();
+        Dictionary<int, Usuarios> jovenesAsignados = new Dictionary<int, Usuarios>();
+
+        foreach (Tareas tarea in misTareas)
+        {
+            Usuarios jovenAsignado = BD.ObtenerJovenAceptadoPorTarea(tarea.IdTarea);
+            if (jovenAsignado != null)
+            {
+                if (!jovenesAsignados.ContainsKey(tarea.IdTarea))
+                {
+                    jovenesAsignados.Add(tarea.IdTarea, jovenAsignado);
+                }
+                tareasConJoven.Add(tarea);
+            }
+        }
+
         ViewBag.Adulto = adulto;
         ViewBag.Jovenes = BD.ObtenerJovenesDisponibles();
-        ViewBag.MisTareas = BD.ObtenerTareasPorSolicitante(adulto.IdUsuario);
+        ViewBag.MisTareas = misTareas;
+        ViewBag.TareasConJoven = tareasConJoven;
+        ViewBag.JovenesAsignados = jovenesAsignados;
+        ViewBag.PersonasQueAyudaron = BD.ObtenerPersonasQueAyudaron(adulto.IdUsuario);
 
         return View("PrincipalAdulto");
     }
@@ -532,8 +552,19 @@ public class HomeController : Controller
         }
 
         ViewBag.Joven = usuario;
-        ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(usuario.IdUsuario);
-        ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
+        if (usuario.TipoUsuario)
+        {
+            ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(usuario.IdUsuario);
+            ViewBag.CantidadAyudas = BD.ContarAyudasRealizadas(usuario.IdUsuario);
+            ViewBag.TareasDisponibles = BD.ObtenerTareasDisponibles();
+        }
+        else
+        {
+            ViewBag.UltimosAyudados = BD.ObtenerPersonasQueAyudaron(usuario.IdUsuario);
+            List<Tareas> misTareas = BD.ObtenerTareasPorSolicitante(usuario.IdUsuario);
+            ViewBag.CantidadAyudas = misTareas.Count;
+            ViewBag.TareasDisponibles = misTareas;
+        }
 
         return View("Explorar");
     }
@@ -914,6 +945,12 @@ public class HomeController : Controller
             return RedirectToAction("PrincipalJoven", "Home");
         }
 
+        Tareas tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
+        {
+            return RedirectToAction("MisAyudas", "Home");
+        }
+
         BD.EliminarTareaFinalizadaAdulto(idTarea);
         return RedirectToAction("MisAyudas", "Home", new { mensaje = "La tarea finalizada fue eliminada de tu lista." });
     }
@@ -932,7 +969,7 @@ public class HomeController : Controller
         }
 
         Tareas tarea = BD.ObtenerTareaPorId(idTarea);
-        if (tarea == null)
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return RedirectToAction("MisAyudas", "Home");
         }
@@ -962,6 +999,12 @@ public class HomeController : Controller
         if (adulto.TipoUsuario)
         {
             return RedirectToAction("PrincipalJoven", "Home");
+        }
+
+        Tareas tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
+        {
+            return RedirectToAction("MisAyudas", "Home");
         }
 
         if (Calificacion < 1) Calificacion = 1;
@@ -997,7 +1040,7 @@ public class HomeController : Controller
         }
 
         Tareas tarea = BD.ObtenerTareaPorId(idTarea);
-        if (tarea == null)
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
         }
@@ -1025,7 +1068,7 @@ public class HomeController : Controller
         }
 
         Tareas tarea = BD.ObtenerTareaPorId(idTarea);
-        if (tarea == null)
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
         }
@@ -1053,7 +1096,7 @@ public class HomeController : Controller
         }
 
         Tareas actual = BD.ObtenerTareaPorId(IdTarea);
-        if (actual == null)
+        if (actual == null || actual.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return RedirectToAction("MisAyudas", "Home", new { mensaje = "No se encontró la ayuda." });
         }
@@ -1165,7 +1208,7 @@ public class HomeController : Controller
         }
 
         Tareas tarea = BD.ObtenerTareaPorId(idTarea);
-        if (tarea == null)
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return RedirectToAction("MisAyudas", "Home");
         }
@@ -1221,6 +1264,12 @@ public class HomeController : Controller
             return Json(new { ok = false });
         }
 
+        Tareas tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
         bool ok = BD.AceptarPostulante(idTarea, idUsuario);
         return Json(new { ok = ok });
     }
@@ -1230,6 +1279,12 @@ public class HomeController : Controller
     {
         Usuarios adulto = ObtenerUsuarioSesion();
         if (adulto == null || adulto.TipoUsuario)
+        {
+            return Json(new { ok = false });
+        }
+
+        Tareas tarea = BD.ObtenerTareaPorId(idTarea);
+        if (tarea == null || tarea.IdUsuarioSolicitante != adulto.IdUsuario)
         {
             return Json(new { ok = false });
         }

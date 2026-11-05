@@ -7,6 +7,12 @@
         esJovenNav = usuarioNav.TipoUsuario;
     }
 
+    int cantidadAyudas = 0;
+    if (ViewBag.CantidadAyudas != null)
+    {
+        cantidadAyudas = ViewBag.CantidadAyudas;
+    }
+
     string rutaFotoNav = "/img/user.svg";
     bool tieneFotoPropia = false;
     if (ViewBag.FotoPerfilSesion != null && ViewBag.FotoPerfilSesion != "" && ViewBag.FotoPerfilSesion != "/img/user.svg")
@@ -45,9 +51,18 @@
             Preguntas frecuentes
         </a>
 
-        <a class="nav-button nav-help" href='@Url.Action("RealizarAyudas", "Home")' id="ExplorarAyuda">
-            Realiza ayudas
-        </a>
+        @if (esJovenNav)
+        {
+            <a class="nav-button nav-help" href='@Url.Action("RealizarAyudas", "Home")' id="ExplorarAyuda">
+                Realiza ayudas
+            </a>
+        }
+        else
+        {
+            <a class="nav-button nav-help" href='@Url.Action("SolicitarTarea", "Home")' id="ExplorarAyuda">
+                Solicitá ayudas
+            </a>
+        }
 
         <a class="nav-perfil-avatar" href='@Url.Action("Perfil", "Home")' title="Perfil" aria-label="Perfil">
             @if (tieneFotoPropia)
@@ -84,7 +99,7 @@
         <div class="tarjeta-resumen-usuario">
             @{
                 string srcJoven = "/img/user.svg";
-                string nombreJoven = "Joven de la comunidad";
+                string nombreJoven = "Usuario de la comunidad";
                 if (usuarioNav != null)
                 {
                     if (usuarioNav.FotoPerfil != null && usuarioNav.FotoPerfil != "")
@@ -98,16 +113,30 @@
                     }
                 }
             }
-            <img src="@srcJoven" alt="Foto Joven" class="avatar-resumen-joven" />
+            <img src="@srcJoven" alt="Foto Usuario" class="avatar-resumen-joven" />
             <div class="detalles-resumen-joven">
                 <h3 class="nombre-resumen-joven">@nombreJoven</h3>
-                <p class="conteo-ayudas-joven">21 ayudas realizadas</p>
+                @if (esJovenNav)
+                {
+                    <p class="conteo-ayudas-joven">@cantidadAyudas ayudas realizadas</p>
+                }
+                else
+                {
+                    <p class="conteo-ayudas-joven">@cantidadAyudas ayudas solicitadas</p>
+                }
             </div>
         </div>
     </section>
 
     <section class="panel seccion-ultimos-ayudados">
-        <h2>Últimos ayudados</h2>
+        @if (esJovenNav)
+        {
+            <h2>Últimos ayudados</h2>
+        }
+        else
+        {
+            <h2>Personas que te ayudaron</h2>
+        }
         <div class="contenedor-lista-ayudados">
             @{
                 List<Usuarios> listaAyudados = ViewBag.UltimosAyudados;
@@ -115,27 +144,27 @@
             @if (listaAyudados != null && listaAyudados.Count > 0)
             {
                 int posicion = 1;
-                foreach (Usuarios adulto in listaAyudados)
+                foreach (Usuarios persona in listaAyudados)
                 {
-                    string srcAdulto = "/img/user.svg";
-                    if (adulto.FotoPerfil != null && adulto.FotoPerfil != "")
+                    string srcPersona = "/img/user.svg";
+                    if (persona.FotoPerfil != null && persona.FotoPerfil != "")
                     {
-                        srcAdulto = adulto.FotoPerfil;
+                        srcPersona = persona.FotoPerfil;
                     }
 
-                    string nombreAdulto = adulto.Nombre + " " + adulto.Apellido;
-                    if (nombreAdulto.Replace(" ", "") == "")
+                    string nombrePersona = persona.Nombre + " " + persona.Apellido;
+                    if (nombrePersona.Replace(" ", "") == "")
                     {
-                        nombreAdulto = adulto.Email;
+                        nombrePersona = persona.Email;
                     }
 
                     <div class="item-tarjeta-ayudado">
                         <div class="ayudado-info-usuario">
-                            <img src="@srcAdulto" alt="@nombreAdulto" class="imagen-avatar-ayudado" />
-                            <span class="nombre-usuario-ayudado">@nombreAdulto</span>
+                            <img src="@srcPersona" alt="@nombrePersona" class="imagen-avatar-ayudado" />
+                            <span class="nombre-usuario-ayudado">@nombrePersona</span>
                         </div>
                         <div class="ayudado-acciones">
-                            <button type="button" class="button" onclick="verInfoAyudado(@adulto.IdUsuario)">Ver más info</button>
+                            <button type="button" class="button" onclick="verInfoAyudado(@persona.IdUsuario)">Ver más info</button>
                             <span class="posicion-ranking-numero">#@posicion</span>
                         </div>
                     </div>
@@ -145,7 +174,14 @@
             else
             {
                 <div class="item-tarjeta-ayudado">
-                    <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+                    @if (esJovenNav)
+                    {
+                        <span class="nombre-usuario-ayudado">Aún no se registran adultos ayudados.</span>
+                    }
+                    else
+                    {
+                        <span class="nombre-usuario-ayudado">Aún no se registran personas que te hayan ayudado.</span>
+                    }
                 </div>
             }
         </div>

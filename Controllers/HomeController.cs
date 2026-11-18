@@ -1046,10 +1046,10 @@ public class HomeController : Controller
         }
 
         bool cancelada = BD.CancelarTarea(idTarea);
-        string mensaje = "No se puede cancelar una ayuda que ya tiene postulantes.";
+        string mensaje = "No se pudo cancelar la ayuda.";
         if (cancelada)
         {
-            mensaje = "La ayuda fue cancelada.";
+            mensaje = "La ayuda fue cancelada y las postulaciones asociadas fueron rechazadas.";
         }
         return RedirectToAction("MisAyudas", "Home", new { mensaje = mensaje });
     }

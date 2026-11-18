@@ -271,7 +271,7 @@ public static class BD
         string sql = @"SELECT T.* 
             FROM Tareas T
             WHERE (T.estado = 1 AND NOT EXISTS (SELECT 1 FROM Postulaciones P WHERE P.IdTarea = T.IdTarea AND P.IdUsuario = @pIdJoven))
-               OR EXISTS (SELECT 1 FROM Postulaciones P2 WHERE P2.IdTarea = T.IdTarea AND P2.IdUsuario = @pIdJoven AND P2.estado IN ('Aceptada', 'Rechazada'))
+               OR EXISTS (SELECT 1 FROM Postulaciones P2 WHERE P2.IdTarea = T.IdTarea AND P2.IdUsuario = @pIdJoven AND P2.estado IN ('Aceptada', 'Rechazada', 'Finalizada'))
             ORDER BY T.IdTarea DESC";
 
         using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -444,13 +444,14 @@ public static class BD
 
     public static bool CancelarTarea(int idTarea)
     {
-        if (ContarPostulantes(idTarea) > 0)
+        Tareas tarea = ObtenerTareaPorId(idTarea);
+        if (tarea == null || !tarea.Estado)
         {
             return false;
         }
 
-        string sqlPostulaciones = "DELETE FROM Postulaciones WHERE IdTarea = @pId";
-        string sqlTarea = "DELETE FROM Tareas WHERE IdTarea = @pId";
+        string sqlPostulaciones = "UPDATE Postulaciones SET estado = 'Rechazada' WHERE IdTarea = @pId AND estado IN ('Pendiente', 'Aceptada')";
+        string sqlTarea = "UPDATE Tareas SET estado = 0 WHERE IdTarea = @pId";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             connection.Execute(sqlPostulaciones, new { pId = idTarea });

@@ -73,7 +73,19 @@
             }
             else
             {
-                <div class="ar-grid" id="gridTareasDisponibles">
+                <div class="ar-listado-layout">
+                    <aside class="ar-filtros" aria-label="Filtros de tareas">
+                        <label for="mostrarTareasCanceladas">
+                            <input type="checkbox" id="mostrarTareasCanceladas" onclick="filtrarTareasJoven()" />
+                            Mostrar tareas canceladas
+                        </label>
+                        <label for="mostrarTareasTerminadas">
+                            <input type="checkbox" id="mostrarTareasTerminadas" onclick="filtrarTareasJoven()" />
+                            Mostrar tareas terminadas
+                        </label>
+                    </aside>
+
+                    <div class="ar-grid" id="gridTareasDisponibles">
                     @foreach (Tareas t in tareasPendientes)
                     {
                         int km = 2;
@@ -119,7 +131,17 @@
                             claseEstado = "is-finalizada";
                         }
 
-                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea">
+                        string tipoTarea = "activa";
+                        if (estado == "Rechazada")
+                        {
+                            tipoTarea = "cancelada";
+                        }
+                        else if (estado == "Finalizada")
+                        {
+                            tipoTarea = "finalizada";
+                        }
+
+                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea">
 
                             <div class="ar-card-top">
                                 @if (estado != "Finalizada")
@@ -186,6 +208,7 @@
                             </div>
                         </article>
                     }
+                    </div>
                 </div>
             }
         </div>
@@ -262,3 +285,38 @@
     <span>Se rechazó la ayuda de manera exitosa.</span>
     <button type="button" class="snackbar-btn-deshacer" id="btnDeshacerRechazo" onclick="deshacerRechazo()">Deshacer</button>
 </div>
+
+<script>
+    function filtrarTareasJoven() {
+        let mostrarCanceladas = document.getElementById('mostrarTareasCanceladas').checked;
+        let mostrarTerminadas = document.getElementById('mostrarTareasTerminadas').checked;
+        let tarjetas = document.querySelectorAll('[data-tipo-tarea]');
+
+        for (let i = 0; i < tarjetas.length; i++) {
+            let tarjeta = tarjetas[i];
+            let tipo = tarjeta.getAttribute('data-tipo-tarea');
+
+            if (tipo == 'activa') {
+                tarjeta.style.display = '';
+            }
+            else if (tipo == 'cancelada') {
+                if (mostrarCanceladas) {
+                    tarjeta.style.display = '';
+                }
+                else {
+                    tarjeta.style.display = 'none';
+                }
+            }
+            else if (tipo == 'finalizada') {
+                if (mostrarTerminadas) {
+                    tarjeta.style.display = '';
+                }
+                else {
+                    tarjeta.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    filtrarTareasJoven();
+</script>

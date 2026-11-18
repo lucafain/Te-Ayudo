@@ -865,6 +865,15 @@ footer {
     nav.open {
         display: flex;
     }
+
+    .ar-listado-layout {
+        flex-direction: column;
+    }
+
+    .ar-filtros {
+        width: 100%;
+        flex-basis: auto;
+    }
 }
 
 @media (max-width: 760px) {
@@ -2233,6 +2242,45 @@ footer {
 }
 
 
+/* ---------- Filtros de tareas del joven ---------- */
+.ar-vista {
+    position: relative;
+}
+
+.ar-listado-layout {
+    display: block;
+}
+
+.ar-filtros {
+    position: absolute;
+    left: -214px;
+    top: 82px;
+    width: 190px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.ar-filtros label {
+    display: block;
+    color: #233645;
+    font-size: 14px;
+    line-height: 1.35;
+    cursor: pointer;
+}
+
+.ar-filtros label + label {
+    margin-top: 12px;
+}
+
+.ar-filtros input {
+    margin-right: 8px;
+}
+
+.ar-listado-layout .ar-grid {
+    max-width: none;
+    margin: 0;
+}
 /* DETALLE DE AYUDA Y POSTULADOS */
 
 .ayudas-titulo-principal,
@@ -2596,7 +2644,6 @@ footer {
 .textarea-descripcion {
     border: 0;
     width: 100%;
-    min-height: 120px;
     border-radius: 999px;
     border-radius: 20px;
     padding: 14px 18px;
@@ -2919,9 +2966,11 @@ footer {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
+             flex-wrap: wrap;
     justify-content: flex-end;
 }
+
+
 
 .ar-nav-btn {
     display: inline-flex;
@@ -3202,11 +3251,6 @@ footer {
     padding: 36px 20px;
 }
 
-.ar-empty p {
-    font-size: 17px;
-    margin-bottom: 16px;
-}
-
 /* ---------- Vistas de detalle / postulados ---------- */
 .ar-vista[hidden] {
     display: none;
@@ -3363,6 +3407,7 @@ footer {
 }
 
 @media (max-width: 900px) {
+    .ayudas-grid,
     .ar-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 18px 22px;
@@ -3374,6 +3419,15 @@ footer {
 
     .ar-main {
         padding: 22px 20px 28px;
+    }
+
+    .ar-listado-layout {
+        flex-direction: column;
+    }
+
+    .ar-filtros {
+        width: 100%;
+        flex-basis: auto;
     }
 }
 
@@ -3394,9 +3448,6 @@ footer {
         padding: 24px 20px;
     }
 }
-
-
-/* ========== UNIFICACIÓN DE TARJETAS DE AYUDAS (ADULTOS Y JÓVENES) ========== */
 
 .ayudas-titulo-principal,
 .ar-title {
@@ -3426,7 +3477,6 @@ footer {
     display: flex;
     flex-direction: column;
     min-height: 170px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .ayuda-card-top,
@@ -3540,11 +3590,6 @@ footer {
     background: #7d828c;
 }
 
-.btn-ayuda-deshabilitado {
-    background: #c9c9c9;
-    cursor: not-allowed;
-}
-
 .ar-card-foot {
     width: 100%;
     display: flex;
@@ -3569,11 +3614,49 @@ footer {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 18px 22px;
     }
+
+    .ar-header {
+        padding: 14px 20px;
+    }
+
+    .ar-main {
+        padding: 22px 20px 28px;
+    }
+
+    .ar-listado-layout {
+        flex-direction: column;
+    }
+
+    .ar-filtros {
+        width: 100%;
+        flex-basis: auto;
+    }
 }
 
 @media (max-width: 600px) {
     .ayudas-grid,
     .ar-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1200px) {
+    .ar-listado-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .ar-filtros {
+        position: static;
+        width: 170px;
+        flex: 0 0 auto;
+    }
+
+    .ar-filtros label {
+        width: 170px;
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }

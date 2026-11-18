@@ -156,26 +156,25 @@
                                             Ver más
                                         </a>
 
-                                        @if (postulantes == 0 && jovenAsignado == null && tarea.Estado)
+                                        @if (tarea.Estado)
                                         {
-                                            <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
-                                                Modificar
-                                            </a>
+                                            @if (postulantes == 0 && jovenAsignado == null)
+                                            {
+                                                <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                                    Modificar
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
+                                                    Modificar
+                                                </button>
+                                            }
 
                                             <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
                                                 <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
                                                 <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
                                             </form>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
-                                                Modificar
-                                            </button>
-
-                                            <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede cancelar porque ya tiene postulantes">
-                                                Cancelar
-                                            </button>
                                         }
                                     </div>
                                 </div>

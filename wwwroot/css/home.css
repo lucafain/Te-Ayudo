@@ -2142,6 +2142,10 @@ footer {
     }
 }
 
+.ar-card:not(.is-rechazada):not(.is-finalizada) .ar-card-title {
+    margin-top: 12px;
+}
+
 .ayuda-card-monto {
     font-family: 'Fredoka', Arial, Helvetica, sans-serif;
     color: #0d6e2b;
@@ -3168,23 +3172,17 @@ footer {
     background: #0d6e2b;
 }
 
-.ar-btn-rechazar {
-    background: #bb0000;
-}
-
-.ar-btn-gris {
-    background: #7d828c;
-}
-
 .ar-card-foot {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 600;
+    color: #000000;
     text-align: left;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
 }
 
 .ar-foot-lugar {
@@ -3239,6 +3237,7 @@ footer {
     color: #777;
 }
 
+.ar-card.is-rechazada .ar-card-body,
 .ar-card.is-finalizada .ar-card-body {
     justify-content: center;
     gap: 2px;
@@ -3516,8 +3515,7 @@ footer {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 16px 14px;
-    gap: 12px;
+    padding: 10px 12px 8px;
     text-align: center;
 }
 
@@ -3527,7 +3525,6 @@ footer {
     font-family: 'Fredoka One', cursive, sans-serif;
     font-weight: 400;
     font-size: 20px;
-    line-height: 1.2;
     color: #000000;
     text-align: center;
     margin: 0;
@@ -3588,19 +3585,6 @@ footer {
 
 .ar-btn-gris {
     background: #7d828c;
-}
-
-.ar-card-foot {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
-    font-size: 11.5px;
-    font-weight: 600;
-    color: #000000;
-    text-align: left;
 }
 
 .ar-foot-dist svg {

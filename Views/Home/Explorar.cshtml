@@ -47,9 +47,18 @@
             Explorá
         </a>
 
-        <a class="nav-button" href='@linkPreguntas'>
-            Preguntas frecuentes
+        @if (esJovenNav)
+        {
+        <a class="nav-button nav-button--joven" href='@Url.Action("PrincipalJoven", "Home")#joven-consejos'>
+                Consejos
         </a>
+        }
+        else
+        {
+            <a class="nav-button nav-button--joven" href='@Url.Action("PrincipalAdulto", "Home")#preguntas-adulto'>
+                Preguntas frecuentes
+            </a>
+        }
 
         @if (esJovenNav)
         {

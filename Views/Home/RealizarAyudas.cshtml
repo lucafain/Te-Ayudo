@@ -144,7 +144,7 @@
                         <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea">
 
                             <div class="ar-card-top">
-                                @if (estado != "Finalizada")
+                                @if (estado != "Finalizada" && estado != "Rechazada")
                                 {
                                     <span class="ar-price">$@t.Monto</span>
                                 }
@@ -174,25 +174,24 @@
                                 <div class="ar-actions">
                                     @if (estado == "Aceptada")
                                     {
-                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalleAceptada(@t.IdTarea, false)">Ver más</button>
+                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalleAceptada(@t.IdTarea, false)">Detalles</button>
                                     }
                                     else if (estado == "Rechazada")
                                     {
-                                        <button type="button" class="ar-btn" onclick="eliminarTarjeta(@t.IdTarea)">Eliminar</button>
+                                        <button type="button" class="ar-btn ar-btn-gris" onclick="abrirDetalleAceptada(@t.IdTarea, true)">Detalles</button>
                                     }
                                     else if (estado == "Finalizada")
                                     {
-                                        <button type="button" class="ar-btn ar-btn-gris" onclick="abrirDetalleAceptada(@t.IdTarea, true)">Ver detalle</button>
-                                        <button type="button" class="ar-btn ar-btn-gris" onclick="eliminarTarjeta(@t.IdTarea)">Eliminar</button>
+                                        <button type="button" class="ar-btn ar-btn-gris" onclick="abrirDetalleAceptada(@t.IdTarea, true)">Detalles</button>
                                     }
                                     else
                                     {
-                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalle(@t.IdTarea)">Ver más</button>
+                                        <button type="button" class="ar-btn ar-btn-ver" onclick="abrirDetalle(@t.IdTarea)">Detalles</button>
                                         <button type="button" class="ar-btn ar-btn-rechazar" onclick="rechazarConDeshacer(@t.IdTarea)">Rechazar</button>
                                     }
                                 </div>
 
-                                @if (estado != "Finalizada")
+                                @if (estado != "Finalizada" && estado != "Rechazada")
                                 {
                                     <div class="ar-card-foot">
                                         <span class="ar-foot-lugar">@lugar</span>

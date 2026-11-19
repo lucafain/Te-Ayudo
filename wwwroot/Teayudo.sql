@@ -157,7 +157,7 @@ CREATE TABLE [dbo].[Usuarios](
 	[calle] [varchar](100) NOT NULL,
 	[codigoPostal] [varchar](8) NOT NULL,
 	[fechaRegistro] [date] NOT NULL,
-	[tipoUsuario] [bit] NOT NULL,
+	[esJoven] [bit] NOT NULL,
 	[contrasena] [varchar](50) NOT NULL,
 	[aceptaTerminos] [bit] NULL,
 	[fotoPerfil] [varchar](max) NOT NULL,
@@ -183,14 +183,14 @@ SET IDENTITY_INSERT [dbo].[Mensajes] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Usuarios] ON 
 
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (1, N'Mateo', N'Perez Curci', N'mateo@gmail.com', N'Buenos Aires', 150, N'Av. Medrano', N'1179', CAST(N'2026-10-26' AS Date), 0, N'Mateo123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (2, N'Rocco', N'Diaz', N'rocco@gmail.com', N'Buenos Aires', 220, N'Av. Boedo', N'1218', CAST(N'2026-10-26' AS Date), 0, N'Rocco123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (3, N'Santiago', N'Montiel', N'santiago@gmail.com', N'Buenos Aires', 330, N'Av. Pueyrredon', N'1032', CAST(N'2026-10-26' AS Date), 1, N'Santiago123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (4, N'Camilo', N'Rey', N'camilo@gmail.com', N'Buenos Aires', 440, N'Av. Warnes', N'1414', CAST(N'2026-10-26' AS Date), 1, N'Camilo123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (5, N'Nicolas', N'Reniero', N'nicolas@gmail.com', N'Buenos Aires', 550, N'Av. San Juan', N'1147', CAST(N'2026-10-26' AS Date), 0, N'Nicolas123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (6, N'Lucia', N'Sosa', N'lucia@gmail.com', N'Buenos Aires', 660, N'Av. Directorio', N'1406', CAST(N'2026-10-26' AS Date), 0, N'Lucia123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (7, N'Nahuel', N'Molina', N'nahuel@gmail.com', N'Buenos Aires', 770, N'Av. Belgrano', N'1092', CAST(N'2026-10-26' AS Date), 1, N'Nahuel123', 1, N'')
-INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [tipoUsuario], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (8, N'Agustina', N'Romero', N'agustina@gmail.com', N'Buenos Aires', 880, N'Av. Diaz Velez', N'1405', CAST(N'2026-10-26' AS Date), 0, N'Agustina123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (1, N'Mateo', N'Perez Curci', N'mateo@gmail.com', N'Buenos Aires', 150, N'Av. Medrano', N'1179', CAST(N'2026-10-26' AS Date), 0, N'Mateo123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (2, N'Rocco', N'Diaz', N'rocco@gmail.com', N'Buenos Aires', 220, N'Av. Boedo', N'1218', CAST(N'2026-10-26' AS Date), 0, N'Rocco123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (3, N'Santiago', N'Montiel', N'santiago@gmail.com', N'Buenos Aires', 330, N'Av. Pueyrredon', N'1032', CAST(N'2026-10-26' AS Date), 1, N'Santiago123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (4, N'Camilo', N'Rey', N'camilo@gmail.com', N'Buenos Aires', 440, N'Av. Warnes', N'1414', CAST(N'2026-10-26' AS Date), 1, N'Camilo123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (5, N'Nicolas', N'Reniero', N'nicolas@gmail.com', N'Buenos Aires', 550, N'Av. San Juan', N'1147', CAST(N'2026-10-26' AS Date), 0, N'Nicolas123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (6, N'Lucia', N'Sosa', N'lucia@gmail.com', N'Buenos Aires', 660, N'Av. Directorio', N'1406', CAST(N'2026-10-26' AS Date), 0, N'Lucia123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (7, N'Nahuel', N'Molina', N'nahuel@gmail.com', N'Buenos Aires', 770, N'Av. Belgrano', N'1092', CAST(N'2026-10-26' AS Date), 1, N'Nahuel123', 1, N'')
+INSERT [dbo].[Usuarios] ([IdUsuario], [nombre], [apellido], [email], [provincia], [direccion], [calle], [codigoPostal], [fechaRegistro], [esJoven], [contrasena], [aceptaTerminos], [fotoPerfil]) VALUES (8, N'Agustina', N'Romero', N'agustina@gmail.com', N'Buenos Aires', 880, N'Av. Diaz Velez', N'1405', CAST(N'2026-10-26' AS Date), 0, N'Agustina123', 1, N'')
 SET IDENTITY_INSERT [dbo].[Usuarios] OFF
 GO
 ALTER TABLE [dbo].[Mensajes]  WITH CHECK ADD  CONSTRAINT [FK_Mensajes_Usuarios] FOREIGN KEY([IdEmisor])
@@ -393,7 +393,7 @@ CREATE PROCEDURE [dbo].[IniciarSesion]
     @contrasena VARCHAR(50)
 AS
 BEGIN
-    SELECT IdUsuario, nombre, apellido, email, tipoUsuario FROM Usuarios WHERE email = @email AND contrasena = @contrasena
+    SELECT IdUsuario, nombre, apellido, email, esJoven FROM Usuarios WHERE email = @email AND contrasena = @contrasena
 END
 GO
 /****** Object:  StoredProcedure [dbo].[ModificarTarea]    Script Date: 19/11/2026 07:56:44 ******/
@@ -489,7 +489,7 @@ CREATE PROCEDURE [dbo].[MostrarPerfil]
     @IdUsuario INT
 AS
 BEGIN
-    SELECT IdUsuario, nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, fotoPerfil FROM Usuarios WHERE IdUsuario = @IdUsuario
+    SELECT IdUsuario, nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, esJoven, fotoPerfil FROM Usuarios WHERE IdUsuario = @IdUsuario
 END
 GO
 /****** Object:  StoredProcedure [dbo].[MostrarPostulacionesCompletas]    Script Date: 19/11/2026 07:56:44 ******/
@@ -594,7 +594,7 @@ GO
 CREATE PROCEDURE [dbo].[ObtenerJovenesDisponibles]
 AS
 BEGIN
-    SELECT * FROM Usuarios WHERE tipoUsuario = 1
+    SELECT * FROM Usuarios WHERE esJoven = 1
 END
 GO
 /****** Object:  StoredProcedure [dbo].[ObtenerPrimerUsuario]    Script Date: 19/11/2026 07:56:44 ******/
@@ -649,7 +649,7 @@ GO
 CREATE PROCEDURE [dbo].[ObtenerUltimosAyudados]
 AS
 BEGIN
-    SELECT * FROM Usuarios WHERE tipoUsuario = 0
+    SELECT * FROM Usuarios WHERE esJoven = 0
 END
 GO
 /****** Object:  StoredProcedure [dbo].[ObtenerUsuarioPorCredenciales]    Script Date: 19/11/2026 07:56:44 ******/
@@ -739,7 +739,7 @@ CREATE PROCEDURE [dbo].[RegistrarUsuario]
     @direccion INT,
     @calle VARCHAR(100),
     @codigoPostal VARCHAR(8),
-    @tipoUsuario BIT,
+    @esJoven BIT,
     @contrasena VARCHAR(50),
     @aceptaTerminos BIT,
     @fotoPerfil VARCHAR(MAX)
@@ -747,7 +747,7 @@ AS
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE email = @email)
     BEGIN
-        INSERT INTO Usuarios (nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, contrasena, aceptaTerminos, fotoPerfil) VALUES (@nombre, @apellido, @email, @provincia, @direccion, @calle, @codigoPostal, GETDATE(), @tipoUsuario, @contrasena, @aceptaTerminos, @fotoPerfil)
+        INSERT INTO Usuarios (nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, esJoven, contrasena, aceptaTerminos, fotoPerfil) VALUES (@nombre, @apellido, @email, @provincia, @direccion, @calle, @codigoPostal, GETDATE(), @esJoven, @contrasena, @aceptaTerminos, @fotoPerfil)
 
         PRINT 'Usuario registrado correctamente.'
     END

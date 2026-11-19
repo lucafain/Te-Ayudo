@@ -11,7 +11,7 @@ public class Usuarios
     public string Calle { get; set; }
     public string CodigoPostal { get; set; }
     public DateTime FechaRegistro { get; set; }
-    public bool TipoUsuario { get; set; }
+    public bool esJoven { get; set; }
     public string Contrasena { get; set; }
     public bool AceptaTerminos { get; set; }
     public string FotoPerfil { get; set; }
@@ -30,7 +30,7 @@ public class Usuarios
         Barrio = "";
     }
 
-    public Usuarios(string nombre, string apellido, string email, string provincia, int direccion, string calle, string codigoPostal, bool tipoUsuario, string contrasena, bool aceptaTerminos, string fotoPerfil)
+    public Usuarios(string nombre, string apellido, string email, string provincia, int direccion, string calle, string codigoPostal, bool esJoven, string contrasena, bool aceptaTerminos, string fotoPerfil)
     {
         Nombre = nombre;
         Apellido = apellido;
@@ -40,7 +40,7 @@ public class Usuarios
         Calle = calle;
         CodigoPostal = codigoPostal;
         FechaRegistro = DateTime.Now;
-        TipoUsuario = tipoUsuario;
+        esJoven = esJoven;
         Contrasena = contrasena;
         AceptaTerminos = aceptaTerminos;
         FotoPerfil = fotoPerfil;

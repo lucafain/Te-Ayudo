@@ -345,7 +345,7 @@ function verInfoAyudado(idUsuario) {
                 let provincia = datos.provincia || datos.Provincia || '';
                 let calle = datos.calle || datos.Calle || '';
                 let direccion = datos.direccion || datos.Direccion || '';
-                let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
+                let tipoBool = datos.esJoven !== undefined ? datos.esJoven : datos.esJoven;
                 let tipoTexto = tipoBool ? 'Joven' : 'Adulto mayor';
 
                 let nombreCompleto = (nombre + ' ' + apellido).trim();
@@ -598,7 +598,7 @@ function verInfoAyudado(idUsuario) {
                 let provincia = datos.provincia || datos.Provincia || '';
                 let calle = datos.calle || datos.Calle || '';
                 let direccion = datos.direccion || datos.Direccion || '';
-                let tipoBool = datos.tipoUsuario !== undefined ? datos.tipoUsuario : datos.TipoUsuario;
+                let tipoBool = datos.esJoven !== undefined ? datos.esJoven : datos.esJoven;
                 let tipoTexto = tipoBool ? 'Joven' : 'Adulto mayor';
 
                 let nombreCompleto = (nombre + ' ' + apellido).trim();

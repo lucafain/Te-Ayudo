@@ -139,7 +139,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (usuario.TipoUsuario)
+        if (usuario.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -156,7 +156,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (usuarioActual.TipoUsuario)
+        if (usuarioActual.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -299,7 +299,7 @@ public class HomeController : Controller
         user.Direccion = Direccion;
         user.CodigoPostal = codigoPostalFinal;
         user.FechaRegistro = DateTime.Now;
-        user.TipoUsuario = false;
+        user.esJoven = false;
         user.Contrasena = Contrasena;
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfil = rutaFoto;
@@ -370,7 +370,7 @@ public class HomeController : Controller
         user.Direccion = Direccion;
         user.CodigoPostal = CodigoPostal;
         user.FechaRegistro = DateTime.Now;
-        user.TipoUsuario = true;
+        user.esJoven = true;
         user.Contrasena = Contrasena;
         user.AceptaTerminos = AceptaTerminos;
         user.FotoPerfil = rutaFoto;
@@ -437,14 +437,14 @@ public class HomeController : Controller
         ViewBag.Calle = usuario.Calle;
         ViewBag.Direccion = usuario.Direccion;
         ViewBag.CodigoPostal = usuario.CodigoPostal;
-        ViewBag.EsJoven = usuario.TipoUsuario;
-        if (usuario.TipoUsuario)
+        ViewBag.EsJoven = usuario.esJoven;
+        if (usuario.esJoven)
         {
-            ViewBag.TipoUsuario = "Joven";
+            ViewBag.esJoven = "Joven";
         }
         else
         {
-            ViewBag.TipoUsuario = "Adulto mayor";
+            ViewBag.esJoven = "Adulto mayor";
         }
         ViewBag.FotoPerfil = usuario.FotoPerfil;
 
@@ -477,7 +477,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -511,7 +511,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -552,7 +552,7 @@ public class HomeController : Controller
         }
 
         ViewBag.Joven = usuario;
-        if (usuario.TipoUsuario)
+        if (usuario.esJoven)
         {
             ViewBag.UltimosAyudados = BD.ObtenerUltimosAyudados(usuario.IdUsuario);
             ViewBag.CantidadAyudas = BD.ContarAyudasRealizadas(usuario.IdUsuario);
@@ -576,7 +576,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -649,7 +649,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -769,7 +769,7 @@ public class HomeController : Controller
     public IActionResult EliminarTareaRechazada(int idTarea)
     {
         Usuarios joven = ObtenerUsuarioSesion();
-        if (joven == null || !joven.TipoUsuario)
+        if (joven == null || !joven.esJoven)
         {
             return Json(new { ok = false });
         }
@@ -782,7 +782,7 @@ public class HomeController : Controller
     public IActionResult FinalizarTareaAceptada(int idTarea)
     {
         Usuarios joven = ObtenerUsuarioSesion();
-        if (joven == null || !joven.TipoUsuario)
+        if (joven == null || !joven.esJoven)
         {
             return Json(new { ok = false });
         }
@@ -799,7 +799,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -814,7 +814,7 @@ public class HomeController : Controller
     public IActionResult PostularseJson(int idTarea)
     {
         Usuarios joven = ObtenerUsuarioSesion();
-        if (joven == null || !joven.TipoUsuario)
+        if (joven == null || !joven.esJoven)
         {
             return Json(null);
         }
@@ -845,7 +845,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -864,7 +864,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (!joven.TipoUsuario)
+        if (!joven.esJoven)
         {
             return RedirectToAction("PrincipalAdulto", "Home");
         }
@@ -877,7 +877,7 @@ public class HomeController : Controller
     public IActionResult RechazarTarea(int idTarea)
     {
         Usuarios joven = ObtenerUsuarioSesion();
-        if (joven == null || !joven.TipoUsuario)
+        if (joven == null || !joven.esJoven)
         {
             return Json(new { ok = false });
         }
@@ -893,7 +893,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -940,7 +940,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -963,7 +963,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -996,7 +996,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -1034,7 +1034,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -1062,7 +1062,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -1090,7 +1090,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -1202,7 +1202,7 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login", "Home");
         }
-        if (adulto.TipoUsuario)
+        if (adulto.esJoven)
         {
             return RedirectToAction("PrincipalJoven", "Home");
         }
@@ -1259,7 +1259,7 @@ public class HomeController : Controller
     public IActionResult AceptarPostulante(int idTarea, int idUsuario)
     {
         Usuarios adulto = ObtenerUsuarioSesion();
-        if (adulto == null || adulto.TipoUsuario)
+        if (adulto == null || adulto.esJoven)
         {
             return Json(new { ok = false });
         }
@@ -1278,7 +1278,7 @@ public class HomeController : Controller
     public IActionResult RechazarPostulante(int idTarea, int idUsuario)
     {
         Usuarios adulto = ObtenerUsuarioSesion();
-        if (adulto == null || adulto.TipoUsuario)
+        if (adulto == null || adulto.esJoven)
         {
             return Json(new { ok = false });
         }

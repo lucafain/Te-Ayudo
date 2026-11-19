@@ -58,9 +58,9 @@ public static class BD
         }
 
         string sql = @"INSERT INTO Usuarios 
-            (nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, tipoUsuario, contrasena, aceptaTerminos, fotoPerfil)
+            (nombre, apellido, email, provincia, direccion, calle, codigoPostal, fechaRegistro, esJoven, contrasena, aceptaTerminos, fotoPerfil)
             VALUES 
-            (@pNombre, @pApellido, @pEmail, @pProvincia, @pDireccion, @pCalle, @pCodigoPostal, @pFechaRegistro, @pTipoUsuario, @pContrasena, @pAceptaTerminos, @pFotoPerfil)";
+            (@pNombre, @pApellido, @pEmail, @pProvincia, @pDireccion, @pCalle, @pCodigoPostal, @pFechaRegistro, @pesJoven, @pContrasena, @pAceptaTerminos, @pFotoPerfil)";
 
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
@@ -74,7 +74,7 @@ public static class BD
                 pCalle = usuario.Calle,
                 pCodigoPostal = usuario.CodigoPostal,
                 pFechaRegistro = usuario.FechaRegistro,
-                pTipoUsuario = usuario.TipoUsuario,
+                pesJoven = usuario.esJoven,
                 pContrasena = usuario.Contrasena,
                 pAceptaTerminos = usuario.AceptaTerminos,
                 pFotoPerfil = usuario.FotoPerfil
@@ -171,7 +171,7 @@ public static class BD
 
     public static List<Usuarios> ObtenerJovenesDisponibles()
     {
-        string sql = "SELECT * FROM Usuarios WHERE tipoUsuario = 1";
+        string sql = "SELECT * FROM Usuarios WHERE esJoven = 1";
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             return connection.Query<Usuarios>(sql).ToList();

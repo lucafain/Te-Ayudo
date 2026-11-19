@@ -189,7 +189,7 @@ function verInfoAyudado(idUsuario) {
                 let provincia = datos.provincia || '';
                 let calle = datos.calle || '';
                 let direccion = datos.direccion || '';
-                let tipoTexto = datos.tipoUsuario ? 'Joven' : 'Adulto mayor';
+                let tipoTexto = datos.esJoven ? 'Joven' : 'Adulto mayor';
 
                 document.getElementById('detalleNombre').textContent = 'Información de ' + nombre + ' ' + apellido;
                 document.getElementById('detalleEmail').textContent = 'Email: ' + email;
@@ -333,7 +333,7 @@ function verInfoPostulado(idUsuario) {
                 let calle = datos.calle || '';
                 let dir = datos.direccion || '';
                 let provincia = datos.provincia || '';
-                let tipo = datos.tipoUsuario ? 'Joven' : 'Adulto mayor';
+                let tipo = datos.esJoven ? 'Joven' : 'Adulto mayor';
 
                 document.getElementById('modalPostuladoNombre').textContent = nombre;
                 document.getElementById('modalPostuladoEmail').textContent = 'Email: ' + email;

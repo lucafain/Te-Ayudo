@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Perfil";
+    bool esJoven = ViewBag.EsJoven is bool valorEsJoven && valorEsJoven;
     string fotoUrl = "/img/user.svg";
     if (ViewBag.FotoPerfil != null && ViewBag.FotoPerfil != "")
     {
@@ -56,7 +57,7 @@
         </div>
 
         <div class="auth-actions" style="gap: 12px;">
-            @if (ViewBag.EsJoven == true)
+            @if (esJoven)
             {
                 <a class="auth-button auth-button--secondary" href='@Url.Action("PrincipalJoven", "Home")'>Ir al inicio</a>
             }

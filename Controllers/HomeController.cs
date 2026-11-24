@@ -132,7 +132,8 @@ public class HomeController : Controller
         return RedirectToAction("Perfil", "Home");
     }
 
-    public IActionResult SolicitarTarea()
+    [HttpGet]
+    public IActionResult SolicitarTarea(int idTarea = 0)
     {
         Usuarios usuario = ObtenerUsuarioSesion();
         if (usuario == null)
@@ -145,6 +146,22 @@ public class HomeController : Controller
         }
 
         ViewBag.UsuarioActual = usuario;
+        if (idTarea > 0)
+        {
+            try
+            {
+                Tareas tarea = BD.ObtenerTareaPorId(idTarea);
+                if (tarea != null && tarea.IdUsuarioSolicitante == usuario.IdUsuario)
+                {
+                    ViewBag.TareaRepetir = tarea;
+                }
+            }
+            catch
+            {
+                ViewBag.TareaRepetir = null;
+                ViewBag.ErrorMessage = "No se pudo cargar la tarea cancelada. Podés completar una solicitud nueva.";
+            }
+        }
         return View();
     }
 

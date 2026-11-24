@@ -75,112 +75,164 @@
 
             @if (misTareas != null && misTareas.Count > 0)
             {
-                <div class="ayudas-grid">
-                    @foreach (Tareas tarea in misTareas)
-                    {
-                        int postulantes = 0;
-                        if (cantidadPostulantes != null && cantidadPostulantes.ContainsKey(tarea.IdTarea))
-                        {
-                            postulantes = cantidadPostulantes[tarea.IdTarea];
-                        }
+                <div class="ar-listado-layout">
+                    <aside class="ar-filtros" aria-label="Filtros de tareas">
+                        <label for="mostrarAyudasCanceladas">
+                            <input type="checkbox" id="mostrarAyudasCanceladas" onclick="filtrarAyudasAdulto()" />
+                            Mostrar tareas canceladas
+                        </label>
+                        <label for="mostrarAyudasFinalizadas">
+                            <input type="checkbox" id="mostrarAyudasFinalizadas" onclick="filtrarAyudasAdulto()" />
+                            Mostrar tareas finalizadas
+                        </label>
+                        <label for="ordenarAyudasFecha">
+                            <input type="radio" id="ordenarAyudasFecha" name="ordenAyudas" onclick="ordenarAyudasAdulto()" />
+                            Ordenar por fecha (más recientes primero)
+                        </label>
+                        <label for="ordenarAyudasPrecio">
+                            <input type="radio" id="ordenarAyudasPrecio" name="ordenAyudas" onclick="ordenarAyudasAdulto()" />
+                            Ordenar por precio (mayor a menor)
+                        </label>
+                    </aside>
 
-                        Usuarios jovenAsignado = null;
-                        if (jovenesAsignados != null && jovenesAsignados.ContainsKey(tarea.IdTarea))
+                    <div class="ayudas-grid">
+                        @foreach (Tareas tarea in misTareas)
                         {
-                            jovenAsignado = jovenesAsignados[tarea.IdTarea];
-                        }
+                            int postulantes = 0;
+                            if (cantidadPostulantes != null && cantidadPostulantes.ContainsKey(tarea.IdTarea))
+                            {
+                                postulantes = cantidadPostulantes[tarea.IdTarea];
+                            }
 
-                        bool esFinalizada = false;
-                        if (tareasFinalizadas != null && tareasFinalizadas.ContainsKey(tarea.IdTarea))
-                        {
-                            esFinalizada = tareasFinalizadas[tarea.IdTarea];
-                        }
+                            Usuarios jovenAsignado = null;
+                            if (jovenesAsignados != null && jovenesAsignados.ContainsKey(tarea.IdTarea))
+                            {
+                                jovenAsignado = jovenesAsignados[tarea.IdTarea];
+                            }
 
-                        if (esFinalizada)
-                        {
-                            <article class="ayuda-card ayuda-card--aceptada">
-                                <div class="ayuda-card-top ayuda-card-top--aceptada"></div>
+                            bool esFinalizada = false;
+                            if (tareasFinalizadas != null && tareasFinalizadas.ContainsKey(tarea.IdTarea))
+                            {
+                                esFinalizada = tareasFinalizadas[tarea.IdTarea];
+                            }
 
-                                <div class="ayuda-card-body">
-                                    <div>
-                                        <h3 class="ayuda-card-title">@tarea.Titulo</h3>
-                                        <p class="ayuda-card-subtitulo-aceptada">Tarea finalizada</p>
+                            string fechaCreacion = "";
+                            string fechaOrden = "";
+                            if (tarea.FechaCreacion.Year > 1)
+                            {
+                                fechaCreacion = tarea.FechaCreacion.ToString("dd/MM/yyyy");
+                                fechaOrden = tarea.FechaCreacion.ToString("yyyyMMdd");
+                            }
+
+                            string precioOrden = tarea.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+                            if (esFinalizada)
+                            {
+                                <article class="ayuda-card ayuda-card--aceptada" data-tipo-ayuda="finalizada" data-fecha="@fechaOrden" data-precio="@precioOrden">
+                                    <div class="ayuda-card-top ayuda-card-top--aceptada">
+                                        <span class="ayuda-card-monto ayuda-card-monto--blanco">$@tarea.Monto</span>
+                                        <span class="ayuda-card-monto ayuda-card-monto--blanco">@fechaCreacion</span>
                                     </div>
 
-                                    <div class="ayuda-card-botones">
-                                        <a class="btn-ayuda-verde" href='@Url.Action("TicketAyuda", "Home", new { idTarea = tarea.IdTarea })'>
-                                            Ver detalle
-                                        </a>
+                                    <div class="ayuda-card-body">
+                                        <div>
+                                            <h3 class="ayuda-card-title">@tarea.Titulo</h3>
+                                            <p class="ayuda-card-subtitulo-aceptada">Tarea finalizada</p>
+                                        </div>
 
-                                        <form action='@Url.Action("EliminarTareaFinalizada", "Home")' method="post" style="display: inline;">
-                                            <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
-                                            <button type="submit" class="btn-ayuda-verde">
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                        <div class="ayuda-card-botones">
+                                            <a class="btn-ayuda-verde" href='@Url.Action("TicketAyuda", "Home", new { idTarea = tarea.IdTarea })'>
+                                                Ver detalle
+                                            </a>
+
+                                            <form action='@Url.Action("EliminarTareaFinalizada", "Home")' method="post" style="display: inline;">
+                                                <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
+                                                <button type="submit" class="btn-ayuda-verde">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                            </article>
-                        }
-                        else
-                        {
-                            <article class="ayuda-card">
-                                <div class="ayuda-card-top"></div>
+                                </article>
+                            }
+                            else
+                            {
+                                string tipoAyuda = "activa";
+                                if (!tarea.Estado && jovenAsignado == null)
+                                {
+                                    tipoAyuda = "cancelada";
+                                }
 
-                                <div class="ayuda-card-body">
-                                    <div>
-                                        <h3 class="ayuda-card-title">@tarea.Titulo</h3>
-                                        @if (jovenAsignado != null)
-                                        {
-                                            string nombreAsignado = jovenAsignado.Nombre + " " + jovenAsignado.Apellido;
-                                            if (nombreAsignado.Replace(" ", "") == "")
+                                <article class="ayuda-card" data-tipo-ayuda="@tipoAyuda" data-fecha="@fechaOrden" data-precio="@precioOrden">
+                                    <div class="ayuda-card-top">
+                                        <span class="ayuda-card-monto ayuda-card-monto--blanco">$@tarea.Monto</span>
+                                        <span class="ayuda-card-monto ayuda-card-monto--blanco">@fechaCreacion</span>
+                                    </div>
+
+                                    <div class="ayuda-card-body">
+                                        <div>
+                                            <h3 class="ayuda-card-title">@tarea.Titulo</h3>
+                                            @if (jovenAsignado != null)
                                             {
-                                                nombreAsignado = jovenAsignado.Email;
+                                                string nombreAsignado = jovenAsignado.Nombre + " " + jovenAsignado.Apellido;
+                                                if (nombreAsignado.Replace(" ", "") == "")
+                                                {
+                                                    nombreAsignado = jovenAsignado.Email;
+                                                }
+                                                <p class="ayuda-card-postulantes" style="color: #0d6e2b; font-weight: 600;">
+                                                    Realiza: @nombreAsignado
+                                                </p>
                                             }
-                                            <p class="ayuda-card-postulantes" style="color: #0d6e2b; font-weight: 600;">
-                                                Realiza: @nombreAsignado
-                                            </p>
-                                        }
-                                        else if (postulantes == 1)
-                                        {
-                                            <p class="ayuda-card-postulantes">1 postulante</p>
-                                        }
-                                        else
-                                        {
-                                            <p class="ayuda-card-postulantes">@postulantes postulantes</p>
-                                        }
-                                    </div>
-
-                                    <div class="ayuda-card-botones">
-                                        <a class="btn-ayuda-verde" href='@Url.Action("PostulantesTarea", "Home", new { idTarea = tarea.IdTarea })'>
-                                            Ver más
-                                        </a>
-
-                                        @if (tarea.Estado)
-                                        {
-                                            @if (postulantes == 0 && jovenAsignado == null)
+                                            else if (postulantes == 1)
                                             {
-                                                <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
-                                                    Modificar
+                                                <p class="ayuda-card-postulantes">1 postulante</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="ayuda-card-postulantes">@postulantes postulantes</p>
+                                            }
+                                        </div>
+
+                                        <div class="ayuda-card-botones">
+                                            @if (tarea.Estado || jovenAsignado != null)
+                                            {
+                                                <a class="btn-ayuda-verde" href='@Url.Action("PostulantesTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                                    Ver más
                                                 </a>
                                             }
                                             else
                                             {
-                                                <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
-                                                    Modificar
-                                                </button>
+                                                <a class="btn-ayuda-verde" href='@Url.Action("SolicitarTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                                    Solicitar otra vez
+                                                </a>
                                             }
 
-                                            <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
-                                                <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
-                                                <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
-                                            </form>
-                                        }
+                                            @if (tarea.Estado)
+                                            {
+                                                @if (postulantes == 0 && jovenAsignado == null)
+                                                {
+                                                    <a class="btn-ayuda-verde" href='@Url.Action("ModificarTarea", "Home", new { idTarea = tarea.IdTarea })'>
+                                                        Modificar
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn-ayuda-deshabilitado" disabled title="No se puede modificar porque ya tiene postulantes o aceptados">
+                                                        Modificar
+                                                    </button>
+                                                }
+
+                                                <form action='@Url.Action("CancelarTarea", "Home")' method="post" style="display: inline;">
+                                                    <input type="hidden" name="idTarea" value="@tarea.IdTarea" />
+                                                    <button type="submit" class="btn-ayuda-rojo">Cancelar</button>
+                                                </form>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </article>
+                                </article>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             }
             else
@@ -230,3 +282,77 @@
         </p>
     </footer>
 </div>
+
+<script>
+    function filtrarAyudasAdulto() {
+        let mostrarCanceladas = document.getElementById('mostrarAyudasCanceladas').checked;
+        let mostrarFinalizadas = document.getElementById('mostrarAyudasFinalizadas').checked;
+        let tarjetas = document.querySelectorAll('[data-tipo-ayuda]');
+
+        for (let i = 0; i < tarjetas.length; i++) {
+            let tarjeta = tarjetas[i];
+            let tipo = tarjeta.getAttribute('data-tipo-ayuda');
+
+            if (tipo == 'activa') {
+                tarjeta.style.display = '';
+            }
+            else if (tipo == 'cancelada') {
+                if (mostrarCanceladas) {
+                    tarjeta.style.display = '';
+                }
+                else {
+                    tarjeta.style.display = 'none';
+                }
+            }
+            else if (tipo == 'finalizada') {
+                if (mostrarFinalizadas) {
+                    tarjeta.style.display = '';
+                }
+                else {
+                    tarjeta.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function ordenarAyudasAdulto() {
+        let contenedor = document.querySelector('.ayudas-grid');
+        let tarjetas = document.querySelectorAll('[data-tipo-ayuda]');
+        let ordenarFecha = document.getElementById('ordenarAyudasFecha').checked;
+        let ordenarPrecio = document.getElementById('ordenarAyudasPrecio').checked;
+
+        for (let i = 0; i < tarjetas.length - 1; i++) {
+            for (let j = i + 1; j < tarjetas.length; j++) {
+                let cambiar = false;
+                if (ordenarFecha) {
+                    if (tarjetas[j].getAttribute('data-fecha') > tarjetas[i].getAttribute('data-fecha')) {
+                        cambiar = true;
+                    }
+                }
+                else if (ordenarPrecio) {
+                    if (Number(tarjetas[j].getAttribute('data-precio')) > Number(tarjetas[i].getAttribute('data-precio'))) {
+                        cambiar = true;
+                    }
+                }
+
+                if (cambiar) {
+                    let temporal = tarjetas[i];
+                    tarjetas[i] = tarjetas[j];
+                    tarjetas[j] = temporal;
+                }
+            }
+        }
+
+        if (ordenarFecha || ordenarPrecio) {
+            for (let i = 0; i < tarjetas.length; i++) {
+                contenedor.appendChild(tarjetas[i]);
+            }
+        }
+
+        filtrarAyudasAdulto();
+    }
+
+    if (document.getElementById('mostrarAyudasCanceladas') != null && document.getElementById('mostrarAyudasFinalizadas') != null) {
+        filtrarAyudasAdulto();
+    }
+</script>

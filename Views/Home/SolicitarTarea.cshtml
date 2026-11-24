@@ -1,10 +1,32 @@
 @{
     ViewData["Title"] = "Solicitar Ayuda";
     Usuarios usuario = ViewBag.UsuarioActual;
+    Tareas tareaRepetir = ViewBag.TareaRepetir;
+
+    string tituloInicial = "";
+    string descripcionInicial = "";
     string lugarInicial = "";
+    string barrioInicial = "";
+    string aclaracionInicial = "";
+    string diaHoraInicial = "";
+    string diaHoraVisibleInicial = "";
+    double montoInicial = 0;
+
     if (usuario != null && usuario.Calle != null && usuario.Calle != "")
     {
         lugarInicial = usuario.Calle + " " + usuario.Direccion;
+    }
+
+    if (tareaRepetir != null)
+    {
+        tituloInicial = tareaRepetir.Titulo;
+        descripcionInicial = tareaRepetir.Descripcion;
+        lugarInicial = tareaRepetir.Lugar;
+        barrioInicial = tareaRepetir.Barrio;
+        aclaracionInicial = tareaRepetir.Aclaracion;
+        montoInicial = tareaRepetir.Monto;
+        diaHoraInicial = tareaRepetir.DiaTarea.ToString("yyyy-MM-dd") + "T" + tareaRepetir.HoraTarea.ToString(@"hh\:mm");
+        diaHoraVisibleInicial = tareaRepetir.DiaTarea.ToString("dd/MM/yyyy") + " · " + tareaRepetir.HoraTarea.ToString(@"hh\:mm");
     }
 }
 
@@ -31,25 +53,19 @@
 
             <form action='@Url.Action("SolicitarTarea", "Home")' method="post" id="formSolicitar" class="form-solicitar" novalidate>
                 <div class="field">
-                    <input type="text" id="Titulo" name="Titulo" maxlength="50" placeholder="Ponele nombre a tu ayuda..." class="input-titulo-ayuda" />
+                    <input type="text" id="Titulo" name="Titulo" maxlength="50" value="@tituloInicial" placeholder="Ponele nombre a tu ayuda..." class="input-titulo-ayuda" />
                 </div>
 
                 <div class="auth-divider solicitar-divider"></div>
 
                 <div class="field">
                     <label for="Descripcion">Descripción</label>
-                    <textarea id="Descripcion" name="Descripcion" maxlength="500" rows="5" class="textarea-descripcion" placeholder="Contá con detalle qué necesitás..."></textarea>
+                    <textarea id="Descripcion" name="Descripcion" maxlength="500" rows="5" class="textarea-descripcion" placeholder="Contá con detalle qué necesitás...">@descripcionInicial</textarea>
                 </div>
 
                 <div class="field">
                     <label for="Lugar">Lugar</label>
                     <div class="input-with-left-icon">
-                        <span class="input-left-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </span>
                         <input type="text" id="Lugar" name="Lugar" maxlength="50" value="@lugarInicial" />
                     </div>
                 </div>
@@ -57,13 +73,7 @@
                 <div class="field">
                     <label for="Barrio">Barrio</label>
                     <div class="input-with-left-icon">
-                        <span class="input-left-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </span>
-                        <input type="text" id="Barrio" name="Barrio" maxlength="50" placeholder="Ej: Caballito, Palermo, Belgrano..." />
+                        <input type="text" id="Barrio" name="Barrio" maxlength="50" value="@barrioInicial" placeholder="Ej: Caballito, Palermo, Belgrano..." />
                     </div>
                 </div>
 
@@ -78,8 +88,8 @@
                                 <line x1="3" y1="10" x2="21" y2="10"></line>
                             </svg>
                         </span>
-                        <input type="text" id="DiaHoraVisible" placeholder="Seleccionar día y horario..." readonly style="cursor: pointer;" />
-                        <input type="hidden" id="DiaHora" name="DiaHora" />
+                        <input type="text" id="DiaHoraVisible" value="@diaHoraVisibleInicial" placeholder="Seleccionar día y horario..." readonly style="cursor: pointer;" />
+                        <input type="hidden" id="DiaHora" name="DiaHora" value="@diaHoraInicial" />
                     </div>
 
                     <div id="customDateTimePopup" class="dt-popup-wrapper" style="display: none;">
@@ -162,12 +172,12 @@
 
                 <div class="field">
                     <label for="Monto">Monto ($)</label>
-                    <input type="number" id="Monto" name="Monto" min="0" step="100" placeholder="Ej: 5000" />
+                    <input type="number" id="Monto" name="Monto" min="0" step="100" value="@montoInicial" placeholder="Ej: 5000" />
                 </div>
 
                 <div class="field">
                     <label for="Aclaracion">Aclaraciones (opcional)</label>
-                    <input type="text" id="Aclaracion" name="Aclaracion" />
+                    <input type="text" id="Aclaracion" name="Aclaracion" value="@aclaracionInicial" />
                 </div>
 
                 <div class="auth-actions" style="margin-top: 28px;">

@@ -1110,8 +1110,6 @@ footer {
 .header--joven {
     background: #b5dc97;
     min-height: 96px;
-    max-width: 1280px;
-    margin: 0 auto;
     width: 100%;
     padding: 16px 48px;
 }
@@ -2253,6 +2251,7 @@ footer {
 
 .ar-listado-layout {
     display: block;
+    position: relative;
 }
 
 .ar-filtros {
@@ -3585,11 +3584,6 @@ footer {
 
 .ar-btn-gris {
     background: #7d828c;
-}
-
-.ar-foot-dist svg {
-    width: 13px;
-    height: 13px;
 }
 
 @media (max-width: 900px) {

@@ -29,7 +29,7 @@
 
         <nav class="ar-nav" aria-label="Navegación principal">
             <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Explorá</a>
-            <a href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades' class="ar-nav-btn">Conversaciones</a>
+            <a href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades' class="ar-nav-btn">Consejos</a>
             <a href='@Url.Action("RealizarAyudas", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
             <button type="button" class="ar-bell" title="Notificaciones" aria-label="Notificaciones">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -82,6 +82,14 @@
                         <label for="mostrarTareasTerminadas">
                             <input type="checkbox" id="mostrarTareasTerminadas" onclick="filtrarTareasJoven()" />
                             Mostrar tareas terminadas
+                        </label>
+                        <label for="ordenarTareasFecha">
+                            <input type="radio" id="ordenarTareasFecha" name="ordenTareasJoven" onclick="ordenarTareasJoven()" />
+                            Ordenar por fecha (más recientes primero)
+                        </label>
+                        <label for="ordenarTareasPrecio">
+                            <input type="radio" id="ordenarTareasPrecio" name="ordenTareasJoven" onclick="ordenarTareasJoven()" />
+                            Ordenar por precio (mayor a menor)
                         </label>
                     </aside>
 
@@ -141,12 +149,22 @@
                             tipoTarea = "finalizada";
                         }
 
-                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea">
+                        string fechaCreacionJoven = "";
+                        string fechaOrdenJoven = "";
+                        if (t.FechaCreacion.Year > 1)
+                        {
+                            fechaCreacionJoven = t.FechaCreacion.ToString("dd/MM/yyyy");
+                            fechaOrdenJoven = t.FechaCreacion.ToString("yyyyMMdd");
+                        }
+                        string precioOrdenJoven = t.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea" data-fecha="@fechaOrdenJoven" data-precio="@precioOrdenJoven">
 
                             <div class="ar-card-top">
-                                @if (estado != "Finalizada" && estado != "Rechazada")
+                                @if (estado != "Rechazada")
                                 {
                                     <span class="ar-price">$@t.Monto</span>
+                                    <span class="ar-price">@fechaCreacionJoven</span>
                                 }
                                 @if (estado == "Aceptada")
                                 {
@@ -315,6 +333,43 @@
                 }
             }
         }
+    }
+
+    function ordenarTareasJoven() {
+        let contenedor = document.getElementById('gridTareasDisponibles');
+        let tarjetas = document.querySelectorAll('[data-tipo-tarea]');
+        let ordenarFecha = document.getElementById('ordenarTareasFecha').checked;
+        let ordenarPrecio = document.getElementById('ordenarTareasPrecio').checked;
+
+        for (let i = 0; i < tarjetas.length - 1; i++) {
+            for (let j = i + 1; j < tarjetas.length; j++) {
+                let cambiar = false;
+                if (ordenarFecha) {
+                    if (tarjetas[j].getAttribute('data-fecha') > tarjetas[i].getAttribute('data-fecha')) {
+                        cambiar = true;
+                    }
+                }
+                else if (ordenarPrecio) {
+                    if (Number(tarjetas[j].getAttribute('data-precio')) > Number(tarjetas[i].getAttribute('data-precio'))) {
+                        cambiar = true;
+                    }
+                }
+
+                if (cambiar) {
+                    let temporal = tarjetas[i];
+                    tarjetas[i] = tarjetas[j];
+                    tarjetas[j] = temporal;
+                }
+            }
+        }
+
+        if (ordenarFecha || ordenarPrecio) {
+            for (let i = 0; i < tarjetas.length; i++) {
+                contenedor.appendChild(tarjetas[i]);
+            }
+        }
+
+        filtrarTareasJoven();
     }
 
     filtrarTareasJoven();

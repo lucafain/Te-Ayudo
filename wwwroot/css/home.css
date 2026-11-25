@@ -1,11 +1,18 @@
 /* COLORES */
 
-:root {
-    --verde: #285548;
-    --verde-hover: #1d4035;
-    --crema: #faf9f3;
-    --suave: #edf0e5;
+:root{
+    --verde-oscuro:var(--verde-oscuro);
+    --verde-medio:var(--verde-medio);
+    --verde-claro:#B5D99C;
+    --blanco:#fff;
+    --gris-claro:#F2F2F2;
+    --rojo:#BA0000;
+    --amarillo:#FBC756;
+    --link:#002AFF;
     --texto: #243c31;
+    --f-base:'Fredoka',cursive,system-ui,sans-serif;
+    --f-titulo:'Fredoka One','Fredoka',cursive,system-ui,sans-serif;
+    --f-form:'Inter',system-ui,sans-serif;
 }
 
 
@@ -22,8 +29,8 @@ html {
 
 body {
     margin: 0;
-    background: var(--crema);
-    color: var(--texto);
+    background: var(--verde-claro);
+    color: black;
     font-family: 'Fredoka', Arial, Helvetica, sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -32,6 +39,11 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+
 }
 
 button,
@@ -60,7 +72,7 @@ h3,
 .solicitar-main-title,
 .nombre-resumen-joven,
 .ready {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
 }
 
@@ -79,7 +91,7 @@ h3 {
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible {
-    outline: 3px solid #67ad29;
+    outline: 3px solid var(--verde-medio);
     outline-offset: 4px;
 }
 
@@ -91,30 +103,54 @@ summary:focus-visible {
 
 
 /* HEADER */
+.campana{position:relative;width:65px;height:65px;border:0;border-radius:44px;background:var(--verde-oscuro);color:#fff;cursor:pointer;display:grid;place-items:center}
+.campana:hover{filter:brightness(1.15)}
+.campana:focus-visible{outline:4px solid var(--amarillo);outline-offset:3px}
+.badge{position:absolute;top:-13px;right:-9px;width:22px;height:22px;border-radius:50%;background:var(--verde-oscuro);
+  color:var(--amarillo);font:500 14px/22px var(--f-base);text-align:center}
+.avatar{width:105px;height:105px;border-radius:50%;background:var(--verde-medio);border:0;display:grid;place-items:center;color:#fff;
+  font:500 36px var(--f-base);cursor:pointer;flex:none}
+.perfil{width:104px;height:104px;border-radius:50%;background:var(--verde-oscuro);border:0;color:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+.avatar:focus-visible,.perfil:focus-visible{outline:4px solid var(--amarillo);outline-offset:3px}
 
-.header {
+header {
     width: 100%;
-    min-height: 112px;
-    padding: 12px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    background: #e4e9dc;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:129px;
+    background:var(--verde-claro);
+    padding:0 62px 0 66px;
+    gap:16px;
 }
-
+header nav{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+    justify-content:flex-end
+}
 .logo {
     display: block;
     flex-shrink: 0;
+    width:107px;
+    height:107px;
+    border-radius:50%;
+    background:var(--blanco);
+    display:grid;
+    place-items:center;
+    font:700 22px/1 var(--f-base);
+    color:var(--verde-oscuro);
+    text-align:center;
+    flex:none;
 }
-
 .logo img {
     display: block;
     width: 110px;
     height: 90px;
     object-fit: contain;
 }
-
 nav {
     display: flex;
     align-items: center;
@@ -122,7 +158,6 @@ nav {
     flex-wrap: wrap;
     gap: 12px;
 }
-
 .menu-toggle {
     display: none;
 }
@@ -142,7 +177,7 @@ nav {
     padding: 14px 21px;
     border-radius: 999px;
 
-    background: #72BF3B;
+    background: var(--verde-medio);
     color: #FFFFFF;
 
     font-size: 14px;
@@ -173,7 +208,7 @@ nav {
 
 .button:hover,
 .nav-button:hover {
-    background: #64A535;
+    background: var(--verde-medio);
     color: #FFFFFF;
 }
 
@@ -181,14 +216,14 @@ nav {
 
 .button:active,
 .nav-button:active {
-    background: #0A732F;
+    background: var(--verde-oscuro);
     color: #FFFFFF;
 }
 
 /* Solicita tus ayudas usa el mismo color primario */
 
 .nav-help {
-    background: #72BF3B;
+    background: var(--verde-medio);
     color: #FFFFFF;
 }
 
@@ -197,18 +232,18 @@ nav {
 nav .login {
     padding: 14px 12px;
     background: transparent;
-    color: #000000;
+    color: black;
 }
 
 nav .login:hover {
     background: transparent;
-    color: #000000;
+    color: black;
     text-decoration: underline;
 }
 
 nav .login:active {
     background: transparent;
-    color: #000000;
+    color: black;
 }
 
 .login-icon {
@@ -374,7 +409,7 @@ nav .login:active {
     height: 66px;
     margin: 12px auto;
     border-radius: 12px;
-    background: var(--verde);
+    background: var(--verde-oscuro);
 }
 
 .icon-box img {
@@ -402,7 +437,7 @@ nav .login:active {
     min-width: 0;
     padding: 28px 24px;
     border-radius: 25px;
-    background: var(--verde);
+    background: var(--verde-oscuro);
     color: #fff;
 }
 
@@ -421,7 +456,7 @@ nav .login:active {
 .value-grid .icon-box {
     display: flex;
     margin: 18px auto;
-    background: var(--verde);
+    background: var(--verde-oscuro);
 }
 
 .value-grid .icon-box img {
@@ -839,7 +874,7 @@ footer {
     .menu-toggle {
         display: block;
         padding: 5px 12px;
-        border: 1px solid var(--verde);
+        border: 1px solid var(--verde-oscuro);
         border-radius: 8px;
         background: transparent;
         color: var(--texto);
@@ -989,7 +1024,7 @@ footer {
 }
 
 .tarjeta-resumen-usuario {
-    background: var(--verde);
+    background: var(--verde-oscuro);
     color: #ffffff;
     border-radius: 36px;
     padding: 18px 32px;
@@ -1015,7 +1050,7 @@ footer {
 .nombre-resumen-joven {
     font-size: 22px;
     margin: 0;
-    color: #ffffff;
+    color: white;
 }
 
 .conteo-ayudas-joven {
@@ -1033,7 +1068,7 @@ footer {
 }
 
 .item-tarjeta-ayudado {
-    background: #ffffff;
+    background: white;
     border: 1px solid #c7d1c1;
     border-radius: 28px;
     padding: 12px 24px;
@@ -1074,14 +1109,14 @@ footer {
 .posicion-ranking-numero {
     font-size: 18px;
     font-weight: 700;
-    color: var(--verde);
+    color: var(--verde-oscuro);
 }
 
 .detalle-fetch-card {
     max-width: 680px;
     margin: 20px auto 0 auto;
-    background-color: #ffffff;
-    border: 2px solid var(--verde);
+    background-color: white;
+    border: 2px solid var(--verde-oscuro);
     border-radius: 24px;
     padding: 20px 24px;
     text-align: left;
@@ -1089,7 +1124,7 @@ footer {
 
 .detalle-fetch-card h3 {
     margin-bottom: 8px;
-    color: var(--verde);
+    color: var(--verde-oscuro);
 }
 
 .detalle-fetch-card p {
@@ -1697,7 +1732,7 @@ footer {
 }
 
 .ayuda-card-body h3 {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 20px;
     color: #000000;
@@ -1788,7 +1823,7 @@ footer {
 }
 
 .ticket-titulo-principal {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 36px;
     color: #000000;
@@ -1797,7 +1832,7 @@ footer {
 }
 
 .ticket-subtitulo-verde {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 24px;
     color: #0d6e2b;
@@ -1816,7 +1851,7 @@ footer {
 }
 
 .ticket-seccion-titulo {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 16px;
     color: #000000;
@@ -1890,7 +1925,7 @@ footer {
 }
 
 .valoracion-titulo {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 36px;
     color: #0d6e2b;
@@ -1942,7 +1977,7 @@ footer {
 }
 
 .valoracion-pregunta {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 18px;
     color: #000000;
@@ -2289,7 +2324,7 @@ footer {
 .ayudas-titulo-principal,
 .detalle-ayuda-nombre,
 .postulados-titulo {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
 }
 
@@ -2897,7 +2932,7 @@ footer {
 }
 
 .ayudas-subtitulo-gris {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-size: 2.2rem;
     color: #0f172a;
     margin: 0 0 18px;
@@ -2995,11 +3030,11 @@ footer {
 }
 
 .ar-nav-btn.is-active {
-    background: #72bf3b;
+    background: var(--verde-medio);
 }
 
 .ar-nav-btn.is-active:hover {
-    background: #64a535;
+    background: var(--verde-medio);
 }
 
 .ar-bell {
@@ -3091,7 +3126,7 @@ footer {
 }
 
 .ar-card-top {
-    background: #72bf3b;
+    background: var(--verde-medio);
     height: 30px;
     padding: 0 12px;
     display: flex;
@@ -3449,7 +3484,7 @@ footer {
 
 .ayudas-titulo-principal,
 .ar-title {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 38px;
     line-height: 1.15;
@@ -3483,7 +3518,7 @@ footer {
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    background: #72bf3b;
+    background: var(--verde-medio);
     height: 34px;
     width: 100%;
     border-radius: 0;
@@ -3521,7 +3556,7 @@ footer {
 .ayuda-card-body h3,
 .ayuda-card-title,
 .ar-card-title {
-    font-family: 'Fredoka One', cursive, sans-serif;
+    font-family: var(--f-titulo);
     font-weight: 400;
     font-size: 20px;
     color: #000000;

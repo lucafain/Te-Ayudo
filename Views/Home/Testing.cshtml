@@ -1,0 +1,80 @@
+@{
+    ViewData["Title"] = "Ayudas Para Realizar";
+    Usuarios joven = ViewBag.Joven;
+    List<Tareas> tareasPendientes = ViewBag.TareasPendientes;
+    Dictionary<int, int> distanciasTareas = ViewBag.DistanciasTareas;
+    Dictionary<int, string> estadosPostulacion = ViewBag.EstadosPostulacion;
+
+    string nombreJoven = "Joven Voluntario";
+    bool tieneFoto = false;
+    string srcFotoNav = "/img/user.svg";
+
+    if (joven != null)
+    {
+        nombreJoven = joven.Nombre + " " + joven.Apellido;
+        if (joven.FotoPerfil != null && joven.FotoPerfil != "" && joven.FotoPerfil != "/img/user.svg")
+        {
+            tieneFoto = true;
+            srcFotoNav = joven.FotoPerfil;
+        }
+    }
+}
+
+<header>
+<a class="ar-brand" href='@Url.Action("PrincipalJoven", "Home")' title="Te Ayudo">
+    <img src="~/img/logo-teayudo.png" alt="Logo Te Ayudo" />
+</a>
+<nav aria-label="Principal">
+    <a class="ar-nav-btn" href='@Url.Action("PrincipalJoven", "Home")'>Explorá</a>
+    <a class="ar-nav-btn" href='@Url.Action("Conversaciones", "Home")'>Conversaciones</a>
+    <a class="ar-nav-btn" href='@Url.Action("SolicitarAyudas", "Home")'>Solicitá Ayudas</a>
+    <button class="campana" aria-label="Notificaciones">
+    <svg width="37" height="37" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <span class="indicador_num">2</span>
+    </button>
+    <a class="avatar" aria-label="Mi perfil" href='@Url.Action("Perfil", "Home")' class="ar-avatar" title="Mi Perfil">
+        @if (tieneFoto)
+        {
+            <img src="@srcFotoNav" alt="Foto de @nombreJoven" />
+        }
+        else
+        {
+            <svg viewBox="0 0 52 52" aria-label="Mi perfil">
+                <circle cx="26" cy="19" r="9" fill="none" stroke="#fff" stroke-width="3" />
+                <path d="M7 52c0-12 8-19 19-19s19 7 19 19" fill="none" stroke="#fff" stroke-width="3" />
+            </svg>
+        }
+    </a>
+</nav>
+</header>
+
+<header class="ar-header">
+        <a class="ar-brand" href='@Url.Action("PrincipalJoven", "Home")' title="Te Ayudo">
+            <img src="~/img/logo-teayudo.png" alt="Logo Te Ayudo" />
+        </a>
+
+        <nav class="ar-nav" aria-label="Navegación principal">
+            <a href='@Url.Action("PrincipalJoven", "Home")' class="ar-nav-btn">Explorá</a>
+            <a href='@Url.Action("PrincipalJoven", "Home")#ultimas-actividades' class="ar-nav-btn">Consejos</a>
+            <a href='@Url.Action("RealizarAyudas", "Home")' class="ar-nav-btn is-active" aria-current="page">Realizá Ayudas</a>
+            <button type="button" class="ar-bell" title="Notificaciones" aria-label="Notificaciones">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </button>
+            <a href='@Url.Action("Perfil", "Home")' class="ar-avatar" title="Mi Perfil">
+                @if (tieneFoto)
+                {
+                    <img src="@srcFotoNav" alt="Foto de @nombreJoven" />
+                }
+                else
+                {
+                    <svg viewBox="0 0 52 52" aria-label="Mi perfil">
+                        <circle cx="26" cy="19" r="9" fill="none" stroke="#fff" stroke-width="3" />
+                        <path d="M7 52c0-12 8-19 19-19s19 7 19 19" fill="none" stroke="#fff" stroke-width="3" />
+                    </svg>
+                }
+            </a>
+        </nav>
+    </header>

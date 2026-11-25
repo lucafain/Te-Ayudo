@@ -1403,4 +1403,16 @@ public class HomeController : Controller
 
         return "/" + subcarpeta + "/" + nombreArchivo;
     }
+
+    public IActionResult Testing()
+    {
+        Usuarios? joven = ObtenerUsuarioSesion();
+
+        ViewBag.Joven = joven;
+        ViewBag.TareasPendientes = new List<Tareas>();
+        ViewBag.DistanciasTareas = new Dictionary<int, int>();
+        ViewBag.EstadosPostulacion = new Dictionary<int, string>();
+
+        return View("Testing");
+    }
 }

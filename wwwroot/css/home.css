@@ -903,6 +903,7 @@ footer {
 
     .ar-listado-layout {
         flex-direction: column;
+        
     }
 
     .ar-filtros {
@@ -1701,10 +1702,12 @@ footer {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 28px;
+    
 }
 
 .ayuda-card {
     background: #ffffff;
+    border: 1px solid #99c47a;
     border-radius: 26px;
     overflow: hidden;
     display: flex;
@@ -2291,7 +2294,7 @@ footer {
 
 .ar-filtros {
     position: absolute;
-    left: -214px;
+    left: -250px;
     top: 82px;
     width: 190px;
     padding: 0;
@@ -2318,6 +2321,7 @@ footer {
 .ar-listado-layout .ar-grid {
     max-width: none;
     margin: 0;
+    
 }
 /* DETALLE DE AYUDA Y POSTULADOS */
 
@@ -3136,9 +3140,10 @@ footer {
 }
 
 .ar-price {
-    font-size: 15px;
-    font-weight: 500;
-    color: #0d6e2b;
+    font-family: 'Fredoka', Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
     line-height: 1;
 }
 
@@ -3220,6 +3225,7 @@ footer {
 }
 
 .ar-foot-lugar {
+    font-size: 15px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3229,12 +3235,13 @@ footer {
     display: inline-flex;
     align-items: center;
     gap: 3px;
+    font-size: 15px;
     white-space: nowrap;
 }
 
 .ar-foot-dist svg {
-    width: 11px;
-    height: 11px;
+    width: 15px;
+    height: 15px;
 }
 
 /* Estados */
@@ -3531,9 +3538,9 @@ footer {
 
 .ar-price {
     font-family: 'Fredoka', Arial, Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
-    color: #0d6e2b;
+    color: #ffffff;
     line-height: 1;
 }
 

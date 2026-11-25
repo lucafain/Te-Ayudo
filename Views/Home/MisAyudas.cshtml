@@ -121,14 +121,14 @@
                             if (tarea.FechaCreacion.Year > 1)
                             {
                                 fechaCreacion = tarea.FechaCreacion.ToString("dd/MM/yyyy");
-                                fechaOrden = tarea.FechaCreacion.ToString("yyyyMMdd");
+                                fechaOrden = tarea.FechaCreacion.ToString("yyyyMMddHHmmssfff");
                             }
 
                             string precioOrden = tarea.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
                             if (esFinalizada)
                             {
-                                <article class="ayuda-card ayuda-card--aceptada" data-tipo-ayuda="finalizada" data-fecha="@fechaOrden" data-precio="@precioOrden">
+                                <article class="ayuda-card ayuda-card--aceptada" data-tipo-ayuda="finalizada" data-fecha="@fechaOrden" data-precio="@precioOrden" data-id="@tarea.IdTarea">
                                     <div class="ayuda-card-top ayuda-card-top--aceptada">
                                         <span class="ayuda-card-monto ayuda-card-monto--blanco">$@tarea.Monto</span>
                                         <span class="ayuda-card-monto ayuda-card-monto--blanco">@fechaCreacion</span>
@@ -163,7 +163,7 @@
                                     tipoAyuda = "cancelada";
                                 }
 
-                                <article class="ayuda-card" data-tipo-ayuda="@tipoAyuda" data-fecha="@fechaOrden" data-precio="@precioOrden">
+                                <article class="ayuda-card" data-tipo-ayuda="@tipoAyuda" data-fecha="@fechaOrden" data-precio="@precioOrden" data-id="@tarea.IdTarea">
                                     <div class="ayuda-card-top">
                                         <span class="ayuda-card-monto ayuda-card-monto--blanco">$@tarea.Monto</span>
                                         <span class="ayuda-card-monto ayuda-card-monto--blanco">@fechaCreacion</span>
@@ -317,21 +317,68 @@
 
     function ordenarAyudasAdulto() {
         let contenedor = document.querySelector('.ayudas-grid');
-        let tarjetas = document.querySelectorAll('[data-tipo-ayuda]');
+        let tarjetasEncontradas = document.querySelectorAll('[data-tipo-ayuda]');
+        let tarjetas = [];
         let ordenarFecha = document.getElementById('ordenarAyudasFecha').checked;
         let ordenarPrecio = document.getElementById('ordenarAyudasPrecio').checked;
+
+        for (let i = 0; i < tarjetasEncontradas.length; i++) {
+            tarjetas.push(tarjetasEncontradas[i]);
+        }
 
         for (let i = 0; i < tarjetas.length - 1; i++) {
             for (let j = i + 1; j < tarjetas.length; j++) {
                 let cambiar = false;
+
                 if (ordenarFecha) {
-                    if (tarjetas[j].getAttribute('data-fecha') > tarjetas[i].getAttribute('data-fecha')) {
+                    let fechaI = tarjetas[i].getAttribute('data-fecha');
+                    let fechaJ = tarjetas[j].getAttribute('data-fecha');
+
+                    if (fechaJ > fechaI) {
                         cambiar = true;
+                    }
+                    else if (fechaJ == fechaI) {
+                        let idI = Number(tarjetas[i].getAttribute('data-id'));
+                        let idJ = Number(tarjetas[j].getAttribute('data-id'));
+                        if (idJ > idI) {
+                            cambiar = true;
+                        }
                     }
                 }
                 else if (ordenarPrecio) {
-                    if (Number(tarjetas[j].getAttribute('data-precio')) > Number(tarjetas[i].getAttribute('data-precio'))) {
+                    let precioTextoI = tarjetas[i].getAttribute('data-precio');
+                    let precioTextoJ = tarjetas[j].getAttribute('data-precio');
+
+                    precioTextoI = precioTextoI.replace('$', '');
+                    precioTextoJ = precioTextoJ.replace('$', '');
+                    while (precioTextoI.indexOf(' ') != -1) {
+                        precioTextoI = precioTextoI.replace(' ', '');
+                    }
+                    while (precioTextoJ.indexOf(' ') != -1) {
+                        precioTextoJ = precioTextoJ.replace(' ', '');
+                    }
+                    precioTextoI = precioTextoI.replace(',', '.');
+                    precioTextoJ = precioTextoJ.replace(',', '.');
+
+                    let precioI = Number(precioTextoI);
+                    let precioJ = Number(precioTextoJ);
+
+                    if (precioJ > precioI) {
                         cambiar = true;
+                    }
+                    else if (precioJ == precioI) {
+                        let fechaI = tarjetas[i].getAttribute('data-fecha');
+                        let fechaJ = tarjetas[j].getAttribute('data-fecha');
+                        if (fechaJ > fechaI) {
+                            cambiar = true;
+                        }
+                        else if (fechaJ == fechaI) {
+                            let idI = Number(tarjetas[i].getAttribute('data-id'));
+                            let idJ = Number(tarjetas[j].getAttribute('data-id'));
+                            if (idJ > idI) {
+                                cambiar = true;
+                            }
+                        }
                     }
                 }
 
@@ -353,6 +400,7 @@
     }
 
     if (document.getElementById('mostrarAyudasCanceladas') != null && document.getElementById('mostrarAyudasFinalizadas') != null) {
+        ordenarAyudasAdulto();
         filtrarAyudasAdulto();
     }
 </script>

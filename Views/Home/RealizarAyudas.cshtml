@@ -109,20 +109,18 @@
                         }
 
                         string lugar = "Ubicación cercana";
-                        if (t.Lugar != null && t.Lugar != "")
-                        {
-                            if (t.Barrio != null && t.Barrio != "")
-                            {
-                                lugar = t.Lugar + " (" + t.Barrio + ")";
-                            }
-                            else
-                            {
-                                lugar = t.Lugar;
-                            }
-                        }
-                        else if (t.Barrio != null && t.Barrio != "")
+                        if (t.Barrio != null && t.Barrio != "")
                         {
                             lugar = t.Barrio;
+                        }
+                        else if (t.Lugar != null && t.Lugar != "")
+                        {
+                            int inicioBarrio = t.Lugar.IndexOf("(");
+                            int finBarrio = t.Lugar.IndexOf(")");
+                            if (inicioBarrio != -1 && finBarrio != -1 && finBarrio > inicioBarrio)
+                            {
+                                lugar = t.Lugar.Substring(inicioBarrio + 1, finBarrio - inicioBarrio - 1);
+                            }
                         }
 
                         string claseEstado = "";
@@ -154,11 +152,11 @@
                         if (t.FechaCreacion.Year > 1)
                         {
                             fechaCreacionJoven = t.FechaCreacion.ToString("dd/MM/yyyy");
-                            fechaOrdenJoven = t.FechaCreacion.ToString("yyyyMMdd");
+                            fechaOrdenJoven = t.FechaCreacion.ToString("yyyyMMddHHmmssfff");
                         }
                         string precioOrdenJoven = t.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
-                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea" data-fecha="@fechaOrdenJoven" data-precio="@precioOrdenJoven">
+                        <article class="ar-card @claseEstado" id="card-tarea-@t.IdTarea" data-tipo-tarea="@tipoTarea" data-fecha="@fechaOrdenJoven" data-precio="@precioOrdenJoven" data-id="@t.IdTarea">
 
                             <div class="ar-card-top">
                                 @if (estado != "Rechazada")
@@ -337,21 +335,68 @@
 
     function ordenarTareasJoven() {
         let contenedor = document.getElementById('gridTareasDisponibles');
-        let tarjetas = document.querySelectorAll('[data-tipo-tarea]');
+        let tarjetasEncontradas = document.querySelectorAll('[data-tipo-tarea]');
+        let tarjetas = [];
         let ordenarFecha = document.getElementById('ordenarTareasFecha').checked;
         let ordenarPrecio = document.getElementById('ordenarTareasPrecio').checked;
+
+        for (let i = 0; i < tarjetasEncontradas.length; i++) {
+            tarjetas.push(tarjetasEncontradas[i]);
+        }
 
         for (let i = 0; i < tarjetas.length - 1; i++) {
             for (let j = i + 1; j < tarjetas.length; j++) {
                 let cambiar = false;
+
                 if (ordenarFecha) {
-                    if (tarjetas[j].getAttribute('data-fecha') > tarjetas[i].getAttribute('data-fecha')) {
+                    let fechaI = tarjetas[i].getAttribute('data-fecha');
+                    let fechaJ = tarjetas[j].getAttribute('data-fecha');
+
+                    if (fechaJ > fechaI) {
                         cambiar = true;
+                    }
+                    else if (fechaJ == fechaI) {
+                        let idI = Number(tarjetas[i].getAttribute('data-id'));
+                        let idJ = Number(tarjetas[j].getAttribute('data-id'));
+                        if (idJ > idI) {
+                            cambiar = true;
+                        }
                     }
                 }
                 else if (ordenarPrecio) {
-                    if (Number(tarjetas[j].getAttribute('data-precio')) > Number(tarjetas[i].getAttribute('data-precio'))) {
+                    let precioTextoI = tarjetas[i].getAttribute('data-precio');
+                    let precioTextoJ = tarjetas[j].getAttribute('data-precio');
+
+                    precioTextoI = precioTextoI.replace('$', '');
+                    precioTextoJ = precioTextoJ.replace('$', '');
+                    while (precioTextoI.indexOf(' ') != -1) {
+                        precioTextoI = precioTextoI.replace(' ', '');
+                    }
+                    while (precioTextoJ.indexOf(' ') != -1) {
+                        precioTextoJ = precioTextoJ.replace(' ', '');
+                    }
+                    precioTextoI = precioTextoI.replace(',', '.');
+                    precioTextoJ = precioTextoJ.replace(',', '.');
+
+                    let precioI = Number(precioTextoI);
+                    let precioJ = Number(precioTextoJ);
+
+                    if (precioJ > precioI) {
                         cambiar = true;
+                    }
+                    else if (precioJ == precioI) {
+                        let fechaI = tarjetas[i].getAttribute('data-fecha');
+                        let fechaJ = tarjetas[j].getAttribute('data-fecha');
+                        if (fechaJ > fechaI) {
+                            cambiar = true;
+                        }
+                        else if (fechaJ == fechaI) {
+                            let idI = Number(tarjetas[i].getAttribute('data-id'));
+                            let idJ = Number(tarjetas[j].getAttribute('data-id'));
+                            if (idJ > idI) {
+                                cambiar = true;
+                            }
+                        }
                     }
                 }
 
@@ -372,5 +417,6 @@
         filtrarTareasJoven();
     }
 
+    ordenarTareasJoven();
     filtrarTareasJoven();
 </script>

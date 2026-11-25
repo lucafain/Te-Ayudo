@@ -1,8 +1,8 @@
 /* COLORES */
 
 :root{
-    --verde-oscuro:var(--verde-oscuro);
-    --verde-medio:var(--verde-medio);
+    --verde-oscuro: #0A732F;
+    --verde-medio: #72BF3B;
     --verde-claro:#B5D99C;
     --blanco:#fff;
     --gris-claro:#F2F2F2;
@@ -166,7 +166,6 @@ nav {
 /* BOTONES DEL UI KIT */
 
 .button,
-.button,
 .nav-button {
     border: 0;
     display: inline-flex;
@@ -175,9 +174,9 @@ nav {
     gap: 8px;
 
     padding: 14px 21px;
-    border-radius: 999px;
+    border-radius: 24px;
 
-    background: var(--verde-medio);
+    background: var(--verde-oscuro);
     color: #FFFFFF;
 
     font-size: 14px;
@@ -196,19 +195,11 @@ nav {
     border-radius: 24px;
 }
 
-/* Botones del header, como en la referencia */
-
-.button,
-.nav-button {
-    border: 0;
-    border-radius: 24px;
-}
-
 /* Hover del kit */
 
 .button:hover,
 .nav-button:hover {
-    background: var(--verde-medio);
+    background: var(--verde-oscuro);
     color: #FFFFFF;
 }
 
@@ -223,27 +214,28 @@ nav {
 /* Solicita tus ayudas usa el mismo color primario */
 
 .nav-help {
-    background: var(--verde-medio);
+    background: var(--verde-oscuro);
     color: #FFFFFF;
 }
 
 /* Iniciar sesión: persona y texto negro, sin fondo */
 
 nav .login {
-    padding: 14px 12px;
+    padding: 14px 14px;
+    border-radius: 999px;
     background: transparent;
-    color: black;
+    color: white;
 }
 
 nav .login:hover {
     background: transparent;
-    color: black;
+    color: white;
     text-decoration: underline;
 }
 
 nav .login:active {
     background: transparent;
-    color: black;
+    color: white;
 }
 
 .login-icon {
@@ -346,22 +338,22 @@ nav .login:active {
     overflow: hidden;
 }
 
-.about-logo {
+.about-ayuda {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px;
-    background: #e2e7d9;
+    width: 120%;
 }
 
-.about-logo img {
-    width: 100%;
+.about-ayuda img {
+    width: 120%;
     max-width: 280px;
     height: auto;
 }
 
 .about-copy {
     padding: 36px;
+    width: 70%;
 }
 
 .about-copy h2 {
@@ -371,6 +363,7 @@ nav .login:active {
 .about-copy p {
     margin: 12px 0;
     font-size: 15px;
+    text-align: left;
 }
 
 
@@ -381,6 +374,17 @@ nav .login:active {
     margin: 8px 0 20px;
 }
 
+.callout, .work{
+    background: var(--verde-medio);
+    border-radius: 999px;
+}
+
+.callout{
+    width: 50%;
+    margin-right: 25%;
+    margin-left: 25%;
+}
+
 .work h2 {
     max-width: 510px;
     margin: auto;
@@ -388,6 +392,8 @@ nav .login:active {
 
 
 /* CÓMO FUNCIONA */
+.how{
+}
 
 .steps {
     display: grid;
@@ -405,22 +411,27 @@ nav .login:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 110px;
-    height: 66px;
+    width: 100%;
+    height: auto;
     margin: 12px auto;
     border-radius: 12px;
-    background: var(--verde-oscuro);
 }
 
 .icon-box img {
-    width: 30px;
-    height: 30px;
+    width: 100%;
+    height: auto;
     object-fit: contain;
 }
 
 .ready {
     margin: 15px 0 20px;
     font-size: 32px;
+}
+
+.how > .button {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 
@@ -477,7 +488,7 @@ nav .login:active {
 
 details {
     padding: 16px 0;
-    border-bottom: 1px solid #c7d1c1;
+    border-bottom: 1px solid var(--verde-oscuro);
 }
 
 summary {
@@ -499,7 +510,9 @@ details p {
 footer {
     width: 100%;
     padding: 28px 0 18px;
-    background: #e4e9dc;
+    margin-top: 10%;
+    background: var(--verde-oscuro);
+    color: white;
 }
 
 /* FORMULARIOS DEL UI KIT */
@@ -507,7 +520,7 @@ footer {
 .auth-page {
     min-height: 100vh;
     padding: 24px;
-    background: #b8df95;
+    background: var(--verde-claro);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -517,7 +530,7 @@ footer {
     width: min(760px, 100%);
     padding: 28px 32px 24px;
     border-radius: 28px;
-    background: #6dc22e;
+    background: var(--verde-medio);
     color: #000000;
 }
 
@@ -983,7 +996,6 @@ footer {
         scroll-behavior: auto;
     }
 
-    .button,
     .button,
 .nav-button {
     border: 0;

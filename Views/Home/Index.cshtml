@@ -31,7 +31,6 @@
 
         <a class="nav-button login" href='@Url.Action("Ingresar", "Home")'>
             <img class="login-icon" src="~/img/user.svg" alt="" />
-            Iniciar sesión
         </a>
     </nav>
 </header>
@@ -58,8 +57,8 @@
 <main class="page" id="inicio">
 
     <section class="about panel" id="nosotros">
-        <div class="about-logo">
-            <img src="~/img/logo-teayudo.png"
+        <div class="about-ayuda">
+            <img src="~/img/ayuda_UBA.png"
                  alt="Te Ayudo, ayuda entre generaciones" />
         </div>
 
@@ -72,7 +71,7 @@
             }
 
             <p>
-                <strong>Te Ayudo. @ViewBag.Titulo.</strong>
+                <strong>Te Ayudo.</strong> @ViewBag.Titulo.
             </p>
         </div>
     </section>
@@ -90,17 +89,19 @@
         <h2>¿Cómo funciona?</h2>
 
         <div class="steps">
-            @foreach (ContenidoItem paso in ViewBag.Pasos)
+            @for (int i = 0; i < ViewBag.Pasos.Count; i++)
             {
                 <article>
-                    <h3>@paso.Titulo</h3>
+                    <h3>@(i + 1)</h3>
+
+                    <p>@ViewBag.Pasos[i].Titulo</p>
 
                     <div class="icon-box">
-                        <img src="@Url.Content("~/img/" + paso.Icono)"
+                        <img src="@Url.Content("~/img/" + ViewBag.Pasos[i].Icono)"
                              alt="" />
                     </div>
 
-                    <p>@paso.Texto</p>
+                    <p>@ViewBag.Pasos[i].Texto</p>
                 </article>
             }
         </div>
@@ -127,7 +128,7 @@
         <div class="value-grid">
             @foreach (ContenidoItem valor in ViewBag.Valores)
             {
-                <article>
+                <article class="valor">
                     <h3>@valor.Titulo</h3>
 
                     <div class="icon-box">
@@ -141,7 +142,7 @@
         </div>
     </section>
 
-    <section class="faq panel" id="preguntas">
+    <section class="faq" id="preguntas">
         <h2>Preguntas frecuentes</h2>
 
         @foreach (ContenidoItem pregunta in ViewBag.Preguntas)

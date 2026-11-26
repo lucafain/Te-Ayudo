@@ -3164,8 +3164,8 @@ footer {
 .ar-main {
     width: min(1040px, calc(100% - 40px));
     margin: 12px auto 0;
-    border: 1px solid #9cc67d;
-    border-radius: 10px;
+    border: 0;
+    border-radius: 0;
     padding: 28px 40px 36px;
 }
 

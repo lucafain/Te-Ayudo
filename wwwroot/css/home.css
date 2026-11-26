@@ -471,34 +471,101 @@ nav .login:active {
     filter: none;
 }
 
+.value-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.value-item article {
+    width: 100%;
+}
+
 
 /* PREGUNTAS FRECUENTES */
 
-.faq {
-    text-align: left;
+.faq{
+	position:relative;
+	width:1509px;
+	max-width:100%;
+	padding:clamp(3rem,7.1vw,6.7rem) clamp(1rem,9vw,8.6rem) clamp(3rem,9.8vw,9.2rem);
+	border-radius:clamp(2.25rem,6.5vw,6.1rem);
 }
+.faq h2{
+    margin-bottom:2em;
+    margin-top:-3%;
+    text-align:center;
+} /* título solo para lectores de pantalla, como en Figma */
 
-.faq h2 {
-    margin-bottom: 20px;
-    text-align: center;
+.faq div{
+    padding: 5%;
+    border-radius: 36px;
+    background:var(--verde-medio);
 }
-
-details {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--verde-oscuro);
+.faq details{
+	overflow:hidden;
+	border-radius:999px;
+	background:var(--blanco)
 }
-
-summary {
-    cursor: pointer;
+.faq details+details{
+	margin-top:4%;
 }
-
-summary:hover {
-    color: #0d7137;
+.faq summary{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:1.5rem;
+	cursor:pointer;
+	list-style:none;
+	padding:2.7% 8% 2.7% 4%;
+	background:var(--verde-oscuro);
+	color:white;
+	font:400 1.25em/1.16 var(--f-base);
 }
-
-details p {
-    margin-top: 12px;
-    font-size: 15px;
+.faq summary::-webkit-details-marker{
+	display:none
+}
+.faq summary::after{
+	content:"";
+	flex:0 0 5.5%;
+	width:5.5%;
+	aspect-ratio:1;
+	transition:transform 400ms ease;
+	background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M19 12l-7 7-7-7'/%3E%3C/svg%3E") center/contain no-repeat
+}
+.faq details[open] summary::after{
+	transform:rotate(180deg)
+}
+.faq summary:focus-visible{
+	outline:4px solid var(--blanco);
+	outline-offset:-8px
+}
+.faq p{
+	margin:0;
+	padding:clamp(1.25rem,2.7vw,2.4rem) clamp(1.5rem,2vw,2.1rem) clamp(1.5rem,3.3vw,3.3rem);
+	font:400 clamp(1.2rem,2.65vw,2.5rem)/1.2 var(--f-base)
+}
+@media (max-width:560px){
+	.faq summary{
+		gap:.8rem
+	}
+	.faq summary::after{
+		flex-basis:12%;
+		width:12%
+	}
+}
+/* Animación de apertura (solo navegadores que soportan ::details-content; en el resto se abre sin animar) */
+@media (prefers-reduced-motion:no-preference){
+	.faq details::details-content{
+		block-size:0;
+		overflow:hidden;
+		transition:block-size 400ms ease,content-visibility 220ms allow-discrete
+	}
+	.faq details[open]::details-content{
+		block-size:auto
+	}
 }
 
 

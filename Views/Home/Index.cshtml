@@ -128,24 +128,26 @@
         <div class="value-grid">
             @foreach (ContenidoItem valor in ViewBag.Valores)
             {
-                <h3>@valor.Titulo</h3>
-                
-                <article class="valor">
+                <div class="value-item">
+                    <h3>@valor.Titulo</h3>
+                    
+                    <article class="valor">
 
-                    <div class="icon-box">
-                        <img src="@Url.Content("~/img/" + valor.Icono)"
-                             alt="" />
-                    </div>
+                        <div class="icon-box">
+                            <img src="@Url.Content("~/img/" + valor.Icono)"
+                                alt="" />
+                        </div>
 
-                    <p>@valor.Texto</p>
-                </article>
+                        <p>@valor.Texto</p>
+                    </article>
+                </div>
             }
         </div>
     </section>
 
     <section class="faq" id="preguntas">
         <h2>Preguntas frecuentes</h2>
-
+        <div>
         @foreach (ContenidoItem pregunta in ViewBag.Preguntas)
         {
             <details>
@@ -153,75 +155,8 @@
                 <p>@pregunta.Texto</p>
             </details>
         }
-    </section>
-
-<!--
-<section class="faq-card" aria-labelledby="faq-title">
-        <h1 id="faq-title" class="sr-only">Preguntas frecuentes</h1>
-
-        <div class="faq-list">
-          <article class="faq-item" data-open="true">
-            <button type="button" aria-expanded="true" aria-controls="faq-answer-0">
-              <span>¿Cómo pido una ayuda?</span>
-              <span class="accordion-icon" aria-hidden="true">
-                <img src="./assets/444d6.svg" alt="" />
-              </span>
-            </button>
-            <div class="faq-answer" id="faq-answer-0" aria-hidden="false">
-              <p>
-                Para pedir una Ayuda, puedes apretar en el botón del menú que está arriba de todo en
-                la página
-              </p>
-            </div>
-          </article>
-
-          <article class="faq-item" data-open="false">
-            <button type="button" aria-expanded="false" aria-controls="faq-answer-1">
-              <span>¿Qué puedo hacer con Te Ayudo?</span>
-              <span class="accordion-icon" aria-hidden="true">
-                <img src="./assets/444d6.svg" alt="" />
-              </span>
-            </button>
-            <div class="faq-answer" id="faq-answer-1" aria-hidden="true">
-              <p>
-                Con Te Ayudo puedes publicar una solicitud, explicar qué necesitas y encontrar a una
-                persona joven dispuesta a ayudarte.
-              </p>
-            </div>
-          </article>
-
-          <article class="faq-item" data-open="false">
-            <button type="button" aria-expanded="false" aria-controls="faq-answer-2">
-              <span>¿Es seguro pedir ayuda a jóvenes?</span>
-              <span class="accordion-icon" aria-hidden="true">
-                <img src="./assets/444d6.svg" alt="" />
-              </span>
-            </button>
-            <div class="faq-answer" id="faq-answer-2" aria-hidden="true">
-              <p>
-                Sí. La plataforma está pensada para facilitar encuentros de confianza y brindar
-                información clara antes de coordinar cada ayuda.
-              </p>
-            </div>
-          </article>
-
-          <article class="faq-item" data-open="false">
-            <button type="button" aria-expanded="false" aria-controls="faq-answer-3">
-              <span>¿Cuánta plata cuesta pedir una Ayuda?</span>
-              <span class="accordion-icon" aria-hidden="true">
-                <img src="./assets/444d6.svg" alt="" />
-              </span>
-            </button>
-            <div class="faq-answer" id="faq-answer-3" aria-hidden="true">
-              <p>
-                El valor puede variar según el tipo de ayuda que necesites. Antes de confirmar,
-                podrás conversar y acordar todos los detalles.
-              </p>
-            </div>
-          </article>
         </div>
-      </section>
--->
+    </section>
 
 </main>
 

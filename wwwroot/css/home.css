@@ -137,14 +137,14 @@ header nav{
     width:107px;
     height:107px;
     border-radius:50%;
-    background:var(--blanco);
     display:grid;
     place-items:center;
+    background:var(--verde-claro);
     font:700 22px/1 var(--f-base);
-    color:var(--verde-oscuro);
     text-align:center;
     flex:none;
 }
+
 .logo img {
     display: block;
     width: 110px;

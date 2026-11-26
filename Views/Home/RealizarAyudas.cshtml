@@ -109,9 +109,11 @@
                         }
 
                         string lugar = "Ubicación cercana";
+                        bool barrioEncontrado = false;
                         if (t.Barrio != null && t.Barrio != "")
                         {
                             lugar = t.Barrio;
+                            barrioEncontrado = true;
                         }
                         else if (t.Lugar != null && t.Lugar != "")
                         {
@@ -120,6 +122,26 @@
                             if (inicioBarrio != -1 && finBarrio != -1 && finBarrio > inicioBarrio)
                             {
                                 lugar = t.Lugar.Substring(inicioBarrio + 1, finBarrio - inicioBarrio - 1);
+                                barrioEncontrado = true;
+                            }
+                        }
+
+                        if (barrioEncontrado && lugar != "")
+                        {
+                            string[] palabrasBarrio = lugar.Trim().Split(' ');
+                            lugar = "";
+                            for (int palabraIndice = 0; palabraIndice < palabrasBarrio.Length; palabraIndice++)
+                            {
+                                string palabra = palabrasBarrio[palabraIndice].ToLower();
+                                if (palabra != "")
+                                {
+                                    palabra = palabra.Substring(0, 1).ToUpper() + palabra.Substring(1);
+                                    if (lugar != "")
+                                    {
+                                        lugar += " ";
+                                    }
+                                    lugar += palabra;
+                                }
                             }
                         }
 

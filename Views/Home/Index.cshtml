@@ -2,7 +2,7 @@
     ViewData["Title"] = "Inicio";
 }
 
-<header class="header">
+<header>
     <a class="logo" href='@Url.Action("Index", "Home")'>
         <img src="~/img/logo-teayudo.png" alt="Te Ayudo" />
     </a>
@@ -128,19 +128,13 @@
         <div class="value-grid">
             @foreach (ContenidoItem valor in ViewBag.Valores)
             {
-                <div class="value-item">
+                <article class="valor">
+                <div class="valor-overlay">
                     <h3>@valor.Titulo</h3>
-                    
-                    <article class="valor">
-
-                        <div class="icon-box">
-                            <img src="@Url.Content("~/img/" + valor.Icono)"
-                                alt="" />
-                        </div>
-
-                        <p>@valor.Texto</p>
-                    </article>
+                    <img src="@Url.Content("~/img/" + valor.Icono)" alt="@valor.Titulo" />
+                    <p>@Html.Raw(valor.Texto)</p>
                 </div>
+                </article>
             }
         </div>
     </section>

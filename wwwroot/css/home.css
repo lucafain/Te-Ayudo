@@ -250,17 +250,14 @@ nav .login:active {
 .hero {
     padding: 60px 20px;
     margin-bottom: 36px;
-    background: #f0f1e9;
     text-align: center;
 }
 
 .hero--inicio {
     width: 100%;
-    aspect-ratio: 16 / 6.2;
     min-height: 430px;
     padding: 0;
     margin-bottom: 42px;
-    background-color: #f6f6f2;
     background-image: url('/img/hero-inicio.png');
     background-size: 101% auto;
     background-position: right 60%;
@@ -275,7 +272,7 @@ nav .login:active {
     display: flex;
     align-items: center;
     padding: 48px 7%;
-    background: linear-gradient(90deg, #f6f6f2 0%, #f6f6f2 44%, rgba(246, 246, 242, 0.96) 49%, rgba(246, 246, 242, 0) 57%);
+    background: linear-gradient(90deg, #f6f6f2 0%, rgba(246, 246, 242, 0.2) 49%, rgba(246, 246, 242, 0) 100%);
 }
 
 .hero-inicio-content {

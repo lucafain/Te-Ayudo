@@ -1,3 +1,19 @@
+const faqItems = document.querySelectorAll(".faq-item");
+
+faqItems.forEach((item) => {
+  const button = item.querySelector("button");
+  const answer = item.querySelector(".faq-answer");
+
+  button.addEventListener("click", () => {
+    const isOpen = item.dataset.open === "true";
+    const nextState = String(!isOpen);
+
+    item.dataset.open = nextState;
+    button.setAttribute("aria-expanded", nextState);
+    answer.setAttribute("aria-hidden", String(isOpen));
+  });
+});
+
 let menu = document.querySelector('.menu-toggle');
 let navigation = document.querySelector('#navigation');
 
